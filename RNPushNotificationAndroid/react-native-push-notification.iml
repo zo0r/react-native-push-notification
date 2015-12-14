@@ -88,15 +88,15 @@
     <orderEntry type="library" exported="" name="imagepipeline-0.8.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-measurement-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="react-native-0.16.1" level="project" />
-    <orderEntry type="library" exported="" name="jsr305-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="stetho-1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="jsr305-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-2.2.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-8.3.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-ws-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-ws-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="fbcore-0.8.1" level="project" />
     <orderEntry type="library" exported="" name="android-jsc-r174650" level="project" />
