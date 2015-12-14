@@ -1,0 +1,31 @@
+{
+  "name": "react-native-push-notification",
+  "version": "1.0.0",
+  "description": "React Native Local and Remote Notifications",
+  "main": "index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-component",
+    "react-native",
+    "ios",
+    "android",
+    "notifications",
+    "push",
+    "apns",
+    "gcm"
+  ],
+  "bugs": {
+    "url": "https://github.com/zo0r/react-native-push-notification/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:zo0r/react-native-push-notification.git"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.16"
+  },
+  "author": "zo0r <http://zo0r.me>",
+  "license": "MIT"
+}
