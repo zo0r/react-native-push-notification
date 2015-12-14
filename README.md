@@ -94,7 +94,7 @@ PushNotification.configure({
     },
 
     // ANDROID ONLY: (optional) GCM Sender ID.
-    senderID: "YOUR GCM SENDER ID"
+    senderID: "YOUR GCM SENDER ID",
 
     // IOS ONLY (optional): default: all - Permissions to register.
     permissions: {
@@ -140,7 +140,7 @@ PushNotification.localNotification({
     smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
 
     /* iOS and Android properties */
-	message: "My Notification Message" // (required)
+    message: "My Notification Message" // (required)
 });
 
 // IOS ONLY
