@@ -153,6 +153,15 @@ PushNotification.localNotificationSchedule({
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
 
+## iOS Only Methods
+`PushNotification.checkPermissions(callback: Function)` Check permissions
+
+`PushNotification.setApplicationIconBadgeNumber(number: number)` set badge number
+
+`PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
+
+`PushNotification.abandonPermissions()` Abandon permissions
+
 ### TODO
 - [ ] Add `PushNotification.localNotificationSchedule()` Android support
 
