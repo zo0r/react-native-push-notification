@@ -25,13 +25,15 @@ public class RNPushNotificationHelper {
     }
 
     public Class getMainActivityClass() {
-        try {
-            String packageName = mApplication.getPackageName();
-            return Class.forName(packageName + ".MainActivity");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+      String packageName = mContext.getPackageName();
+      Intent launchIntent = mContext.getPackageManager().getLaunchIntentForPackage(packageName);
+      String className = launchIntent.getComponent().getClassName();
+      try {
+          return Class.forName(className);
+      } catch (ClassNotFoundException e) {
+          e.printStackTrace();
+          return null;
+      }
     }
 
     public void sendNotification(Bundle bundle) {
