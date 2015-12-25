@@ -44,6 +44,7 @@ public class ReactNativePushNotificationPackage implements ReactPackage {
     }
 
     public void newIntent(Intent intent) {
+        if(mRNPushNotification == null){ return; }
         mRNPushNotification.newIntent(intent);
     }
 }
