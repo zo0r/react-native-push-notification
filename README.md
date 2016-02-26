@@ -99,11 +99,12 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
    */
     @Override
     protected List<ReactPackage> getPackages() {
+      mReactNativePushNotificationPackage = new ReactNativePushNotificationPackage(this); // <------ Initialize the Package
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
         new VectorIconsPackage(),
         new FabricPackage(),
-        new ReactNativePushNotificationPackage(this) // <---- Add the Package
+        mReactNativePushNotificationPackage // <---- Add the Package
       );
     }
 
