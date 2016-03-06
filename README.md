@@ -188,7 +188,7 @@ PushNotification.localNotification({
 
 // IOS ONLY
 PushNotification.localNotificationSchedule({
-	message: "My Notification Message" // (required)
+	message: "My Notification Message", // (required)
 	date: new Date()
 });
 ```
