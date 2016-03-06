@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,8 +46,14 @@ public class RNPushNotificationHelper {
         Resources res = mApplication.getResources();
         String packageName = mApplication.getPackageName();
 
+        String title = bundle.getString("title");
+        if (title == null) {
+          ApplicationInfo appInfo = mContext.getApplicationInfo();
+          title = mContext.getPackageManager().getApplicationLabel(appInfo).toString();
+        }
+
         NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext)
-                .setContentTitle(bundle.getString("title"))
+                .setContentTitle(title)
                 .setContentText(bundle.getString("message"))
                 .setTicker(bundle.getString("ticker"))
                 .setCategory(NotificationCompat.CATEGORY_CALL)
