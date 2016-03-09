@@ -47,12 +47,18 @@ public class RNPushNotificationHelper {
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(bundle.getString("title"))
-                .setContentText(bundle.getString("message"))
                 .setTicker(bundle.getString("ticker"))
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
+
+        if (bundle.getString("message") != null) {
+            notification.setContentText(bundle.getString("message"));
+        } else {
+            this.cancelAll();
+            return;
+        }
 
         String largeIcon = bundle.getString("largeIcon");
 
