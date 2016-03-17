@@ -73,10 +73,12 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
 
-		var tempFirstNotification = this.callNative( 'popInitialNotification' );
+		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
+			var tempFirstNotification = this.callNative( 'popInitialNotification' );
 
-		if ( tempFirstNotification !== null ) {
-			this._onNotification(tempFirstNotification, true);
+			if ( tempFirstNotification !== null ) {
+				this._onNotification(tempFirstNotification, true);
+			}
 		}
 
 		this.loaded = true;
