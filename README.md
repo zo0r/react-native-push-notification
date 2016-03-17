@@ -145,7 +145,11 @@ PushNotification.configure({
         badge: true,
         sound: true
     },
-    
+
+    // Should the initial notification be popped automatically
+    // default: true
+    popInitialNotification: true,
+
     /**
       * IOS ONLY: (optional) default: true
       * - Specified if permissions will requested or not,
