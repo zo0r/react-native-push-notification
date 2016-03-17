@@ -69,7 +69,8 @@ dependencies {
 Register module (in `MainActivity.java`)
 
 ```java
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import
+import android.content.Intent; // <--- Import Intent
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
