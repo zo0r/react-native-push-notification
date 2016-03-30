@@ -154,6 +154,9 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				foreground: ! isFromBackground,
 				message: data.getMessage(),
 				data: data.getData(),
+				badge: data.getBadgeCount(),
+				alert: data.getAlert(),
+				sound: data.getSound()
 			});
 		} else {
 			this.onNotification({
@@ -162,7 +165,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				data: (
 					typeof data.data !== 'undefined'
 					? data.data
-					: {} 
+					: {}
 				),
 			});
 		}
