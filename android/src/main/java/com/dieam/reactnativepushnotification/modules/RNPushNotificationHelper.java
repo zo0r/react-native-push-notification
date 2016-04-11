@@ -14,9 +14,12 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 public class RNPushNotificationHelper {
+    public static final String FILE_URI_SCHEME = "file://";
+
     private Application mApplication;
     private Context mContext;
 
@@ -66,39 +69,13 @@ public class RNPushNotificationHelper {
 
         notification.setContentText(bundle.getString("message"));
 
-        String largeIcon = bundle.getString("largeIcon");
+        Bitmap largeIconBitmap = getLargeIconBitmap(bundle);
 
-        int smallIconResId;
-        int largeIconResId;
-
-        String smallIcon = bundle.getString("smallIcon");
-
-        if ( smallIcon != null ) {
-            smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
-        } else {
-            smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
-        }
-
-        if ( smallIconResId == 0 ) {
-            smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-
-            if ( smallIconResId == 0 ) {
-                smallIconResId  = android.R.drawable.ic_dialog_info;
-            }
-        }
-
-        if ( largeIcon != null ) {
-            largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-        } else {
-            largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-        }
-
-        Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-
-        if ( largeIconResId != 0 && ( largeIcon != null || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP ) ) {
+        if (largeIconBitmap != null) {
             notification.setLargeIcon(largeIconBitmap);
         }
 
+        int smallIconResId = getSmallIconResId(bundle);
         notification.setSmallIcon(smallIconResId);
 
         int notificationID;
@@ -132,6 +109,40 @@ public class RNPushNotificationHelper {
         info.defaults |= Notification.DEFAULT_LIGHTS;
 
         notificationManager.notify(notificationID, info);
+    }
+
+    @Nullable
+    private Bitmap getLargeIconBitmap(Bundle bundle) {
+
+        String largeIcon = bundle.getString("largeIcon");
+
+        if(largeIcon != null && largeIcon.startsWith(FILE_URI_SCHEME)){
+            return  BitmapFactory.decodeFile(largeIcon.substring(FILE_URI_SCHEME.length()));
+        } else if (largeIcon != null) {
+            Resources res = mApplication.getResources();
+            String packageName = mApplication.getPackageName();
+
+            int largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+            return BitmapFactory.decodeResource(res, largeIconResId);
+        }
+        return null;
+    }
+
+    private int getSmallIconResId(Bundle bundle) {
+        Resources res = mApplication.getResources();
+        String packageName = mApplication.getPackageName();
+
+        int smallIconResId = 0;
+
+        String smallIcon = bundle.getString("smallIcon");
+
+        if ( smallIcon != null ) {
+            smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
+        }
+        if ( smallIconResId == 0 ) {
+            smallIconResId = android.R.drawable.ic_dialog_info;
+        }
+        return smallIconResId;
     }
 
     public void cancelAll() {
