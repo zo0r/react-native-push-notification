@@ -51,7 +51,7 @@ In `android/settings.gradle`
 ...
 
 include ':react-native-push-notification'
-project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/RNPushNotificationAndroid')
+project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 ```
 
 In `android/app/build.gradle`
