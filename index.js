@@ -154,6 +154,9 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				foreground: ! isFromBackground,
 				message: data.getMessage(),
 				data: data.getData(),
+				badge: data.getBadgeCount(),
+				alert: data.getAlert(),
+				sound: data.getSound()
 			});
 		} else {
 			var notificationData = {
