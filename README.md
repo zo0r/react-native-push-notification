@@ -194,7 +194,7 @@ PushNotification.localNotification({
 // IOS ONLY
 PushNotification.localNotificationSchedule({
 	message: "My Notification Message", // (required)
-	date: new Date()
+	date: new Date(Date.now() + (60 * 1000)) // in 60 secs
 });
 ```
 
