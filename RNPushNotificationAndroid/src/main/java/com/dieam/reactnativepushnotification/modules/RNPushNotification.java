@@ -56,6 +56,15 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
             constants.put("initialNotification", bundleString);
         }
 
+        String data = intent.getStringExtra("data");
+        if (data != null) {
+          bundle = new Bundle();
+          bundle.putString("data", data);
+          bundle.putBoolean("foreground", false);
+          String bundleString = convertJSON(bundle);
+          constants.put("initialNotification", bundleString);
+        }
+
         return constants;
     }
 
@@ -70,6 +79,15 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
             Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
             intent.putExtra("notification", bundle);
+            notifyNotification(bundle);
+        }
+
+        if ( intent.hasExtra("data") ) {
+            String data = intent.getStringExtra("data");
+            Bundle bundle = new Bundle();
+            bundle.putString("data", data);
+            bundle.putBoolean("foreground", false);
+            intent.putExtra("data", bundle);
             notifyNotification(bundle);
         }
     }
