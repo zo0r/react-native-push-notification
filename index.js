@@ -156,10 +156,20 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				data: data.getData(),
 			});
 		} else {
-			this.onNotification({
+			var notificationData = {
 				foreground: ! isFromBackground,
 				...data
-			});
+			};
+
+			if ( typeof notificationData.data === 'string' ) {
+				try {
+					notificationData.data = JSON.parse(notificationData.data);
+				} catch(e) {
+					/* void */
+				}
+			}
+
+			this.onNotification(notificationData);
 		}
 	}
 };
