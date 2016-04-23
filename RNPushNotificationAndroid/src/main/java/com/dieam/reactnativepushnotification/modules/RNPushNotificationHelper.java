@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 public class RNPushNotificationHelper {
+    public static final String FILE_URI_SCHEME = "file://";
+
     private Application mApplication;
     private Context mContext;
 
@@ -63,7 +65,6 @@ public class RNPushNotificationHelper {
         String largeIcon = bundle.getString("largeIcon");
 
         int smallIconResId;
-        int largeIconResId;
 
         String smallIcon = bundle.getString("smallIcon");
 
@@ -81,15 +82,25 @@ public class RNPushNotificationHelper {
             }
         }
 
-        if ( largeIcon != null ) {
-            largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+        Bitmap largeIconBitmap = null;
+
+        if(largeIcon != null && largeIcon.startsWith(FILE_URI_SCHEME)){
+            largeIconBitmap = BitmapFactory.decodeFile(largeIcon.substring(FILE_URI_SCHEME.length()));
         } else {
-            largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+            final int largeIconResId;
+
+            if (largeIcon != null) {
+                largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+            } else {
+                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+            }
+
+            if (largeIconResId != 0 && (largeIcon != null || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)) {
+                largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+            }
         }
 
-        Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-
-        if ( largeIconResId != 0 && ( largeIcon != null || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP ) ) {
+        if (largeIconBitmap != null) {
             notification.setLargeIcon(largeIconBitmap);
         }
 
