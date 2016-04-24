@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
@@ -32,7 +31,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     private JSONObject getPushData(String dataString) {
         try {
             return new JSONObject(dataString);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             return null;
         }
     }
