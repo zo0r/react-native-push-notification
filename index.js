@@ -157,17 +157,25 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				foreground: ! isFromBackground,
 				message: data.getMessage(),
 				data: data.getData(),
+				badge: data.getBadgeCount(),
+				alert: data.getAlert(),
+				sound: data.getSound()
 			});
 		} else {
-			this.onNotification({
+			var notificationData = {
 				foreground: ! isFromBackground,
-				message: data.message,
-				data: (
-					typeof data.data !== 'undefined'
-					? data.data
-					: {}
-				),
-			});
+				...data
+			};
+
+			if ( typeof notificationData.data === 'string' ) {
+				try {
+					notificationData.data = JSON.parse(notificationData.data);
+				} catch(e) {
+					/* void */
+				}
+			}
+
+			this.onNotification(notificationData);
 		}
 	}
 };
