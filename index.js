@@ -23,7 +23,7 @@ var Notifications = {
 		alert: true,
 		badge: true,
 		sound: true
-	}
+	};
 };
 
 Notifications.callNative = function(name: String, params: Array) {
@@ -70,8 +70,11 @@ Notifications.configure = function(options: Object) {
 	}
 
 	if ( this.loaded === false ) {
-		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
-		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
+		this._onRegister = this._onRegister.bind(this);
+		this.callNative( 'addEventListener', [ 'register', this._onRegister ] )
+
+		this._onNotification = this._onNotification.bind(this);
+		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] )
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
 			var tempFirstNotification = this.callNative( 'popInitialNotification' );
@@ -92,8 +95,8 @@ Notifications.configure = function(options: Object) {
 
 /* Unregister */
 Notifications.unregister = function() {
-	this.callNative( 'removeEventListener', [ 'register', this._onRegister.bind(this) ] )
-	this.callNative( 'removeEventListener', [ 'notification', this._onNotification.bind(this) ] )
+	this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
+	this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
 };
 
 /**
@@ -162,7 +165,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				data: (
 					typeof data.data !== 'undefined'
 					? data.data
-					: {} 
+					: {}
 				),
 			});
 		}
