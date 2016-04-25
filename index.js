@@ -69,12 +69,13 @@ Notifications.configure = function(options: Object) {
 		this.senderID = options.senderID;
 	}
 
-	if ( this.loaded === false ) {
-		this._onRegister = this._onRegister.bind(this);
-		this.callNative( 'addEventListener', [ 'register', this._onRegister ] )
+	this._onRegister = this._onRegister.bind(this);
+	this.callNative( 'addEventListener', [ 'register', this._onRegister ] )
 
-		this._onNotification = this._onNotification.bind(this);
-		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] )
+	this._onNotification = this._onNotification.bind(this);
+	this.callNative( 'addEventListener', [ 'notification', this._onNotification ] )
+
+	if ( this.loaded === false ) {
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
 			var tempFirstNotification = this.callNative( 'popInitialNotification' );
