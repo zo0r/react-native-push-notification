@@ -43,6 +43,10 @@ public class RNPushNotificationHelper {
             return;
         }
 
+        if (bundle.getString("message") == null) {
+            return;
+        }
+
         Resources res = mApplication.getResources();
         String packageName = mApplication.getPackageName();
 
@@ -60,12 +64,7 @@ public class RNPushNotificationHelper {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        if (bundle.getString("message") != null) {
-            notification.setContentText(bundle.getString("message"));
-        } else {
-            this.cancelAll();
-            return;
-        }
+        notification.setContentText(bundle.getString("message"));
 
         String largeIcon = bundle.getString("largeIcon");
 
