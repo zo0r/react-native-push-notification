@@ -27,6 +27,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
     private Activity mActivity;
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private static final String ReceiveNotificationExtra  = "receiveNotifExtra";
 
     public RNPushNotification(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
@@ -95,7 +96,13 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         mReactContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                notifyNotification(intent.getBundleExtra("notification"));
+                if (getReactApplicationContext().hasActiveCatalystInstance()) {
+                    notifyNotification(intent.getBundleExtra("notification"));
+                    Bundle result = getResultExtras(true);
+                    result.putString(ReceiveNotificationExtra, "success");
+                    abortBroadcast();
+                } else {
+                }
             }
         }, intentFilter);
     }
