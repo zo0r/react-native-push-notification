@@ -65,10 +65,6 @@ Notifications.configure = function(options: Object) {
 		this.permissions = options.permissions;
 	}
 
-	if ( typeof options.senderID !== 'undefined' ) {
-		this.senderID = options.senderID;
-	}
-
 	if ( this.loaded === false ) {
 		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
@@ -180,8 +176,8 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 Notifications.requestPermissions = function() {
 	if ( Platform.OS === 'ios' ) {
 		return this.callNative( 'requestPermissions', [ this.permissions ]);
-	} else if ( typeof this.senderID !== 'undefined' ) {
-		return this.callNative( 'requestPermissions', [ this.senderID ]);
+	} else {
+		return this.callNative( 'requestPermissions', []);
 	}
 };
 

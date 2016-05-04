@@ -27,6 +27,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
     private Activity mActivity;
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private String token;
 
     public RNPushNotification(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
@@ -80,7 +81,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         mReactContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String token = intent.getStringExtra("token");
+                String newtoken = intent.getStringExtra("token");
+                token = newtoken;
                 WritableMap params = Arguments.createMap();
                 params.putString("deviceToken", token);
 
@@ -127,10 +129,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void requestPermissions(String senderID) {
+    public void requestPermissions() {
         Intent GCMService = new Intent(mReactContext, RNPushNotificationRegistrationService.class);
 
-        GCMService.putExtra("senderID", senderID);
         mReactContext.startService(GCMService);
     }
 
