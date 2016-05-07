@@ -147,7 +147,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void scheduleLocalNotification(ReadableMap details) {
-        // TODO: Implement
+        Bundle bundle = Arguments.toBundle(details);
+        mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 
 }
