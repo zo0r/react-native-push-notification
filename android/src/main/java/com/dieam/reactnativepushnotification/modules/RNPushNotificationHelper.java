@@ -45,13 +45,20 @@ public class RNPushNotificationHelper {
     }
 
     private PendingIntent getScheduleNotificationIntent(Bundle bundle) {
-        int id = 0; //todo ?
-        Intent notificationIntent = new Intent(mApplication, RNPushNotificationPublisher.class);
-        notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, id);
+        int notificationID;
+        String notificationIDString = bundle.getString("id");
 
+        if ( notificationIDString != null ) {
+            notificationID = Integer.parseInt(notificationIDString);
+        } else {
+            notificationID = (int) System.currentTimeMillis();
+        }
+
+        Intent notificationIntent = new Intent(mApplication, RNPushNotificationPublisher.class);
+        notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
         notificationIntent.putExtras(bundle);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mApplication, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mApplication, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         return pendingIntent;
     }
@@ -184,5 +191,9 @@ public class RNPushNotificationHelper {
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.cancelAll();
+
+        Bundle b = new Bundle();
+        b.putString("id", "0");
+        getAlarmManager().cancel(getScheduleNotificationIntent(b));
     }
 }
