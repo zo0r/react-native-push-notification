@@ -1,6 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 
+import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,8 +14,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 public class RNPushNotificationHelper {
     private Application mApplication;
@@ -35,6 +38,55 @@ public class RNPushNotificationHelper {
           e.printStackTrace();
           return null;
       }
+    }
+
+    private AlarmManager getAlarmManager() {
+        return (AlarmManager) mApplication.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    private PendingIntent getScheduleNotificationIntent(Bundle bundle) {
+        int notificationID;
+        String notificationIDString = bundle.getString("id");
+
+        if ( notificationIDString != null ) {
+            notificationID = Integer.parseInt(notificationIDString);
+        } else {
+            notificationID = (int) System.currentTimeMillis();
+        }
+
+        Intent notificationIntent = new Intent(mApplication, RNPushNotificationPublisher.class);
+        notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
+        notificationIntent.putExtras(bundle);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mApplication, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return pendingIntent;
+    }
+
+    public void sendNotificationScheduled(Bundle bundle) {
+        Class intentClass = getMainActivityClass();
+        if (intentClass == null) {
+            return;
+        }
+
+        if (bundle.getString("message") == null) {
+            return;
+        }
+
+        if (!bundle.containsKey("sendAt")) {
+            return;
+        }
+
+        long sendAt = Long.parseLong(bundle.getString("sendAt"));
+        long currentTime = System.currentTimeMillis();
+
+        Log.i("ReactSystemNotification", "sendAt: " + sendAt + ", Now Time: " + currentTime);
+        PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, sendAt, pendingIntent);
+        } else {
+            getAlarmManager().set(AlarmManager.RTC_WAKEUP, sendAt, pendingIntent);
+        }
     }
 
     public void sendNotification(Bundle bundle) {
@@ -139,5 +191,9 @@ public class RNPushNotificationHelper {
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.cancelAll();
+
+        Bundle b = new Bundle();
+        b.putString("id", "0");
+        getAlarmManager().cancel(getScheduleNotificationIntent(b));
     }
 }
