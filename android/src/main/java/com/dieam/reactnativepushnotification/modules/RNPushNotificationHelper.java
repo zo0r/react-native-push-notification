@@ -100,7 +100,12 @@ public class RNPushNotificationHelper {
         }
 
         notification.setSmallIcon(smallIconResId);
-        notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message")));
+        String bigText = bundle.getString("bigText");
+        if(bigText == null ){
+          bigText = bundle.getString("message");
+        }
+        notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+
 
         int notificationID;
         String notificationIDString = bundle.getString("id");
