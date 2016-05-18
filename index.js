@@ -69,9 +69,13 @@ Notifications.configure = function(options: Object) {
 		this.senderID = options.senderID;
 	}
 
+	this._onRegister = this._onRegister.bind(this);
+	this.callNative( 'addEventListener', [ 'register', this._onRegister ] )
+
+	this._onNotification = this._onNotification.bind(this);
+	this.callNative( 'addEventListener', [ 'notification', this._onNotification ] )
+
 	if ( this.loaded === false ) {
-		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
-		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
 			var tempFirstNotification = this.callNative( 'popInitialNotification' );
@@ -92,8 +96,8 @@ Notifications.configure = function(options: Object) {
 
 /* Unregister */
 Notifications.unregister = function() {
-	this.callNative( 'removeEventListener', [ 'register', this._onRegister.bind(this) ] )
-	this.callNative( 'removeEventListener', [ 'notification', this._onNotification.bind(this) ] )
+	this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
+	this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
 };
 
 /**
