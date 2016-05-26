@@ -72,6 +72,7 @@ Notifications.configure = function(options: Object) {
 	if ( this.loaded === false ) {
 		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
+		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification.bind(this) ] )
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
 			var tempFirstNotification = this.callNative( 'popInitialNotification' );
@@ -94,6 +95,7 @@ Notifications.configure = function(options: Object) {
 Notifications.unregister = function() {
 	this.callNative( 'removeEventListener', [ 'register', this._onRegister.bind(this) ] )
 	this.callNative( 'removeEventListener', [ 'notification', this._onNotification.bind(this) ] )
+	this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification.bind(this) ] )
 };
 
 /**
@@ -106,7 +108,8 @@ Notifications.unregister = function() {
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		this.handler.presentLocalNotification({
-			alertBody: details.message
+			alertBody: details.message,
+			userInfo: details.data,
 		});
 	} else {
 		this.handler.presentLocalNotification(details);
