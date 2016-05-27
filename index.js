@@ -104,7 +104,7 @@ Notifications.unregister = function() {
  * @param {String}		details.message - The message displayed in the notification alert.
  * @param {String}		details.title  -  ANDROID ONLY: The title displayed in the notification alert.
  * @param {String}		details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
- * @param {Object}		details.data -  iOS ONLY: The userInfo used in the notification alert.
+ * @param {Object}		details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
