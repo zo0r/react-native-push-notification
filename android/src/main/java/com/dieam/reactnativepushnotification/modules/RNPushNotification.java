@@ -52,8 +52,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         Bundle bundle = intent.getBundleExtra("notification");
         if ( bundle != null ) {
             bundle.putBoolean("foreground", false);
-            String bundleString = convertJSON(bundle);
-            constants.put("initialNotification", bundleString);
+            JSONObject bundleJson = convertJSON(bundle);
+            constants.put("initialNotification", bundleJson.toString());
         }
 
         return constants;
@@ -101,29 +101,32 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     private void notifyNotification(Bundle bundle) {
-        String bundleString = convertJSON(bundle);
-
         WritableMap params = Arguments.createMap();
-        params.putString("dataJSON", bundleString);
+        JSONObject bundleJson = convertJSON(bundle);
+        params.putString("dataJSON", bundleJson.toString());
 
         sendEvent("remoteNotificationReceived", params);
     }
 
-    private String convertJSON(Bundle bundle) {
+    private JSONObject convertJSON(Bundle bundle) {
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {
             try {
+                Object obj = bundle.get(key);
+                if (obj instanceof Bundle) {
+                    obj = convertJSON((Bundle)obj);
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    json.put(key, JSONObject.wrap(bundle.get(key)));
+                    json.put(key, JSONObject.wrap(obj));
                 } else {
-                    json.put(key, bundle.get(key));
+                    json.put(key, obj);
                 }
             } catch(JSONException e) {
                 return null;
             }
         }
-        return json.toString();
+        return json;
     }
 
     @ReactMethod
