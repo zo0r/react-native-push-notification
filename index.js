@@ -70,9 +70,11 @@ Notifications.configure = function(options: Object) {
 	}
 
 	if ( this.loaded === false ) {
-		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
-		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
-		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification.bind(this) ] )
+		this._onRegister.bind(this);
+		this._onNotification.bind(this);
+		this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
+		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
+		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
 			var tempFirstNotification = this.callNative( 'popInitialNotification' );
@@ -93,9 +95,9 @@ Notifications.configure = function(options: Object) {
 
 /* Unregister */
 Notifications.unregister = function() {
-	this.callNative( 'removeEventListener', [ 'register', this._onRegister.bind(this) ] )
-	this.callNative( 'removeEventListener', [ 'notification', this._onNotification.bind(this) ] )
-	this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification.bind(this) ] )
+	this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
+	this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
+	this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification ] )
 };
 
 /**
