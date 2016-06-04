@@ -185,6 +185,7 @@ PushNotification.localNotification({
     ticker: "My Notification Ticker", // (optional)
     largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
     smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+    bigText: "My big text that will be shown when notification is exapanded",
 
     /* iOS and Android properties */
     message: "My Notification Message" // (required)
