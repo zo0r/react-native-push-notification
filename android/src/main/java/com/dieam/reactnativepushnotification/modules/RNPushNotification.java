@@ -60,9 +60,11 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     private void sendEvent(String eventName, Object params) {
-        mReactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+        if ( mReactContext.hasActiveCatalystInstance() ) {
+            mReactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
+        }
     }
 
     public void newIntent(Intent intent) {
