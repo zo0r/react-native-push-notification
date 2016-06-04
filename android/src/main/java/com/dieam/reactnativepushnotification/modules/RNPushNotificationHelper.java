@@ -6,12 +6,14 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -111,14 +113,25 @@ public class RNPushNotificationHelper {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)
                 .setTicker(bundle.getString("ticker"))
-                .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true);
+                .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
         notification.setContentText(bundle.getString("message"));
 
         String largeIcon = bundle.getString("largeIcon");
+
+        String subText = bundle.getString("subText");
+
+        if ( subText != null ) {
+            notification.setSubText(subText);
+        }
+
+        int number = bundle.getInt("number", 0);
+
+        if ( number != 0 ) {
+            notification.setNumber(number);
+        }
 
         int smallIconResId;
         int largeIconResId;
@@ -158,6 +171,21 @@ public class RNPushNotificationHelper {
         }
         notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
+        Intent intent = new Intent(mContext, intentClass);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("notification", bundle);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        notification.setSound(defaultSoundUri);
+
+        if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
+            notification.setCategory(NotificationCompat.CATEGORY_CALL);
+
+            String color = bundle.getString("color");
+            if (color != null) {
+                notification.setColor(Color.parseColor(color));
+            }
+        }
 
         int notificationID;
         String notificationIDString = bundle.getString("id");
@@ -168,16 +196,8 @@ public class RNPushNotificationHelper {
             notificationID = (int) System.currentTimeMillis();
         }
 
-        Intent intent = new Intent(mContext, intentClass);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("notification", bundle);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        notification.setSound(defaultSoundUri);
 
         NotificationManager notificationManager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);

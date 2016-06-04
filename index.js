@@ -17,7 +17,7 @@ var Notifications = {
 	onError: false,
 	onNotification: false,
 
-	loaded: false,
+	isLoaded: false,
 
 	permissions: {
 		alert: true,
@@ -69,7 +69,7 @@ Notifications.configure = function(options: Object) {
 		this.senderID = options.senderID;
 	}
 
-	if ( this.loaded === false ) {
+	if ( this.isLoaded === false ) {
 		this._onRegister.bind(this);
 		this._onNotification.bind(this);
 		this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
@@ -84,7 +84,7 @@ Notifications.configure = function(options: Object) {
 			}
 		}
 
-		this.loaded = true;
+		this.isLoaded = true;
 	}
 
 	if ( options.requestPermissions !== false ) {
