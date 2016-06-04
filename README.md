@@ -174,7 +174,7 @@ Notification object example:
 ## Local and Schedule Notifications
 `PushNotification.localNotification(details: Object)`
 
-`PushNotification.localNotificationSchedule(details: Object)` (IOS ONLY)
+`PushNotification.localNotificationSchedule(details: Object)`
 
 EXAMPLE:
 ```javascript
@@ -211,5 +211,6 @@ Same parameters as `PushNotification.localNotification()`
 `PushNotification.abandonPermissions()` Abandon permissions
 
 ### TODO
-- [ ] Add `PushNotification.localNotificationSchedule()` Android support
+- [X] Add `PushNotification.localNotificationSchedule()` Android support
+- [ ] Restore Android local notifications after reboot
 
