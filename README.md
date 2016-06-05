@@ -15,6 +15,7 @@ In your `AndroidManifest.xml`
 ```xml
     .....
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
