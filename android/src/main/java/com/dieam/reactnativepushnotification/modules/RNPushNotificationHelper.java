@@ -6,7 +6,6 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -60,9 +59,7 @@ public class RNPushNotificationHelper {
         notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
         notificationIntent.putExtras(bundle);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mApplication, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        return pendingIntent;
+        return PendingIntent.getBroadcast(mApplication, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public void sendNotificationScheduled(Bundle bundle) {
@@ -71,23 +68,20 @@ public class RNPushNotificationHelper {
             return;
         }
 
-        if (bundle.getString("message") == null) {
+        Double fireDateDouble = bundle.getDouble("fireDate", 0);
+        if (fireDateDouble == 0) {
             return;
         }
 
-        if (!bundle.containsKey("sendAt")) {
-            return;
-        }
-
-        long sendAt = Long.parseLong(bundle.getString("sendAt"));
+        long fireDate = Math.round(fireDateDouble);
         long currentTime = System.currentTimeMillis();
 
-        Log.i("ReactSystemNotification", "sendAt: " + sendAt + ", Now Time: " + currentTime);
+        Log.i("ReactSystemNotification", "fireDate: " + fireDate + ", Now Time: " + currentTime);
         PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, sendAt, pendingIntent);
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         } else {
-            getAlarmManager().set(AlarmManager.RTC_WAKEUP, sendAt, pendingIntent);
+            getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         }
     }
 
