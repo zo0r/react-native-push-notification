@@ -213,6 +213,27 @@ Same parameters as `PushNotification.localNotification()`
 
 `PushNotification.abandonPermissions()` Abandon permissions
 
+## Restart React Native when App is Destroyed (Android Only)
+
+**For VoIP usage**
+
+If you are building a VoIP app and you don't want to make a background service to maintain a persistent connection between the app and the VoIP server, this will help you wake up your app in the foreground when a special push notification arrives.
+
+When sending GCM messages, set `"autoRestartReactActivity"="true"` under data payload.
+
+For example:
+
+```javascript
+payload = {
+    "to": "[Your-App-Token]",
+    "priority": "high",
+    "data": {
+        "message": "Hello!",
+        "autoRestartReactActivity": "true"
+    }
+}
+```
+
 ### TODO
 - [X] Add `PushNotification.localNotificationSchedule()` Android support
 - [ ] Restore Android local notifications after reboot
