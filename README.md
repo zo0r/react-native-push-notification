@@ -186,7 +186,7 @@ PushNotification.localNotification({
     autoCancel: true, (optional) default: true
     largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
     smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-    bigText: "My big text that will be shown when notification is exapanded", (optional) default: "message" prop
+    bigText: "My big text that will be shown when notification is expanded", (optional) default: "message" prop
     subText: "This is a subText", // (optional) default: none
     number: 10, // (optional) default: none (Cannot be zero)
     color: "red", // (optional) default: system default
