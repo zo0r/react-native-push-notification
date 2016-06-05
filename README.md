@@ -11,6 +11,20 @@ The component uses PushNotificationIOS for the iOS part.
 [Please see: PushNotificationIOS](https://facebook.github.io/react-native/docs/pushnotificationios.html#content)
 
 ## Android Installation
+
+**NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `8.1.0` for your version):**
+```gradle
+...
+
+dependencies {
+    ...
+
+    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
+        force = true;
+    }
+}
+```
+
 In your `AndroidManifest.xml`
 ```xml
     .....
