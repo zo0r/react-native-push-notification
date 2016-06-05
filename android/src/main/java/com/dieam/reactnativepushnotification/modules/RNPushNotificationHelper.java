@@ -127,10 +127,10 @@ public class RNPushNotificationHelper {
             notification.setSubText(subText);
         }
 
-        int number = bundle.getInt("number", 0);
+        String number = bundle.getString("number");
 
-        if ( number != 0 ) {
-            notification.setNumber(number);
+        if ( number != null ) {
+            notification.setNumber(Integer.parseInt(number));
         }
 
         int smallIconResId;
@@ -166,9 +166,11 @@ public class RNPushNotificationHelper {
 
         notification.setSmallIcon(smallIconResId);
         String bigText = bundle.getString("bigText");
-        if(bigText == null ){
-          bigText = bundle.getString("message");
+
+        if (bigText == null ) {
+            bigText = bundle.getString("message");
         }
+
         notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
         Intent intent = new Intent(mContext, intentClass);
