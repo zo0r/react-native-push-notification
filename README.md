@@ -49,6 +49,7 @@ In your `AndroidManifest.xml`
             </intent-filter>
         </receiver>
 
+	<receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
         <service
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
