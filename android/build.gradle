@@ -21,6 +21,12 @@ android {
     }
 }
 
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+    }
+}
+
 allprojects {
     repositories {
         mavenLocal()
@@ -30,6 +36,7 @@ allprojects {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.facebook.react:react-native:0.16.+'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
