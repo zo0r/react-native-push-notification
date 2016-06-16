@@ -208,6 +208,11 @@ PushNotification.localNotification({
     subText: "This is a subText", // (optional) default: none
     number: 10, // (optional) default: none (Cannot be zero)
     color: "red", // (optional) default: system default
+    playSound: false, // (optional) default: true
+    vibrate: true, // (optional) default: true
+    vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+    tag: 'some_tag', // (optional) add tag to message
+    group: "group", // (optional) add group to message
 
     /* iOS and Android properties */
     message: "My Notification Message" // (required)
