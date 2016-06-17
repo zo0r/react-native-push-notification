@@ -114,28 +114,24 @@ public class RNPushNotificationHelper {
         DataSource<CloseableReference<CloseableImage>> dataSource =
                 imagePipeline.fetchDecodedImage(imageRequest, mContext);
 
-        try {
-            dataSource.subscribe(new BaseBitmapDataSubscriber() {
-                @Override
-                public void onNewResultImpl(@Nullable Bitmap bitmap) {
-                    if (bitmap == null) {
-                        Log.d(TAG, "Bitmap data source returned success, but bitmap null.");
-                        sendNotificationWithImage(bundle, null);
-                        return;
-                    }
-                    sendNotificationWithImage( bundle, bitmap );
-                }
 
-                @Override
-                public void onFailureImpl(DataSource dataSource) {
-                    sendNotificationWithImage( bundle, null );
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                if (bitmap == null) {
+                    Log.d(TAG, "Bitmap data source returned success, but bitmap null.");
+                    sendNotificationWithImage(bundle, null);
+                    return;
                 }
-            }, CallerThreadExecutor.getInstance());
-        } finally {
-            if (dataSource != null) {
-                dataSource.close();
+                sendNotificationWithImage( bundle, bitmap );
             }
-        }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                sendNotificationWithImage( bundle, null );
+            }
+        }, CallerThreadExecutor.getInstance());
+
 
     }
 
@@ -151,8 +147,9 @@ public class RNPushNotificationHelper {
 
         Resources res = mApplication.getResources();
         String packageName = mApplication.getPackageName();
-
+        String message = bundle.getString("message");
         String title = bundle.getString("title");
+
         if (title == null) {
             ApplicationInfo appInfo = mContext.getApplicationInfo();
             title = mContext.getPackageManager().getApplicationLabel(appInfo).toString();
@@ -165,7 +162,7 @@ public class RNPushNotificationHelper {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
-        notification.setContentText(bundle.getString("message"));
+
 
         String largeIcon = bundle.getString("largeIcon");
 
@@ -218,13 +215,16 @@ public class RNPushNotificationHelper {
             bigText = bundle.getString("message");
         }
 
+
         if( image != null ){
             notification.setStyle(
                     new NotificationCompat.BigPictureStyle()
                             .bigPicture(image)
-                            .setBigContentTitle( bigText )
+                            .setBigContentTitle( title )
+                            .setSummaryText( message )
             );
         } else {
+            notification.setContentText(message);
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
         }
 
