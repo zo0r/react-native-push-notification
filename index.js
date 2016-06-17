@@ -110,11 +110,17 @@ Notifications.unregister = function() {
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
-		this.handler.presentLocalNotification({
-			alertBody: details.message,
-			userInfo: details.userInfo,
-		});
-	} else {
+    const soundName = !details.hasOwnProperty("playSound") || details.playSound === true ? 'default' : '';// empty string results in no sound
+
+    this.handler.presentLocalNotification({
+      alertBody: details.message,
+      alertAction: details.alertAction,
+      category: details.category,
+      soundName: soundName,
+      applicationIconBadgeNumber: details.number,
+      userInfo: details.userInfo
+    });
+  } else {
 		this.handler.presentLocalNotification(details);
 	}
 };
@@ -159,12 +165,12 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( this.onNotification !== false ) {
 		if ( Platform.OS === 'ios' ) {
 			this.onNotification({
-				foreground: ! isFromBackground,
-				message: data.getMessage(),
-				data: data.getData(),
-				badge: data.getBadgeCount(),
-				alert: data.getAlert(),
-				sound: data.getSound()
+        foreground: !isFromBackground,
+        message: data.getMessage() ? data.getMessage() : null,
+        data: data.getData() ? data.getData() : null,
+        badge: data.getBadgeCount() ? data.getBadgeCount() : null,
+        alert: data.getAlert() ? data.getAlert() : null,
+        sound: data.getSound() ? data.getSound() : null
 			});
 		} else {
 			var notificationData = {
