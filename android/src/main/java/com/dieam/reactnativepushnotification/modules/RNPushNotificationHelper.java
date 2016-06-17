@@ -17,12 +17,25 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.common.Priority;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 public class RNPushNotificationHelper {
     private Application mApplication;
     private Context mContext;
+    private String TAG = "RNPushNotificationHelper";
 
     public RNPushNotificationHelper(Application application, Context context) {
         mApplication = application;
@@ -85,7 +98,48 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendNotification(Bundle bundle) {
+    public void sendNotification(final Bundle bundle) {
+        String imageUrl = bundle.getString("imageUrl");
+        if( imageUrl == null ){
+            sendNotificationWithImage( bundle, null );
+            return;
+        }
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+
+        ImageRequest imageRequest = ImageRequestBuilder
+                .newBuilderWithSource( Uri.parse(imageUrl) )
+                .setRequestPriority(Priority.HIGH)
+                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                .build();
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, mContext);
+
+        try {
+            dataSource.subscribe(new BaseBitmapDataSubscriber() {
+                @Override
+                public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                    if (bitmap == null) {
+                        Log.d(TAG, "Bitmap data source returned success, but bitmap null.");
+                        sendNotificationWithImage(bundle, null);
+                        return;
+                    }
+                    sendNotificationWithImage( bundle, bitmap );
+                }
+
+                @Override
+                public void onFailureImpl(DataSource dataSource) {
+                    sendNotificationWithImage( bundle, null );
+                }
+            }, CallerThreadExecutor.getInstance());
+        } finally {
+            if (dataSource != null) {
+                dataSource.close();
+            }
+        }
+
+    }
+
+    public void sendNotificationWithImage(Bundle bundle, Bitmap image ) {
         Class intentClass = getMainActivityClass();
         if (intentClass == null) {
             return;
@@ -153,7 +207,6 @@ public class RNPushNotificationHelper {
         }
 
         Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-
         if ( largeIconResId != 0 && ( largeIcon != null || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP ) ) {
             notification.setLargeIcon(largeIconBitmap);
         }
@@ -165,7 +218,15 @@ public class RNPushNotificationHelper {
             bigText = bundle.getString("message");
         }
 
-        notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+        if( image != null ){
+            notification.setStyle(
+                    new NotificationCompat.BigPictureStyle()
+                            .bigPicture(image)
+                            .setBigContentTitle( bigText )
+            );
+        } else {
+            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+        }
 
         Intent intent = new Intent(mContext, intentClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
