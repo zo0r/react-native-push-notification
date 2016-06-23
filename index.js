@@ -77,11 +77,11 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
-			var tempFirstNotification = this.callNative( 'popInitialNotification' );
-
-			if ( tempFirstNotification !== null ) {
-				this._onNotification(tempFirstNotification, true);
-			}
+			this.popInitialNotification(function(firstNotification) {
+				if ( firstNotification !== null ) {
+					this._onNotification(firstNotification, true);
+				}
+			});
 		}
 
 		this.isLoaded = true;
@@ -214,8 +214,14 @@ Notifications.getApplicationIconBadgeNumber = function() {
 	return this.callNative('getApplicationIconBadgeNumber', arguments);
 };
 
-Notifications.popInitialNotification = function() {
-	return this.callNative('popInitialNotification', arguments);
+Notifications.popInitialNotification = function(handler) {
+	if ( Platform.OS === 'ios' ) {
+		this.callNative('getInitialNotification').then(function(result){
+			handler(result);
+		});
+	} else {
+		handler(this.callNative('getInitialNotification', arguments));
+	}
 };
 
 Notifications.abandonPermissions = function() {

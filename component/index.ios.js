@@ -1,12 +1,12 @@
 'use strict';
 
 import {
-  AppStateIOS,
+  AppState,
   PushNotificationIOS
 } from 'react-native';
 
 module.exports = {
-  state: AppStateIOS,
+  state: AppState,
   component: PushNotificationIOS
 };
 
