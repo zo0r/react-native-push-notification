@@ -128,8 +128,8 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
     // Add onNewIntent
     @Override
-    // in RN 0.28+ you may need to use `public void onNewIntent (Intent intent) {`
-    protected void onNewIntent (Intent intent) {
+    // in RN <= 0.27 you may need to use `protected void onNewIntent (Intent intent) {`
+    public void onNewIntent (Intent intent) {
       super.onNewIntent(intent);
 
       mReactNativePushNotificationPackage.newIntent(intent);
