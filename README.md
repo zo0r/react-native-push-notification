@@ -58,7 +58,7 @@ In your `AndroidManifest.xml`
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-        
+
         .....
 
 ```
@@ -128,6 +128,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
     // Add onNewIntent
     @Override
+    // in RN 0.28+ you may need to use `public void onNewIntent (Intent intent) {`
     protected void onNewIntent (Intent intent) {
       super.onNewIntent(intent);
 
