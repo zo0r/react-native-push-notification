@@ -220,7 +220,7 @@ Notifications.popInitialNotification = function(handler) {
 			handler(result);
 		});
 	} else {
-		handler(this.callNative('getInitialNotification', arguments));
+		handler(this.callNative('popInitialNotification', arguments));
 	}
 };
 
