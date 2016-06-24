@@ -152,4 +152,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 
+    @ReactMethod
+    public void cancelLocalNotification(String notificationIDString) {
+        mRNPushNotificationHelper.cancelNotification(notificationIDString);
+    }
+
 }

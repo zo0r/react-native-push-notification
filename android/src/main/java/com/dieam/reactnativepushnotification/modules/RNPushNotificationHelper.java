@@ -20,13 +20,17 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RNPushNotificationHelper {
     private Application mApplication;
     private Context mContext;
-
+    private final Map<String, PendingIntent> currentlyScheduledNotifications;
     public RNPushNotificationHelper(Application application, Context context) {
         mApplication = application;
         mContext = context;
+        currentlyScheduledNotifications = new HashMap<>();
     }
 
     public Class getMainActivityClass() {
@@ -78,10 +82,24 @@ public class RNPushNotificationHelper {
 
         Log.i("ReactSystemNotification", "fireDate: " + fireDate + ", Now Time: " + currentTime);
         PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
+
+        // Store the pending intent into the currentlyScheduledNotifications so that
+        // it can be cancelled if needed. Only notifications for which notificationID
+        // is pre-defined would be stored so that they can be cancelled using the
+        // same notificationID
+        storeNotificationLocally(bundle.getString("id"), pendingIntent);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         } else {
             getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+        }
+    }
+
+    private void storeNotificationLocally(String notificationIDString, PendingIntent pendingIntent) {
+
+        if ( notificationIDString != null ) {
+            currentlyScheduledNotifications.put(notificationIDString, pendingIntent);
         }
     }
 
@@ -217,5 +235,13 @@ public class RNPushNotificationHelper {
         Bundle b = new Bundle();
         b.putString("id", "0");
         getAlarmManager().cancel(getScheduleNotificationIntent(b));
+    }
+
+    public void cancelNotification(String notificationIDString) {
+        PendingIntent pendingIntent = currentlyScheduledNotifications.get(notificationIDString);
+
+        if(pendingIntent != null) {
+            getAlarmManager().cancel(pendingIntent);
+        }
     }
 }
