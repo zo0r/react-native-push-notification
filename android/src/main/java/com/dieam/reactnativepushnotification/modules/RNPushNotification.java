@@ -22,6 +22,7 @@ import java.util.Set;
 import org.json.*;
 
 import android.content.Context;
+import android.util.Log;
 
 public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
@@ -153,8 +154,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void cancelLocalNotification(String notificationIDString) {
-        mRNPushNotificationHelper.cancelNotification(notificationIDString);
+    public void cancelLocalNotifications(ReadableMap details) {
+        String notificationId = details.getString("notificationId");
+        Log.i("Notification", "Deleting notification with ID " + notificationId);
+        mRNPushNotificationHelper.cancelNotification(notificationId);
     }
-
 }
