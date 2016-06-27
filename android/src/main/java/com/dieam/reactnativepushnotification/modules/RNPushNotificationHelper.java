@@ -189,8 +189,17 @@ public class RNPushNotificationHelper {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("notification", bundle);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        notification.setSound(defaultSoundUri);
+        String soundName = bundle.getString("sound");
+        if(soundName != null) {
+            Uri soundUri = null;
+            
+            if("default".equalsIgnoreCase(soundName)) {
+                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            } else {
+                soundUri = Uri.parse(soundName);
+            }
+            notification.setSound(soundUri);
+        }
 
         if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
             notification.setCategory(NotificationCompat.CATEGORY_CALL);
@@ -220,7 +229,6 @@ public class RNPushNotificationHelper {
 
         Notification info = notification.build();
         info.defaults |= Notification.DEFAULT_VIBRATE;
-        info.defaults |= Notification.DEFAULT_SOUND;
         info.defaults |= Notification.DEFAULT_LIGHTS;
 
         notificationManager.notify(notificationID, info);
