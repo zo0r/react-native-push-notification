@@ -79,7 +79,7 @@ Notifications.configure = function(options: Object) {
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
 			this.popInitialNotification(function(firstNotification) {
 				if ( firstNotification !== null ) {
-					this._onNotification(firstNotification, true);
+					Notifications._onNotification(firstNotification, true);
 				}
 			});
 		}
