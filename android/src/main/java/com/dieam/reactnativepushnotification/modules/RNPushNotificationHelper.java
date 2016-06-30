@@ -246,10 +246,13 @@ public class RNPushNotificationHelper {
     }
 
     public void cancelNotification(String notificationIDString) {
-        PendingIntent pendingIntent = currentlyScheduledNotifications.get(notificationIDString);
+        NotificationManager notificationManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if(pendingIntent != null) {
-            getAlarmManager().cancel(pendingIntent);
-        }
+        notificationManager.cancel(Integer.parseInt(notificationIDString));
+
+        Bundle b = new Bundle();
+        b.putString("id", notificationIDString);
+        getAlarmManager().cancel(getScheduleNotificationIntent(b));
     }
 }

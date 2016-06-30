@@ -21,12 +21,14 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+*.iml
 
 # Android/IJ
 #
 .idea
 .gradle
 local.properties
+android/src/main/gen
 
 # node.js
 #
