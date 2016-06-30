@@ -28,9 +28,11 @@ import java.util.Map;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "RNPushNotification";
+    private Application mApplication;
     private Context mContext;
     private final SharedPreferences mSharedPreferences;
-    public RNPushNotificationHelper(Context context) {
+    public RNPushNotificationHelper(Application application, Context context) {
+        mApplication = application;
         mContext = context;
         mSharedPreferences = (SharedPreferences)context.getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
@@ -48,7 +50,7 @@ public class RNPushNotificationHelper {
     }
 
     private AlarmManager getAlarmManager() {
-        return (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        return (AlarmManager) mApplication.getSystemService(Context.ALARM_SERVICE);
     }
 
     private PendingIntent getScheduleNotificationIntent(Bundle bundle) {
@@ -62,11 +64,11 @@ public class RNPushNotificationHelper {
             bundle.putString("id", Integer.toString(notificationID));
         }
 
-        Intent notificationIntent = new Intent(mContext, RNPushNotificationPublisher.class);
+        Intent notificationIntent = new Intent(mApplication, RNPushNotificationPublisher.class);
         notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
         notificationIntent.putExtras(bundle);
 
-        return PendingIntent.getBroadcast(mContext, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(mApplication, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public void sendNotificationScheduled(Bundle bundle) {
@@ -86,7 +88,7 @@ public class RNPushNotificationHelper {
         Log.i("ReactSystemNotification", "fireDate: " + fireDate + ", Now Time: " + currentTime);
         PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
 
-        String notificationId = bundle.getString(("id");
+        String notificationId = bundle.getString("id");
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         String bundleJson = RNPushNotification.convertBundleToJSON(bundle);
         editor.putString(notificationId, bundleJson);
@@ -114,8 +116,8 @@ public class RNPushNotificationHelper {
             return;
         }
 
-        Resources res = mContext.getResources();
-        String packageName = mContext.getPackageName();
+        Resources res = mApplication.getResources();
+        String packageName = mApplication.getPackageName();
 
         String title = bundle.getString("title");
         if (title == null) {

@@ -35,7 +35,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
 
         mActivity = activity;
         mReactContext = reactContext;
-        mRNPushNotificationHelper = new RNPushNotificationHelper(reactContext);
+        mRNPushNotificationHelper = new RNPushNotificationHelper(activity.getApplication(), reactContext);
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
