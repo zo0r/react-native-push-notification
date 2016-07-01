@@ -94,6 +94,9 @@ public class RNPushNotificationHelper {
         if (bundle.getString("message") == null) {
             return;
         }
+        
+        if ("true".equalsIgnoreCase(bundle.getString("silent")))
+            return;
 
         Resources res = mApplication.getResources();
         String packageName = mApplication.getPackageName();
