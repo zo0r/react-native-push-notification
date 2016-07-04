@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class RNPushNotificationAttributes {
     private String id;
     private String message;
-    private long fireDate;
+    private double fireDate;
     private String title;
     private String ticker;
     private boolean autoCancel;
@@ -29,7 +29,7 @@ public class RNPushNotificationAttributes {
         Bundle bundle = new Bundle();
         bundle.putString("id", id);
         bundle.putString("message", message);
-        bundle.putLong("fireDate", fireDate);
+        bundle.putDouble("fireDate", fireDate);
         bundle.putString("title", title);
         bundle.putString("ticker", ticker);
         bundle.putBoolean("autoCancel", autoCancel);
@@ -46,7 +46,7 @@ public class RNPushNotificationAttributes {
     public void fromBundle(Bundle bundle) {
         id = bundle.getString("id");
         message = bundle.getString("message");
-        fireDate = bundle.getLong("fireDate");
+        fireDate = bundle.getDouble("fireDate");
         title = bundle.getString("title");
         ticker = bundle.getString("ticker");
         autoCancel = bundle.getBoolean("autoCancel");
@@ -85,19 +85,19 @@ public class RNPushNotificationAttributes {
 
     public void fromJson(JSONObject jsonObject) {
         try {
-            id = jsonObject.getString("id");
-            message = jsonObject.getString("message");
-            fireDate = jsonObject.getLong("fireDate");
-            title = jsonObject.getString("title");
-            ticker = jsonObject.getString("ticker");
-            autoCancel = jsonObject.getBoolean("autoCancel");
-            largeIcon = jsonObject.getString("largeIcon");
-            smallIcon = jsonObject.getString("smallIcon");
-            bigText = jsonObject.getString("bigText");
-            subText = jsonObject.getString("subText");
-            number = jsonObject.getString("number");
-            sound = jsonObject.getString("sound");
-            color = jsonObject.getString("color");
+            id = jsonObject.has("id") ? jsonObject.getString("id") : null;
+            message = jsonObject.has("message") ? jsonObject.getString("message") : null;
+            fireDate = jsonObject.has("fireDate") ? jsonObject.getDouble("fireDate") : 0.0;
+            title = jsonObject.has("title") ? jsonObject.getString("title") : null;
+            ticker = jsonObject.has("ticker") ? jsonObject.getString("ticker") : null;
+            autoCancel = jsonObject.has("autoCancel") ? jsonObject.getBoolean("autoCancel") : true;
+            largeIcon = jsonObject.has("largeIcon") ? jsonObject.getString("largeIcon") : null;
+            smallIcon = jsonObject.has("smallIcon") ? jsonObject.getString("smallIcon") : null;
+            bigText = jsonObject.has("bigText") ? jsonObject.getString("bigText") : null;
+            subText = jsonObject.has("subText") ? jsonObject.getString("subText") : null;
+            number = jsonObject.has("number") ? jsonObject.getString("number") : null;
+            sound = jsonObject.has("sound") ? jsonObject.getString("sound") : null;
+            color = jsonObject.has("color") ? jsonObject.getString("color") : null;
         } catch (JSONException e) {
             Log.e("RNPushNotification", "Exception while initializing RNPushNotificationAttributes from " +
                     "JSON. Some fields may not be set", e);
@@ -108,7 +108,7 @@ public class RNPushNotificationAttributes {
         return id;
     }
 
-    public long getFireDate() {
+    public double getFireDate() {
         return fireDate;
     }
 

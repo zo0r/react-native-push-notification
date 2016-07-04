@@ -165,8 +165,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
         // If notification ID is not provided by the user, generate one at random
-        if ( bundle.getInt("id") == 0 ) {
-            bundle.putInt("id", mRandomNumberGenerator.nextInt());
+        if ( bundle.getString("id") == null ) {
+            bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
         }
         mRNPushNotificationHelper.sendNotification(bundle);
     }
@@ -175,16 +175,16 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     public void scheduleLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
         // If notification ID is not provided by the user, generate one at random
-        if ( bundle.getInt("id") == 0 ) {
-            bundle.putInt("id", mRandomNumberGenerator.nextInt());
+        if ( bundle.getString("id") == null ) {
+            bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
         }
         mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 
     @ReactMethod
     public void cancelLocalNotifications(ReadableMap details) {
-        String notificationId = details.getString("notificationId");
-        Log.i("Notification", "Deleting notification with ID " + notificationId);
-        mRNPushNotificationHelper.cancelNotification(notificationId);
+        String notificationIdString = details.getString("id");
+        Log.i("Notification", "Deleting notification with ID " + notificationIdString);
+        mRNPushNotificationHelper.cancelNotification(notificationIdString);
     }
 }

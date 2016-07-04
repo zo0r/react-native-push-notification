@@ -53,7 +53,7 @@ public class RNPushNotificationHelper {
     }
 
     private PendingIntent getScheduleNotificationIntent(Bundle bundle) {
-        int notificationID = bundle.getInt("id");
+        int notificationID = Integer.parseInt(bundle.getString("id"));
 
         Intent notificationIntent = new Intent(mApplication, RNPushNotificationPublisher.class);
         notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
@@ -74,12 +74,12 @@ public class RNPushNotificationHelper {
             return;
         }
 
-        if(bundle.getInt("id") == 0) {
+        if(bundle.getString("id") == null) {
             Log.e("RNPushNotification", "No notification ID specified for the notification");
             return;
         }
 
-        long fireDate = bundle.getLong("fireDate");
+        double fireDate = bundle.getDouble("fireDate");
         if (fireDate == 0) {
             Log.e("RNPushNotification", "No date specified for the scheduled notification");
             return;
@@ -97,9 +97,9 @@ public class RNPushNotificationHelper {
         PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, bundle.getLong("fireDate"), pendingIntent);
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, (long)bundle.getDouble("fireDate"), pendingIntent);
         } else {
-            getAlarmManager().set(AlarmManager.RTC_WAKEUP, bundle.getLong("fireDate"), pendingIntent);
+            getAlarmManager().set(AlarmManager.RTC_WAKEUP, (long)bundle.getDouble("fireDate"), pendingIntent);
         }
     }
 
@@ -131,7 +131,7 @@ public class RNPushNotificationHelper {
             return;
         }
 
-        if(bundle.getInt("id") == 0) {
+        if(bundle.getString("id") == null) {
             Log.e("RNPushNotification", "No notification ID specified for the notification");
             return;
         }
@@ -162,10 +162,10 @@ public class RNPushNotificationHelper {
             notification.setSubText(subText);
         }
 
-        int number = bundle.getInt("number");
+        String numberString = bundle.getString("number");
 
-        if ( number != 0 ) {
-            notification.setNumber(number);
+        if ( numberString != null ) {
+            notification.setNumber(Integer.parseInt(numberString));
         }
 
         int smallIconResId;
@@ -233,7 +233,7 @@ public class RNPushNotificationHelper {
             }
         }
 
-        int notificationID = bundle.getInt("id");
+        int notificationID = Integer.parseInt(bundle.getString("id"));
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
