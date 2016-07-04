@@ -18,19 +18,18 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.v4.app.NotificationCompat;
-import android.util.Base64;
 import android.util.Log;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "RNPushNotification";
     private Application mApplication;
     private Context mContext;
     private final SharedPreferences mSharedPreferences;
+
     public RNPushNotificationHelper(Application application, Context context) {
         mApplication = application;
         mContext = context;
@@ -54,15 +53,7 @@ public class RNPushNotificationHelper {
     }
 
     private PendingIntent getScheduleNotificationIntent(Bundle bundle) {
-        int notificationID;
-        String notificationIDString = bundle.getString("id");
-
-        if ( notificationIDString != null ) {
-            notificationID = Integer.parseInt(notificationIDString);
-        } else {
-            notificationID = (int) System.currentTimeMillis();
-            bundle.putString("id", Integer.toString(notificationID));
-        }
+        int notificationID = bundle.getInt("id");
 
         Intent notificationIntent = new Intent(mApplication, RNPushNotificationPublisher.class);
         notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
@@ -74,30 +65,36 @@ public class RNPushNotificationHelper {
     public void sendNotificationScheduled(Bundle bundle) {
         Class intentClass = getMainActivityClass();
         if (intentClass == null) {
+            Log.e("RNPushNotification", "No activity class found for the notification");
             return;
         }
 
-        Double fireDateDouble = bundle.getDouble("fireDate", 0);
-        if (fireDateDouble == 0) {
+        if (bundle.getString("message") == null) {
+            Log.e("RNPushNotification", "No message specified for the notification");
             return;
         }
 
-        long fireDate = Math.round(fireDateDouble);
+        if(bundle.getInt("id") == 0) {
+            Log.e("RNPushNotification", "No notification ID specified for the notification");
+            return;
+        }
+
+        long fireDate = bundle.getLong("fireDate");
+        if (fireDate == 0) {
+            Log.e("RNPushNotification", "No date specified for the scheduled notification");
+            return;
+        }
+
         long currentTime = System.currentTimeMillis();
+        Log.i("RNPushNotification", "fireDate: " + fireDate + ", Now Time: " + currentTime);
 
-        Log.i("ReactSystemNotification", "fireDate: " + fireDate + ", Now Time: " + currentTime);
+        storeNotificationToPreferences(bundle);
+
+        sendNotificationScheduledCore(bundle);
+    }
+
+    public void sendNotificationScheduledCore(Bundle bundle) {
         PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
-
-        String notificationId = bundle.getString("id");
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        String bundleJson = RNPushNotification.convertBundleToJSON(bundle);
-        editor.putString(notificationId, bundleJson);
-
-        if (Build.VERSION.SDK_INT < 9) {
-            editor.commit();
-        } else {
-            editor.apply();
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
@@ -106,13 +103,36 @@ public class RNPushNotificationHelper {
         }
     }
 
+    private void storeNotificationToPreferences(Bundle bundle) {
+        RNPushNotificationAttributes notificationAttributes = new RNPushNotificationAttributes();
+        notificationAttributes.fromBundle(bundle);
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(notificationAttributes.getId(), notificationAttributes.toJson().toString());
+        commitPreferences(editor);
+    }
+
+    private void commitPreferences(SharedPreferences.Editor editor) {
+        if (Build.VERSION.SDK_INT < 9) {
+            editor.commit();
+        } else {
+            editor.apply();
+        }
+    }
+
     public void sendNotification(Bundle bundle) {
         Class intentClass = getMainActivityClass();
         if (intentClass == null) {
+            Log.e("RNPushNotification", "No activity class found for the notification");
             return;
         }
 
         if (bundle.getString("message") == null) {
+            Log.e("RNPushNotification", "No message specified for the notification");
+            return;
+        }
+
+        if(bundle.getInt("id") == 0) {
+            Log.e("RNPushNotification", "No notification ID specified for the notification");
             return;
         }
 
@@ -142,10 +162,10 @@ public class RNPushNotificationHelper {
             notification.setSubText(subText);
         }
 
-        String number = bundle.getString("number");
+        int number = bundle.getInt("number");
 
-        if ( number != null ) {
-            notification.setNumber(Integer.parseInt(number));
+        if ( number != 0 ) {
+            notification.setNumber(number);
         }
 
         int smallIconResId;
@@ -213,14 +233,7 @@ public class RNPushNotificationHelper {
             }
         }
 
-        int notificationID;
-        String notificationIDString = bundle.getString("id");
-
-        if ( notificationIDString != null ) {
-            notificationID = Integer.parseInt(notificationIDString);
-        } else {
-            notificationID = (int) System.currentTimeMillis();
-        }
+        int notificationID = bundle.getInt("id");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -237,26 +250,18 @@ public class RNPushNotificationHelper {
         if(mSharedPreferences.getString(Integer.toString(notificationID), null) != null) {
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.remove(Integer.toString(notificationID));
-
-            if (Build.VERSION.SDK_INT < 9) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            commitPreferences(editor);
         }
 
         notificationManager.notify(notificationID, info);
     }
 
     public void cancelAll() {
-        NotificationManager notificationManager =
-                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        Set<String> ids = mSharedPreferences.getAll().keySet();
 
-        notificationManager.cancelAll();
-
-        Bundle b = new Bundle();
-        b.putString("id", "0");
-        getAlarmManager().cancel(getScheduleNotificationIntent(b));
+        for (String id: ids) {
+            this.cancelNotification(id);
+        }
     }
 
     public void cancelNotification(String notificationIDString) {
@@ -268,5 +273,9 @@ public class RNPushNotificationHelper {
         Bundle b = new Bundle();
         b.putString("id", notificationIDString);
         getAlarmManager().cancel(getScheduleNotificationIntent(b));
+
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(notificationIDString);
+        commitPreferences(editor);
     }
 }

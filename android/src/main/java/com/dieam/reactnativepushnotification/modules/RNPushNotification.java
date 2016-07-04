@@ -19,6 +19,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import org.json.*;
 
@@ -29,6 +30,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
     private Activity mActivity;
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private final Random mRandomNumberGenerator;
 
     public RNPushNotification(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
@@ -36,6 +38,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         mActivity = activity;
         mReactContext = reactContext;
         mRNPushNotificationHelper = new RNPushNotificationHelper(activity.getApplication(), reactContext);
+        mRandomNumberGenerator = new Random(System.currentTimeMillis());
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
@@ -161,12 +164,20 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     @ReactMethod
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
+        // If notification ID is not provided by the user, generate one at random
+        if ( bundle.getInt("id") == 0 ) {
+            bundle.putInt("id", mRandomNumberGenerator.nextInt());
+        }
         mRNPushNotificationHelper.sendNotification(bundle);
     }
 
     @ReactMethod
     public void scheduleLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
+        // If notification ID is not provided by the user, generate one at random
+        if ( bundle.getInt("id") == 0 ) {
+            bundle.putInt("id", mRandomNumberGenerator.nextInt());
+        }
         mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 

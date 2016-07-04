@@ -11,6 +11,8 @@ import java.util.Set;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 /**
  * Set alarms for scheduled notification after system reboot.
  */
@@ -27,11 +29,20 @@ public class RNPushNotificationBootEventReceiver extends BroadcastReceiver {
 
             for (String id: ids) {
                 try {
-                    String bundleJson = sharedPreferences.getString(id, null);
-                    if(bundleJson != null) {
-                        Bundle bundle = RNPushNotification.converJSONToBundle(bundleJson);
-                        rnPushNotificationHelper.sendNotificationScheduled(bundle);
-                        Log.i("RNPushNotification", "RNPushNotificationBootEventReceiver: Alarm set for: " + bundle.getString("id"));
+                    String notificationAttributesJson = sharedPreferences.getString(id, null);
+                    if(notificationAttributesJson != null) {
+                        RNPushNotificationAttributes notificationAttributes = new RNPushNotificationAttributes();
+                        notificationAttributes.fromJson(new JSONObject(notificationAttributesJson));
+
+                        if(notificationAttributes.getFireDate() < System.currentTimeMillis()) {
+                            Log.i("RNPushNotification", "RNPushNotificationBootEventReceiver: Showing notification for " +
+                                    notificationAttributes.getId());
+                            rnPushNotificationHelper.sendNotification(notificationAttributes.toBundle());
+                        } else {
+                            Log.i("RNPushNotification", "RNPushNotificationBootEventReceiver: Scheduling notification for " +
+                                    notificationAttributes.getId());
+                            rnPushNotificationHelper.sendNotificationScheduledCore(notificationAttributes.toBundle());
+                        }
                     }
                 } catch (Exception e) {
                     Log.e("ReactSystemNotification", "SystemBootEventReceiver: onReceive Error: " + e.getMessage());
