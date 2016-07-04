@@ -97,9 +97,9 @@ public class RNPushNotificationHelper {
         PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, bundle.getLong("fireDate"), pendingIntent);
         } else {
-            getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            getAlarmManager().set(AlarmManager.RTC_WAKEUP, bundle.getLong("fireDate"), pendingIntent);
         }
     }
 
