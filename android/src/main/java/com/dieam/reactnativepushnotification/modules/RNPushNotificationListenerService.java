@@ -6,6 +6,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 
 import java.util.List;
+import java.util.Random;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -37,6 +38,12 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     }
 
     private void sendNotification(Bundle bundle) {
+
+        // If notification ID is not provided by the user, generate one at random
+        if ( bundle.getString("id") == null ) {
+            Random randomNumberGenerator = new Random(System.currentTimeMillis());
+            bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
+        }
 
         Boolean isRunning = isApplicationRunning();
         
