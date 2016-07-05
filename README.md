@@ -53,7 +53,7 @@ In your `AndroidManifest.xml`
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
             <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
@@ -215,7 +215,7 @@ PushNotification.localNotification({
     subText: "This is a subText", // (optional) default: none
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
     color: "red", // (optional) default: system default
-    sound: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be a custom sound as well. default: null (no sound is played)
+    sound: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: null (no sound is played)
     /* iOS and Android properties */
     message: "My Notification Message" // (required)
 });
