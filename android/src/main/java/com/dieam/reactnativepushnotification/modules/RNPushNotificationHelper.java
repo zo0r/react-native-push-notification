@@ -94,12 +94,23 @@ public class RNPushNotificationHelper {
     }
 
     public void sendNotificationScheduledCore(Bundle bundle) {
-        PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
+        long fireDate = (long)bundle.getDouble("fireDate");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, (long)bundle.getDouble("fireDate"), pendingIntent);
+        // If the fireDate is in past, show the notification immediately.
+        // This is to cover the case when user has scheduled a few notifications
+        // and the phone has been switched off at the time of notification. Such
+        // notifications should be shown to the user as soon as the phone is booted
+        // again
+        if(fireDate < System.currentTimeMillis()) {
+            sendNotification(bundle);
         } else {
-            getAlarmManager().set(AlarmManager.RTC_WAKEUP, (long)bundle.getDouble("fireDate"), pendingIntent);
+            PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            } else {
+                getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            }
         }
     }
 
