@@ -226,6 +226,16 @@ PushNotification.localNotificationSchedule({
 });
 ```
 
+## Cancelling scheduled notifications
+`PushNotification.cancelLocalNotifications(details: Object)` 
+
+`details` is the `userInfo` object for iOS. For Android, it should be of shape `{id: <notification-id>}` where `<notification-id>` is the notification ID used to schedule the notification.
+
+EXAMPLE:
+```javascript
+PushNotification.cancelLocalNotifications({id: '123'});
+```
+
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
 
