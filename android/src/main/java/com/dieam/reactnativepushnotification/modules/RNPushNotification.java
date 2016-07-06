@@ -17,16 +17,20 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import org.json.*;
 
 import android.content.Context;
+import android.util.Log;
 
 public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
     private Activity mActivity;
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private final Random mRandomNumberGenerator;
 
     public RNPushNotification(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
@@ -34,6 +38,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         mActivity = activity;
         mReactContext = reactContext;
         mRNPushNotificationHelper = new RNPushNotificationHelper(activity.getApplication(), reactContext);
+        mRandomNumberGenerator = new Random(System.currentTimeMillis());
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
@@ -143,13 +148,27 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     @ReactMethod
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
+        // If notification ID is not provided by the user, generate one at random
+        if ( bundle.getString("id") == null ) {
+            bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
+        }
         mRNPushNotificationHelper.sendNotification(bundle);
     }
 
     @ReactMethod
     public void scheduleLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
+        // If notification ID is not provided by the user, generate one at random
+        if ( bundle.getString("id") == null ) {
+            bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
+        }
         mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 
+    @ReactMethod
+    public void cancelLocalNotifications(ReadableMap details) {
+        String notificationIdString = details.getString("id");
+        Log.i("Notification", "Deleting notification with ID " + notificationIdString);
+        mRNPushNotificationHelper.cancelNotification(notificationIdString);
+    }
 }

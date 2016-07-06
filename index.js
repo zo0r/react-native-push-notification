@@ -206,6 +206,10 @@ Notifications.cancelAllLocalNotifications = function() {
 	return this.callNative('cancelAllLocalNotifications', arguments);
 };
 
+Notifications.cancelLocalNotifications = function(details: Object) {
+	return this.callNative('cancelLocalNotifications', [details]);
+};
+
 Notifications.setApplicationIconBadgeNumber = function() {
 	return this.callNative('setApplicationIconBadgeNumber', arguments);
 };
