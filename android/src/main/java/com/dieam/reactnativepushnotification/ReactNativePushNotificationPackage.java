@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification;
 
+import android.app.Application;
 import android.app.Activity;
 import android.content.Intent;
 
@@ -15,11 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ReactNativePushNotificationPackage implements ReactPackage {
-    Activity mActivity;
+    Application mApplication;
     RNPushNotification mRNPushNotification;
 
-    public ReactNativePushNotificationPackage(Activity activity) {
-        mActivity = activity;
+    public ReactNativePushNotificationPackage(Application application) {
+        mApplication = application;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class ReactNativePushNotificationPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        mRNPushNotification = new RNPushNotification(reactContext, mActivity);
+        mRNPushNotification = new RNPushNotification(reactContext, mApplication);
 
         modules.add(mRNPushNotification);
         return modules;
