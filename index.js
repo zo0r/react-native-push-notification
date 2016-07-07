@@ -81,7 +81,7 @@ Notifications.configure = function(options: Object) {
 				if ( firstNotification !== null ) {
 					this._onNotification(firstNotification, true);
 				}
-			});
+			}.bind(this));
 		}
 
 		this.isLoaded = true;
