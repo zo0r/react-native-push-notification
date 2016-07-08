@@ -89,36 +89,57 @@ Register module (in `MainApplication.java`)
 import android.content.Intent; // <--- Import Intent
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
 
-public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
+public class MainApplication extends Application implements ReactApplication {
 
   private ReactNativePushNotificationPackage mReactNativePushNotificationPackage; // <------ Add Package Variable
 
    ...
 
-   /**
-   * A list of packages used by the app. If the app uses additional views
-   * or modules besides the default ones, add more packages here.
-   */
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
-    protected List<ReactPackage> getPackages() {
-      mReactNativePushNotificationPackage = new ReactNativePushNotificationPackage(this); // <------ Initialize the Package
+    protected boolean getUseDeveloperSupport() {
+      return BuildConfig.DEBUG;
+    }
+
+      @Override
+      protected List<ReactPackage> getPackages() {
+      mReactNativePushNotificationPackage = new ReactNativePushNotificationPackage(); // <------ Initialize the Package
+
       return Arrays.<ReactPackage>asList(
-        new MainReactPackage(),
-        new VectorIconsPackage(),
-        new FabricPackage(),
-        mReactNativePushNotificationPackage // <---- Add the Package
+          new MainReactPackage(),
+          mReactNativePushNotificationPackage // <---- Add the Package
       );
     }
+  };
+
+   // Add onNewIntent
+   public void onNewIntent(Intent intent) {
+      if ( mReactNativePushNotificationPackage != null ) {
+          mReactNativePushNotificationPackage.newIntent(intent);
+      }
+   }
+
+    ....
+}
+```
+
+Register module (in `MainActivity.java`)
+
+```java
+import android.content.Intent; // <--- Import Intent
+
+public class MainActivity extends ReactActivity {
+
+  public class MainActivity extends ReactActivity {
+
+   ...
 
     // Add onNewIntent
     @Override
-    // in RN <= 0.27 you may need to use `protected void onNewIntent (Intent intent) {`
-    public void onNewIntent (Intent intent) {
-      super.onNewIntent(intent);
-
-      mReactNativePushNotificationPackage.newIntent(intent);
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ((MainApplication) getApplication()).onNewIntent(intent);
     }
-
     ....
 }
 ```
