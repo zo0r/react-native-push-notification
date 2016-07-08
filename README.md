@@ -129,9 +129,6 @@ Register module (in `MainActivity.java`)
 import android.content.Intent; // <--- Import Intent
 
 public class MainActivity extends ReactActivity {
-
-  public class MainActivity extends ReactActivity {
-
    ...
 
     // Add onNewIntent
