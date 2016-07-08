@@ -123,7 +123,7 @@ public class MainApplication extends Application implements ReactApplication {
 }
 ```
 
-Register module (in `MainActivity.java`)
+Add `onNewIntent` module (in `MainActivity.java`)
 
 ```java
 import android.content.Intent; // <--- Import Intent
