@@ -236,4 +236,7 @@ Notifications.checkPermissions = function() {
 	return this.callNative('checkPermissions', arguments);
 };
 
+Notifications.registerNotificationActions = function() {
+	return this.callNative('registerNotificationActions', arguments)
+}
 module.exports = Notifications;

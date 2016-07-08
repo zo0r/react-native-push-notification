@@ -23,6 +23,8 @@ import android.util.Log;
 
 import java.util.Random;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "RNPushNotification";
@@ -253,6 +255,38 @@ public class RNPushNotificationHelper {
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notification.setContentIntent(pendingIntent);
+
+        JSONArray actionsArray = null;
+        try {
+            actionsArray = new JSONArray(bundle.getString("actions"));
+        } catch (JSONException e) {
+            Log.e("RNPushNotification", "Exception while converting actions to JSON object.", e);
+        }
+
+        if (actionsArray != null) {
+            // No icon for now. The icon value of 0 shows no icon.
+            int icon = 0;
+
+            // Add button for each actions.
+            for (int i = 0; i < actionsArray.length(); i++) {
+                String action = null;
+                try {
+                    action = actionsArray.getString(i);
+                } catch (JSONException e) {
+                    Log.e("RNPushNotification", "Exception while getting action from actionsArray.", e);
+                    continue;
+                }
+
+                Intent actionIntent = new Intent();
+                actionIntent.setAction(action);
+                // Add "action" for later identifying which button gets pressed.
+                bundle.putString("action", action);
+                actionIntent.putExtra("notification", bundle);
+                PendingIntent pendingActionIntent = PendingIntent.getBroadcast(mContext, notificationID, actionIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                notification.addAction(icon, action, pendingActionIntent);
+            }
+        }
 
         Notification info = notification.build();
         info.defaults |= Notification.DEFAULT_VIBRATE;

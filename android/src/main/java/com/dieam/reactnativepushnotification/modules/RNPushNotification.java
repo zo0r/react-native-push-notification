@@ -1,6 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +13,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -115,6 +117,38 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         sendEvent("remoteNotificationReceived", params);
     }
 
+    private void registerNotificationsReceiveNotificationActions(ReadableArray actions) {
+        IntentFilter intentFilter = new IntentFilter();
+        // Add filter for each actions.
+        for (int i=0; i<actions.size(); i++) {
+            String action = actions.getString(i);
+            intentFilter.addAction(action);
+        }
+        mReactContext.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = intent.getBundleExtra("notification");
+
+                // Notify the action.
+                notifyNotificationAction(bundle);
+
+                // Dismiss the notification popup.
+                NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                int notificationID = Integer.parseInt(bundle.getString("id"));
+                manager.cancel(notificationID);
+            }
+        }, intentFilter);
+    }
+
+    private void notifyNotificationAction(Bundle bundle) {
+        String bundleString = convertJSON(bundle);
+
+        WritableMap params = Arguments.createMap();
+        params.putString("dataJSON", bundleString);
+
+        sendEvent("notificationActionReceived", params);
+    }
+
     private String convertJSON(Bundle bundle) {
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
@@ -171,4 +205,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         Log.i("Notification", "Deleting notification with ID " + notificationIdString);
         mRNPushNotificationHelper.cancelNotification(notificationIdString);
     }
+
+    @ReactMethod
+    public void registerNotificationActions(ReadableArray actions) {
+        registerNotificationsReceiveNotificationActions(actions);
+    }    
 }
