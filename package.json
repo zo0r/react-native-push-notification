@@ -1,6 +1,6 @@
 {
   "name": "react-native-push-notification",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "React Native Local and Remote Notifications",
   "main": "index",
   "scripts": {
@@ -28,7 +28,7 @@
   },
   "rnpm": {
     "android": {
-      "packageInstance": "new ReactNativePushNotificationPackage(this)"
+      "packageInstance": "new ReactNativePushNotificationPackage()"
     }
   },
   "author": "zo0r <http://zo0r.me>",

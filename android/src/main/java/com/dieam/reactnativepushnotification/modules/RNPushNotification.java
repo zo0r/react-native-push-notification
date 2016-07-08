@@ -26,15 +26,13 @@ import android.content.Context;
 
 public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
-    private Application mApplication;
     private RNPushNotificationHelper mRNPushNotificationHelper;
 
-    public RNPushNotification(ReactApplicationContext reactContext, Application application) {
+    public RNPushNotification(ReactApplicationContext reactContext) {
         super(reactContext);
 
-        mApplication = application;
         mReactContext = reactContext;
-        mRNPushNotificationHelper = new RNPushNotificationHelper(application, reactContext);
+        mRNPushNotificationHelper = new RNPushNotificationHelper((Application) reactContext.getApplicationContext());
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
