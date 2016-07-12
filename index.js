@@ -29,7 +29,7 @@ var Notifications = {
 Notifications.callNative = function(name: String, params: Array) {
 	if ( typeof this.handler[name] === 'function' ) {
 		if ( typeof params !== 'array' &&
-			 typeof params !== 'object' ) {
+			typeof params !== 'object' ) {
 			params = [];
 		}
 
@@ -77,11 +77,11 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
-			this.popInitialNotification(function(firstNotification) {
-				if ( firstNotification !== null ) {
-					this._onNotification(firstNotification, true);
-				}
-			}.bind(this));
+			var tempFirstNotification = this.callNative( 'popInitialNotification' );
+
+			if ( tempFirstNotification !== null ) {
+				this._onNotification(tempFirstNotification, true);
+			}
 		}
 
 		this.isLoaded = true;
@@ -110,9 +110,15 @@ Notifications.unregister = function() {
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
+		const soundName = !details.hasOwnProperty("playSound") || details.playSound === true ? 'default' : '';// empty string results in no sound
+
 		this.handler.presentLocalNotification({
 			alertBody: details.message,
-			userInfo: details.userInfo,
+			alertAction: details.alertAction,
+			category: details.category,
+			soundName: soundName,
+			applicationIconBadgeNumber: details.number,
+			userInfo: details.userInfo
 		});
 	} else {
 		this.handler.presentLocalNotification(details);
@@ -159,18 +165,18 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( this.onNotification !== false ) {
 		if ( Platform.OS === 'ios' ) {
 			this.onNotification({
-				foreground: ! isFromBackground,
-				message: data.getMessage(),
-				data: data.getData(),
-				badge: data.getBadgeCount(),
-				alert: data.getAlert(),
-				sound: data.getSound()
+				foreground: !isFromBackground,
+				message: data.getMessage() ? data.getMessage() : null,
+				data: data.getData() ? data.getData() : null,
+				badge: data.getBadgeCount() ? data.getBadgeCount() : null,
+				alert: data.getAlert() ? data.getAlert() : null,
+				sound: data.getSound() ? data.getSound() : null
 			});
 		} else {
 			var notificationData = {
 				foreground: ! isFromBackground,
 				...data
-			};
+		};
 
 			if ( typeof notificationData.data === 'string' ) {
 				try {
@@ -214,14 +220,8 @@ Notifications.getApplicationIconBadgeNumber = function() {
 	return this.callNative('getApplicationIconBadgeNumber', arguments);
 };
 
-Notifications.popInitialNotification = function(handler) {
-	if ( Platform.OS === 'ios' ) {
-		this.callNative('getInitialNotification').then(function(result){
-			handler(result);
-		});
-	} else {
-		handler(this.callNative('popInitialNotification', arguments));
-	}
+Notifications.popInitialNotification = function() {
+	return this.callNative('popInitialNotification', arguments);
 };
 
 Notifications.abandonPermissions = function() {

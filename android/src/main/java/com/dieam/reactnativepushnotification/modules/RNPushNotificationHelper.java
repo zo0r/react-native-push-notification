@@ -1,11 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 
-import android.app.AlarmManager;
-import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -21,6 +17,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class RNPushNotificationHelper {
+    private static final long DEFAULT_VIBRATION = 1000L;
+    private static final String TAG = RNPushNotificationHelper.class.getSimpleName();
+
     private Context mContext;
 
     public RNPushNotificationHelper(Application context) {
@@ -84,6 +83,8 @@ public class RNPushNotificationHelper {
     }
 
     public void sendNotification(Bundle bundle) {
+        try {// intentionally not formatted correctly to make the merge easier to understand
+
         Class intentClass = getMainActivityClass();
         if (intentClass == null) {
             return;
@@ -109,6 +110,11 @@ public class RNPushNotificationHelper {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
+        String group = bundle.getString("group");
+        if (group != null) {
+            notification.setGroup(group);
+        }
+
         notification.setContentText(bundle.getString("message"));
 
         String largeIcon = bundle.getString("largeIcon");
@@ -119,10 +125,15 @@ public class RNPushNotificationHelper {
             notification.setSubText(subText);
         }
 
-        String number = bundle.getString("number");
+        if (bundle.containsKey("number")) {
+            String number = bundle.getString("number");
 
-        if ( number != null ) {
-            notification.setNumber(Integer.parseInt(number));
+            if (number != null) {
+                Log.w(TAG, "'number' field set as a string instead of an int");
+                notification.setNumber(Integer.parseInt(number));
+            }
+
+            notification.setNumber((int) bundle.getDouble("number"));
         }
 
         int smallIconResId;
@@ -169,8 +180,10 @@ public class RNPushNotificationHelper {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("notification", bundle);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        notification.setSound(defaultSoundUri);
+        if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            notification.setSound(defaultSoundUri);
+        }
 
         if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
             notification.setCategory(NotificationCompat.CATEGORY_CALL);
@@ -181,13 +194,20 @@ public class RNPushNotificationHelper {
             }
         }
 
-        int notificationID;
-        String notificationIDString = bundle.getString("id");
+        int notificationID = (int) System.currentTimeMillis();
+        if (bundle.containsKey("id")) {
+            String notificationIDString = bundle.getString("id");
+            if (notificationIDString != null) {
+                Log.w(TAG, "'id' field set as a string instead of an int");
 
-        if ( notificationIDString != null ) {
-            notificationID = Integer.parseInt(notificationIDString);
-        } else {
-            notificationID = (int) System.currentTimeMillis();
+                try {
+                    notificationID = Integer.parseInt(notificationIDString);
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "'id' field could not be converted to an int, ignoring it", e);
+                }
+            } else {
+                notificationID = (int) bundle.getDouble("id");
+            }
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent,
@@ -198,12 +218,26 @@ public class RNPushNotificationHelper {
 
         notification.setContentIntent(pendingIntent);
 
+        if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
+            long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
+            if (vibration == 0)
+                vibration = DEFAULT_VIBRATION;
+            notification.setVibrate(new long[]{0, vibration});
+        }
+
         Notification info = notification.build();
-        info.defaults |= Notification.DEFAULT_VIBRATE;
-        info.defaults |= Notification.DEFAULT_SOUND;
         info.defaults |= Notification.DEFAULT_LIGHTS;
 
-        notificationManager.notify(notificationID, info);
+        if (bundle.containsKey("tag")) {
+            String tag = bundle.getString("tag");
+            notificationManager.notify(tag, notificationID, info);
+        } else {
+            notificationManager.notify(notificationID, info);
+        }
+
+        } catch (Exception e) {
+            Log.e(TAG, "failed to send push notification", e);
+        }
     }
 
     public void cancelAll() {
