@@ -29,7 +29,7 @@ var Notifications = {
 Notifications.callNative = function(name: String, params: Array) {
 	if ( typeof this.handler[name] === 'function' ) {
 		if ( typeof params !== 'array' &&
-			typeof params !== 'object' ) {
+			 typeof params !== 'object' ) {
 			params = [];
 		}
 
@@ -77,11 +77,11 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
-			var tempFirstNotification = this.callNative( 'popInitialNotification' );
-
-			if ( tempFirstNotification !== null ) {
-				this._onNotification(tempFirstNotification, true);
-			}
+			this.popInitialNotification(function(firstNotification) {
+				if ( firstNotification !== null ) {
+					this._onNotification(firstNotification, true);
+				}
+			}.bind(this));
 		}
 
 		this.isLoaded = true;
@@ -165,18 +165,18 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( this.onNotification !== false ) {
 		if ( Platform.OS === 'ios' ) {
 			this.onNotification({
-				foreground: !isFromBackground,
-				message: data.getMessage() ? data.getMessage() : null,
-				data: data.getData() ? data.getData() : null,
-				badge: data.getBadgeCount() ? data.getBadgeCount() : null,
-				alert: data.getAlert() ? data.getAlert() : null,
-				sound: data.getSound() ? data.getSound() : null
+				foreground: ! isFromBackground,
+				message: data.getMessage(),
+				data: data.getData(),
+				badge: data.getBadgeCount(),
+				alert: data.getAlert(),
+				sound: data.getSound()
 			});
 		} else {
 			var notificationData = {
 				foreground: ! isFromBackground,
 				...data
-		};
+			};
 
 			if ( typeof notificationData.data === 'string' ) {
 				try {
@@ -220,8 +220,14 @@ Notifications.getApplicationIconBadgeNumber = function() {
 	return this.callNative('getApplicationIconBadgeNumber', arguments);
 };
 
-Notifications.popInitialNotification = function() {
-	return this.callNative('popInitialNotification', arguments);
+Notifications.popInitialNotification = function(handler) {
+	if ( Platform.OS === 'ios' ) {
+		this.callNative('getInitialNotification').then(function(result){
+			handler(result);
+		});
+	} else {
+		handler(this.callNative('popInitialNotification', arguments));
+	}
 };
 
 Notifications.abandonPermissions = function() {
