@@ -2,7 +2,8 @@ package com.dieam.reactnativepushnotification.modules;
 
 import android.app.IntentService;
 import android.content.Intent;
-
+import android.util.Log;
+import android.content.res.Resources;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
@@ -14,8 +15,10 @@ public class RNPushNotificationRegistrationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String SenderID = intent.getStringExtra("senderID");
-
+        Resources resources = getApplication().getResources();
+        String packageName = getApplication().getPackageName();
+        int resourceId = resources.getIdentifier("gcm_defaultSenderId", "string", packageName);
+        String SenderID = getString(resourceId);
         try {
             InstanceID instanceID = InstanceID.getInstance(this);
             String token = instanceID.getToken(SenderID,
