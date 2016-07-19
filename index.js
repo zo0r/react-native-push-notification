@@ -156,17 +156,17 @@ Notifications._onRegister = function(token: String) {
 
 Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( isFromBackground === null ) {
-		if ( Platform.OS === 'ios' ) {
-			isFromBackground = ( AppState.currentState === 'background' );
-		} else {
-			isFromBackground = ( data.foreground === false );
-		}
+		isFromBackground = (
+			data.foreground === false ||
+			AppState.currentState === 'background'
+		);
 	}
 
 	if ( this.onNotification !== false ) {
 		if ( Platform.OS === 'ios' ) {
 			this.onNotification({
 				foreground: ! isFromBackground,
+				userInteraction: isFromBackground,
 				message: data.getMessage(),
 				data: data.getData(),
 				badge: data.getBadgeCount(),
