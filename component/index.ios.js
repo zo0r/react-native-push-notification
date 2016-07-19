@@ -1,15 +1,12 @@
 'use strict';
 
-
-var React = require('react-native');
-
-var {
-	AppStateIOS,
-	PushNotificationIOS
-} = React;
+import {
+  AppState,
+  PushNotificationIOS
+} from 'react-native';
 
 module.exports = {
-	state: AppStateIOS,
-	component: PushNotificationIOS
+  state: AppState,
+  component: PushNotificationIOS
 };
 

@@ -1,6 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,16 +26,14 @@ import android.content.Context;
 
 public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
-    private Activity mActivity;
     private RNPushNotificationHelper mRNPushNotificationHelper;
     private String token;
 
-    public RNPushNotification(ReactApplicationContext reactContext, Activity activity) {
+    public RNPushNotification(ReactApplicationContext reactContext) {
         super(reactContext);
 
-        mActivity = activity;
         mReactContext = reactContext;
-        mRNPushNotificationHelper = new RNPushNotificationHelper(activity.getApplication(), reactContext);
+        mRNPushNotificationHelper = new RNPushNotificationHelper((Application) reactContext.getApplicationContext());
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
@@ -48,22 +47,28 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
 
-        Intent intent = mActivity.getIntent();
+        Activity activity = getCurrentActivity();
 
-        Bundle bundle = intent.getBundleExtra("notification");
-        if ( bundle != null ) {
-            bundle.putBoolean("foreground", false);
-            String bundleString = convertJSON(bundle);
-            constants.put("initialNotification", bundleString);
+        if (activity != null) {
+            Intent intent = activity.getIntent();
+
+            Bundle bundle = intent.getBundleExtra("notification");
+            if (bundle != null) {
+                bundle.putBoolean("foreground", false);
+                String bundleString = convertJSON(bundle);
+                constants.put("initialNotification", bundleString);
+            }
         }
 
         return constants;
     }
 
     private void sendEvent(String eventName, Object params) {
-        mReactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+        if ( mReactContext.hasActiveCatalystInstance() ) {
+            mReactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
+        }
     }
 
     public void newIntent(Intent intent) {
@@ -93,7 +98,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
 
     private void registerNotificationsReceiveNotification() {
         IntentFilter intentFilter = new IntentFilter("RNPushNotificationReceiveNotification");
-
         mReactContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -148,7 +152,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void scheduleLocalNotification(ReadableMap details) {
-        // TODO: Implement
+        Bundle bundle = Arguments.toBundle(details);
+        mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 
 }

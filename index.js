@@ -17,7 +17,7 @@ var Notifications = {
 	onError: false,
 	onNotification: false,
 
-	loaded: false,
+	isLoaded: false,
 
 	permissions: {
 		alert: true,
@@ -65,19 +65,26 @@ Notifications.configure = function(options: Object) {
 		this.permissions = options.permissions;
 	}
 
-	if ( this.loaded === false ) {
-		this.callNative( 'addEventListener', [ 'register', this._onRegister.bind(this) ] )
-		this.callNative( 'addEventListener', [ 'notification', this._onNotification.bind(this) ] )
+	if ( typeof options.senderID !== 'undefined' ) {
+		this.senderID = options.senderID;
+	}
+
+	if ( this.isLoaded === false ) {
+		this._onRegister = this._onRegister.bind(this);
+		this._onNotification = this._onNotification.bind(this);
+		this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
+		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
+		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 
 		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
-			var tempFirstNotification = this.callNative( 'popInitialNotification' );
-
-			if ( tempFirstNotification !== null ) {
-				this._onNotification(tempFirstNotification, true);
-			}
+			this.popInitialNotification(function(firstNotification) {
+				if ( firstNotification !== null ) {
+					this._onNotification(firstNotification, true);
+				}
+			}.bind(this));
 		}
 
-		this.loaded = true;
+		this.isLoaded = true;
 	}
 
 	if ( options.requestPermissions !== false ) {
@@ -88,8 +95,9 @@ Notifications.configure = function(options: Object) {
 
 /* Unregister */
 Notifications.unregister = function() {
-	this.callNative( 'removeEventListener', [ 'register', this._onRegister.bind(this) ] )
-	this.callNative( 'removeEventListener', [ 'notification', this._onNotification.bind(this) ] )
+	this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
+	this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
+	this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification ] )
 };
 
 /**
@@ -98,11 +106,13 @@ Notifications.unregister = function() {
  * @param {String}		details.message - The message displayed in the notification alert.
  * @param {String}		details.title  -  ANDROID ONLY: The title displayed in the notification alert.
  * @param {String}		details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
+ * @param {Object}		details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		this.handler.presentLocalNotification({
-			alertBody: details.message
+			alertBody: details.message,
+			userInfo: details.userInfo,
 		});
 	} else {
 		this.handler.presentLocalNotification(details);
@@ -121,6 +131,8 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			alertBody: details.message
 		});
 	} else {
+		details.fireDate = details.date.getTime();
+		delete details.date;
 		this.handler.scheduleLocalNotification(details);
 	}
 };
@@ -194,10 +206,6 @@ Notifications.cancelAllLocalNotifications = function() {
 	return this.callNative('cancelAllLocalNotifications', arguments);
 };
 
-Notifications.cancelAllLocalNotifications = function() {
-	return this.callNative('cancelAllLocalNotifications', arguments);
-};
-
 Notifications.setApplicationIconBadgeNumber = function() {
 	return this.callNative('setApplicationIconBadgeNumber', arguments);
 };
@@ -206,8 +214,14 @@ Notifications.getApplicationIconBadgeNumber = function() {
 	return this.callNative('getApplicationIconBadgeNumber', arguments);
 };
 
-Notifications.popInitialNotification = function() {
-	return this.callNative('popInitialNotification', arguments);
+Notifications.popInitialNotification = function(handler) {
+	if ( Platform.OS === 'ios' ) {
+		this.callNative('getInitialNotification').then(function(result){
+			handler(result);
+		});
+	} else {
+		handler(this.callNative('popInitialNotification', arguments));
+	}
 };
 
 Notifications.abandonPermissions = function() {
