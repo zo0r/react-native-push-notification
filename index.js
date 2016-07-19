@@ -110,9 +110,15 @@ Notifications.unregister = function() {
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
+		const soundName = !details.hasOwnProperty("playSound") || details.playSound === true ? 'default' : '';// empty string results in no sound
+
 		this.handler.presentLocalNotification({
 			alertBody: details.message,
-			userInfo: details.userInfo,
+			alertAction: details.alertAction,
+			category: details.category,
+			soundName: soundName,
+			applicationIconBadgeNumber: details.number,
+			userInfo: details.userInfo
 		});
 	} else {
 		this.handler.presentLocalNotification(details);

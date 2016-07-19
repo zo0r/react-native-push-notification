@@ -32,3 +32,9 @@ local.properties
 #
 node_modules/*
 npm-debug.log
+
+android/android.iml
+android/gradle.properties
+android/gradle/
+android/gradlew
+android/gradlew.bat
