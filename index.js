@@ -76,7 +76,8 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 
-		if ( typeof options.popInitialNotification === 'undefined' || options.popInitialNotification === true ) {
+		if ( typeof options.popInitialNotification === 'undefined' ||
+			 options.popInitialNotification === true ) {
 			this.popInitialNotification(function(firstNotification) {
 				if ( firstNotification !== null ) {
 					this._onNotification(firstNotification, true);
@@ -221,9 +222,9 @@ Notifications.getApplicationIconBadgeNumber = function() {
 };
 
 Notifications.popInitialNotification = function(handler) {
-    this.callNative('getInitialNotification').then(function(result){
-        handler(result);
-    });
+	this.callNative('getInitialNotification').then(function(result){
+		handler(result);
+	});
 };
 
 Notifications.abandonPermissions = function() {
