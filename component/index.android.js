@@ -12,17 +12,17 @@ var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
 
 var NotificationsComponent = function() {
-	this.initalPop = false;
+
 };
 
-NotificationsComponent.prototype.popInitialNotification = function() {
-	if ( this.initalPop === false &&
-		 RNPushNotification.initialNotification ) {
-		this.initalPop = true;
-		return JSON.parse(RNPushNotification.initialNotification);
-	} else {
-		return null;
-	}
+NotificationsComponent.prototype.getInitialNotification = function () {
+    return RNPushNotification.getInitialNotification()
+        .then(function (notification) {
+            if (notification && notification.dataJSON) {
+                return JSON.parse(notification.dataJSON);
+            }
+            return null;
+        });
 };
 
 NotificationsComponent.prototype.requestPermissions = function(senderID: string) {

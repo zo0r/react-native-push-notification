@@ -221,13 +221,9 @@ Notifications.getApplicationIconBadgeNumber = function() {
 };
 
 Notifications.popInitialNotification = function(handler) {
-	if ( Platform.OS === 'ios' ) {
-		this.callNative('getInitialNotification').then(function(result){
-			handler(result);
-		});
-	} else {
-		handler(this.callNative('popInitialNotification', arguments));
-	}
+    this.callNative('getInitialNotification').then(function(result){
+        handler(result);
+    });
 };
 
 Notifications.abandonPermissions = function() {
