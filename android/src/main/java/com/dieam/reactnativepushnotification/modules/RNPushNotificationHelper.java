@@ -27,15 +27,15 @@ public class RNPushNotificationHelper {
     }
 
     public Class getMainActivityClass() {
-      String packageName = mContext.getPackageName();
-      Intent launchIntent = mContext.getPackageManager().getLaunchIntentForPackage(packageName);
-      String className = launchIntent.getComponent().getClassName();
-      try {
-          return Class.forName(className);
-      } catch (ClassNotFoundException e) {
-          e.printStackTrace();
-          return null;
-      }
+        String packageName = mContext.getPackageName();
+        Intent launchIntent = mContext.getPackageManager().getLaunchIntentForPackage(packageName);
+        String className = launchIntent.getComponent().getClassName();
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private AlarmManager getAlarmManager() {
@@ -46,7 +46,7 @@ public class RNPushNotificationHelper {
         int notificationID;
         String notificationIDString = bundle.getString("id");
 
-        if ( notificationIDString != null ) {
+        if (notificationIDString != null) {
             notificationID = Integer.parseInt(notificationIDString);
         } else {
             notificationID = (int) System.currentTimeMillis();
@@ -120,7 +120,7 @@ public class RNPushNotificationHelper {
 
             String subText = bundle.getString("subText");
 
-            if ( subText != null ) {
+            if (subText != null) {
                 notification.setSubText(subText);
             }
 
@@ -140,21 +140,21 @@ public class RNPushNotificationHelper {
 
             String smallIcon = bundle.getString("smallIcon");
 
-            if ( smallIcon != null ) {
+            if (smallIcon != null) {
                 smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
             } else {
                 smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
             }
 
-            if ( smallIconResId == 0 ) {
+            if (smallIconResId == 0) {
                 smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
 
-                if ( smallIconResId == 0 ) {
-                    smallIconResId  = android.R.drawable.ic_dialog_info;
+                if (smallIconResId == 0) {
+                    smallIconResId = android.R.drawable.ic_dialog_info;
                 }
             }
 
-            if ( largeIcon != null ) {
+            if (largeIcon != null) {
                 largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
             } else {
                 largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
@@ -162,14 +162,14 @@ public class RNPushNotificationHelper {
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
 
-            if ( largeIconResId != 0 && ( largeIcon != null || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP ) ) {
+            if (largeIconResId != 0 && (largeIcon != null || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)) {
                 notification.setLargeIcon(largeIconBitmap);
             }
 
             notification.setSmallIcon(smallIconResId);
             String bigText = bundle.getString("bigText");
 
-            if (bigText == null ) {
+            if (bigText == null) {
                 bigText = bundle.getString("message");
             }
 
@@ -185,7 +185,7 @@ public class RNPushNotificationHelper {
                 notification.setSound(defaultSoundUri);
             }
 
-            if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 notification.setCategory(NotificationCompat.CATEGORY_CALL);
 
                 String color = bundle.getString("color");
