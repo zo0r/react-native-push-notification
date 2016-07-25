@@ -135,7 +135,8 @@ Notifications.localNotificationSchedule = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		this.handler.scheduleLocalNotification({
 			fireDate: details.date,
-			alertBody: details.message
+			alertBody: details.message,
+			userInfo: details.userInfo
 		});
 	} else {
 		details.fireDate = details.date.getTime();
