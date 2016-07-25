@@ -10,7 +10,9 @@ public class RNPushNotificationRegistrationService extends IntentService {
 
     private static final String TAG = "RNPushNotification";
 
-    public RNPushNotificationRegistrationService() {super(TAG);}
+    public RNPushNotificationRegistrationService() {
+        super(TAG);
+    }
 
     @Override
     protected void onHandleIntent(Intent intent) {

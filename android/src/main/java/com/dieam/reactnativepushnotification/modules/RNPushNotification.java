@@ -21,6 +21,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.json.*;
 
 import android.content.Context;
@@ -52,7 +53,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     private void sendEvent(String eventName, Object params) {
-        if ( mReactContext.hasActiveCatalystInstance() ) {
+        if (mReactContext.hasActiveCatalystInstance()) {
             mReactContext
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit(eventName, params);
@@ -60,7 +61,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     public void newIntent(Intent intent) {
-        if ( intent.hasExtra("notification") ) {
+        if (intent.hasExtra("notification")) {
             Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
             intent.putExtra("notification", bundle);
@@ -112,7 +113,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
                 } else {
                     json.put(key, bundle.get(key));
                 }
-            } catch(JSONException e) {
+            } catch (JSONException e) {
                 return null;
             }
         }
