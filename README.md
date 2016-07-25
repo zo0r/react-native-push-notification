@@ -57,7 +57,7 @@ In your `AndroidManifest.xml`
 				<category android:name="${applicationId}" />
 			</intent-filter>
 		</receiver>
-	
+
 		<receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
 		<service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
 		<service
@@ -99,53 +99,23 @@ import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private ReactNativePushNotificationPackage mReactNativePushNotificationPackage; // <------ Add Package Variable
-
-   ...
-
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-    @Override
-    protected boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
-    }
+      @Override
+      protected boolean getUseDeveloperSupport() {
+        return BuildConfig.DEBUG;
+      }
 
       @Override
       protected List<ReactPackage> getPackages() {
-      mReactNativePushNotificationPackage = new ReactNativePushNotificationPackage(); // <------ Initialize the Package
 
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          mReactNativePushNotificationPackage // <---- Add the Package
+          new ReactNativePushNotificationPackage() // <---- Add the Package
       );
     }
   };
 
-   // Add onNewIntent
-   public void onNewIntent(Intent intent) {
-      if ( mReactNativePushNotificationPackage != null ) {
-          mReactNativePushNotificationPackage.newIntent(intent);
-      }
-   }
-
-    ....
-}
-```
-
-Add `onNewIntent` (in `MainActivity.java`)
-
-```java
-import android.content.Intent; // <--- Import Intent
-
-public class MainActivity extends ReactActivity {
-   ...
-
-    // Add onNewIntent
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        ((MainApplication) getApplication()).onNewIntent(intent);
-    }
-    ....
+  ....
 }
 ```
 
@@ -256,4 +226,3 @@ Same parameters as `PushNotification.localNotification()`
 ### TODO
 - [X] Add `PushNotification.localNotificationSchedule()` Android support
 - [ ] Restore Android local notifications after reboot
-
