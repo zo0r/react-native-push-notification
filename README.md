@@ -4,7 +4,7 @@
 
 React Native Local and Remote Notifications for iOS and Android
 
-## Supported React Native platforms
+## Supported React Native Versions
 | Component Version     | RN Version    | README     |
 |-----------------------|---------------|------------|
 | **1.0.7**          | **<= 0.27**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/f42723817f1687e0da23e6753eb8a9f0385b6ac5/README.md)   |
