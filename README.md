@@ -171,8 +171,8 @@ PushNotification.configure({
     popInitialNotification: true,
 
     /**
-      * IOS ONLY: (optional) default: true
-      * - Specified if permissions will requested or not,
+      * (optional) default: true
+      * - Specified if permissions (ios) and token (android and ios) will requested or not,
       * - if not, you must call PushNotificationsHandler.requestPermissions() later
       */
     requestPermissions: true,
