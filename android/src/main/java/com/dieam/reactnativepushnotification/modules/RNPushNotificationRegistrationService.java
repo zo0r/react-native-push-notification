@@ -33,5 +33,4 @@ public class RNPushNotificationRegistrationService extends IntentService {
         intent.putExtra("token", token);
         sendBroadcast(intent);
     }
-
 }
