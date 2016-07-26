@@ -24,7 +24,7 @@
     "url": "git+ssh://git@github.com:zo0r/react-native-push-notification.git"
   },
   "peerDependencies": {
-    "react-native": ">=0.28"
+    "react-native": ">=0.30"
   },
   "rnpm": {
     "android": {
