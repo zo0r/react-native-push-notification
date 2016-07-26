@@ -83,7 +83,6 @@ project(':react-native-push-notification').projectDir = file('../node_modules/re
 Register module (in `MainApplication.java`)
 
 ```java
-import android.content.Intent; // <--- Import Intent
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
 
 public class MainApplication extends Application implements ReactApplication {
