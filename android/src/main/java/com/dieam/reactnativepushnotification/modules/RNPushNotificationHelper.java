@@ -17,7 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class RNPushNotificationHelper {
-    private static final long DEFAULT_VIBRATION = 1000L;
+    private static final long DEFAULT_VIBRATION = 300L;
     private static final String TAG = RNPushNotificationHelper.class.getSimpleName();
 
     private Context mContext;
