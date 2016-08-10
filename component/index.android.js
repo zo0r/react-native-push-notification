@@ -29,6 +29,10 @@ NotificationsComponent.prototype.requestPermissions = function(senderID: string)
 	RNPushNotification.requestPermissions(senderID);
 };
 
+NotificationsComponent.prototype.cancelLocalNotifications = function(details: Object) {
+	RNPushNotification.cancelLocalNotifications(details);
+};
+
 NotificationsComponent.prototype.cancelAllLocalNotifications = function() {
 	RNPushNotification.cancelAllLocalNotifications();
 };
@@ -78,6 +82,10 @@ NotificationsComponent.prototype.removeEventListener = function(type: string, ha
 	}
 	listener.remove();
 	_notifHandlers.delete(handler);
+}
+
+NotificationsComponent.prototype.registerNotificationActions = function(details: Object) {
+	RNPushNotification.registerNotificationActions(details);
 }
 
 module.exports = {

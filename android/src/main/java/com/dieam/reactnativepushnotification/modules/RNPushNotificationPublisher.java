@@ -13,7 +13,7 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         int id = intent.getIntExtra(NOTIFICATION_ID, 0);
         long currentTime = System.currentTimeMillis();
-        Log.i("ReactSystemNotification", "NotificationPublisher: Prepare To Publish: " + id + ", Now Time: " + currentTime);
+        Log.i("RNPushNotification", "NotificationPublisher: Prepare To Publish: " + id + ", Now Time: " + currentTime);
         new RNPushNotificationHelper((Application) context.getApplicationContext()).sendNotification(intent.getExtras());
     }
 }

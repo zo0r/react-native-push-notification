@@ -27,6 +27,7 @@ project.xcworkspace
 .idea
 .gradle
 local.properties
+*.iml
 
 # node.js
 #
@@ -38,3 +39,4 @@ android/gradle.properties
 android/gradle/
 android/gradlew
 android/gradlew.bat
+android/src/main/gen

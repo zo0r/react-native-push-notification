@@ -210,6 +210,10 @@ Notifications.scheduleLocalNotification = function() {
 	return this.callNative('scheduleLocalNotification', arguments);
 };
 
+Notifications.cancelLocalNotifications = function() {
+	return this.callNative('cancelLocalNotifications', arguments);
+};
+
 Notifications.cancelAllLocalNotifications = function() {
 	return this.callNative('cancelAllLocalNotifications', arguments);
 };
@@ -235,5 +239,9 @@ Notifications.abandonPermissions = function() {
 Notifications.checkPermissions = function() {
 	return this.callNative('checkPermissions', arguments);
 };
+
+Notifications.registerNotificationActions = function() {
+	return this.callNative('registerNotificationActions', arguments)
+}
 
 module.exports = Notifications;
