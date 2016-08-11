@@ -261,7 +261,7 @@ public class RNPushNotificationHelper {
 
             JSONArray actionsArray = null;
             try {
-                actionsArray = new JSONArray(bundle.getString("actions"));
+                actionsArray = bundle.getString("actions") != null ? new JSONArray(bundle.getString("actions")) : null;
             } catch (JSONException e) {
                 Log.e("RNPushNotification", "Exception while converting actions to JSON object.", e);
             }
