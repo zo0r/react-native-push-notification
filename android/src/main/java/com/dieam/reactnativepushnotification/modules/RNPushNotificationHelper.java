@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class RNPushNotificationHelper {
     private static final long DEFAULT_VIBRATION = 300L;
