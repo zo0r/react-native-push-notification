@@ -68,6 +68,11 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             bundle.putBoolean("foreground", false);
             intent.putExtra("notification", bundle);
             notifyNotification(bundle);
+        }else if ( intent.getExtras() != null ) {
+            Bundle bundle = intent.getExtras();
+            bundle.putBoolean("foreground", false);
+            intent.putExtra("notification", bundle);
+            notifyNotification(bundle);
         }
     }
 
@@ -168,5 +173,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Ignored, required to implement ActivityEventListener
+        onNewIntent(data);
     }
 }
