@@ -187,7 +187,7 @@ PushNotification.localNotification({
     userInfo: // (optional) default: null (object containing additional notification data)
 
     /* iOS and Android properties */
-    title: "My Notification Title", // (optional)
+    title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name in other devices)
     message: "My Notification Message" // (required)
     playSound: false, // (optional) default: true
     number: 10 // (optional) default: none (Cannot be zero)
