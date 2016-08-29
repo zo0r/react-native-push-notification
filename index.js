@@ -113,7 +113,11 @@ Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		const soundName = !details.hasOwnProperty("playSound") || details.playSound === true ? 'default' : '';// empty string results in no sound
 
+		// for valid fields see: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html
+		// alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle
+
 		this.handler.presentLocalNotification({
+			alertTitle: details.title,
 			alertBody: details.message,
 			alertAction: details.alertAction,
 			category: details.category,
