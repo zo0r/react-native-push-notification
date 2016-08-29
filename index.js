@@ -19,6 +19,8 @@ var Notifications = {
 
 	isLoaded: false,
 
+	isPermissionsRequestPending: false,
+
 	permissions: {
 		alert: true,
 		badge: true,
@@ -89,7 +91,7 @@ Notifications.configure = function(options: Object) {
 	}
 
 	if ( options.requestPermissions !== false ) {
-		this.requestPermissions();
+		this._requestPermissions();
 	}
 
 };
@@ -197,6 +199,24 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 	}
 };
 
+/* onResultPermissionResult */
+Notifications._onPermissionResult = function() {
+	this.isPermissionsRequestPending = false;
+};
+
+// Prevent requestPermissions called twice if ios result is pending
+Notifications._requestPermissions = function() {
+	if ( Platform.OS === 'ios' ) {
+		if ( this.isPermissionsRequestPending === false ) {
+			this.isPermissionsRequestPending = true;
+			return this.callNative( 'requestPermissions', [ this.permissions ]).then(this._onPermissionResult);
+		}
+	} else if ( typeof this.senderID !== 'undefined' ) {
+		return this.callNative( 'requestPermissions', [ this.senderID ]);
+	}
+};
+
+// Stock requestPermissions function
 Notifications.requestPermissions = function() {
 	if ( Platform.OS === 'ios' ) {
 		return this.callNative( 'requestPermissions', [ this.permissions ]);
