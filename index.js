@@ -209,7 +209,9 @@ Notifications._requestPermissions = function() {
 	if ( Platform.OS === 'ios' ) {
 		if ( this.isPermissionsRequestPending === false ) {
 			this.isPermissionsRequestPending = true;
-			return this.callNative( 'requestPermissions', [ this.permissions ]).then(this._onPermissionResult);
+			return this.callNative( 'requestPermissions', [ this.permissions ])
+							.then(this._onPermissionResult.bind(this))
+							.catch(this._onPermissionResult.bind(this));
 		}
 	} else if ( typeof this.senderID !== 'undefined' ) {
 		return this.callNative( 'requestPermissions', [ this.senderID ]);
