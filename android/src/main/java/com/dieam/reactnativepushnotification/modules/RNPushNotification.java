@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -26,6 +27,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     private RNPushNotificationHelper mRNPushNotificationHelper;
@@ -163,6 +166,11 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             }
         }
         promise.resolve(params);
+    }
+
+    @ReactMethod
+    public void setApplicationIconBadgeNumber(int number) {
+        ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(getReactApplicationContext(), number);
     }
 
     @Override

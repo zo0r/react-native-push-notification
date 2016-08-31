@@ -41,6 +41,13 @@ NotificationsComponent.prototype.scheduleLocalNotification = function(details: O
 	RNPushNotification.scheduleLocalNotification(details);
 };
 
+NotificationsComponent.prototype.setApplicationIconBadgeNumber = function(number: number) {
+       if (!RNPushNotification.setApplicationIconBadgeNumber) {
+               return;
+       }
+       RNPushNotification.setApplicationIconBadgeNumber(number);
+};
+
 NotificationsComponent.prototype.abandonPermissions = function() {
 	/* Void */
 };

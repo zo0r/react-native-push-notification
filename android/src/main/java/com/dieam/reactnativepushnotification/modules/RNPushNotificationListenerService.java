@@ -7,6 +7,7 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 
 import java.util.List;
 
+import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONObject;
@@ -22,6 +23,11 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             }
             if (!bundle.containsKey("title")) {
                 bundle.putString("title", data.optString("title", null));
+            }
+
+            final int badge = data.optInt("badge", -1);
+            if (badge >= 0) {
+                ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
             }
         }
 
