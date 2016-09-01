@@ -369,6 +369,14 @@ public class RNPushNotificationHelper {
         }
     }
 
+    // Clears out the notifications from the notification bar
+    public void clearAllNotifications() {
+        NotificationManager notificationManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.cancelAll();
+    }
+
     public void cancelAll() {
         Set<String> ids = mSharedPreferences.getAll().keySet();
 

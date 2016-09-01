@@ -88,6 +88,10 @@ NotificationsComponent.prototype.registerNotificationActions = function(details:
 	RNPushNotification.registerNotificationActions(details);
 }
 
+NotificationsComponent.prototype.clearAllNotifications = function() {
+	RNPushNotification.clearAllNotifications()
+}
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()
