@@ -72,7 +72,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void registerNotificationsRegistration() {
-        IntentFilter intentFilter = new IntentFilter("RNPushNotificationRegisteredToken");
+        IntentFilter intentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationRegisteredToken");
 
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
@@ -87,7 +87,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void registerNotificationsReceiveNotification() {
-        IntentFilter intentFilter = new IntentFilter("RNPushNotificationReceiveNotification");
+        IntentFilter intentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationReceiveNotification");
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

@@ -40,7 +40,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Boolean isRunning = isApplicationRunning();
 
-        Intent intent = new Intent("RNPushNotificationReceiveNotification");
+        Intent intent = new Intent(this.getPackageName() + ".RNPushNotificationReceiveNotification");
         bundle.putBoolean("foreground", isRunning);
         bundle.putBoolean("userInteraction", false);
         intent.putExtra("notification", bundle);
