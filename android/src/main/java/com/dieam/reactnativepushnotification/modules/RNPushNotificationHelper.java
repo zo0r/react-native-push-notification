@@ -17,7 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class RNPushNotificationHelper {
-    private static final long DEFAULT_VIBRATION = 300L;
+    private static final long DEFAULT_VIBRATION = 1000L;
     private static final String TAG = RNPushNotificationHelper.class.getSimpleName();
 
     private Context mContext;
@@ -186,6 +186,10 @@ public class RNPushNotificationHelper {
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 notification.setSound(defaultSoundUri);
+            }
+
+            if (bundle.containsKey("ongoing")) {
+                notification.setOngoing(bundle.getBoolean("ongoing"));
             }
 
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
