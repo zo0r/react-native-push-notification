@@ -180,6 +180,7 @@ PushNotification.localNotification({
     vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
+    ongoing: false, // (optional) set whether this is an "ongoing" notification
 
     /* iOS only properties */
     alertAction: // (optional) default: view
