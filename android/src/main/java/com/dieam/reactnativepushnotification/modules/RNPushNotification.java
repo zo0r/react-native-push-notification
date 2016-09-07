@@ -8,18 +8,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-
+import com.facebook.react.modules.storage.AsyncStorageModule;
+import com.dieam.reactnativepushnotification.utils.JavaOnlyArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,10 +34,17 @@ import java.util.Set;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private AsyncStorageModule asyncStorageModule;
+    private String NOTIFICATION_SAVED = "notificationSaved";
+    private boolean shouldSaveNotifications;
+    private String storageName;
 
     public RNPushNotification(ReactApplicationContext reactContext) {
         super(reactContext);
 
+        asyncStorageModule = new AsyncStorageModule(reactContext);
+        shouldSaveNotifications = false;
+        storageName = "notifications";
         reactContext.addActivityEventListener(this);
         mRNPushNotificationHelper = new RNPushNotificationHelper((Application) reactContext.getApplicationContext());
         registerNotificationsRegistration();
@@ -61,8 +73,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }
     }
 
-    @Override
+//    @Override
     public void onNewIntent(Intent intent) {
+        Log.d("PUSH", "TESTING");
         if (intent.hasExtra("notification")) {
             Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
@@ -92,6 +105,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             @Override
             public void onReceive(Context context, Intent intent) {
                notifyNotification(intent.getBundleExtra("notification"));
+                if (shouldSaveNotifications) {
+                    saveNotification(intent.getBundleExtra("notification"));
+                }
             }
         }, intentFilter);
     }
@@ -105,6 +121,49 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         sendEvent("remoteNotificationReceived", params);
     }
 
+    public void saveNotification(Bundle notification) {
+        Log.d("PUSH", "Save notification");
+
+        String bundleString = convertJSON(notification);
+        final JavaOnlyArray setArray = new JavaOnlyArray();
+        JavaOnlyArray getArray = new JavaOnlyArray();
+        getArray.pushString(storageName);
+
+        final WritableMap params = Arguments.createMap();
+        params.putString("dataJSON", bundleString);
+
+        final Callback setCallback = new Callback() {
+            @Override
+            public void invoke(Object... args) {
+                sendEvent("notificationSaved", params);
+            }
+        };
+
+        Callback getCallback = new Callback() {
+            @Override
+            public void invoke(Object... args) {
+                if (args.length == 0) {
+                    return;
+                }
+                // @TODO It's should be tested with PushNotifications
+                // JavaOnlyArray getArray = (JavaOnlyArray) args[1];
+
+                // setCallback.invoke(null, args);
+            }
+        };
+
+        asyncStorageModule.multiGet(getArray, getCallback);
+    }
+
+    private JavaOnlyArray getArray(String... values) {
+        JavaOnlyArray array = new JavaOnlyArray();
+        for (String value : values) {
+            array.pushString(value);
+        }
+        return array;
+    }
+
+    @Nullable
     private String convertJSON(Bundle bundle) {
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
@@ -120,6 +179,12 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             }
         }
         return json.toString();
+    }
+
+    @ReactMethod
+    public void shouldSaveNotifications(boolean shouldSave, @Nullable String storageName) {
+        this.shouldSaveNotifications = shouldSave;
+        this.storageName = storageName;
     }
 
     @ReactMethod
