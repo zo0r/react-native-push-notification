@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class RNPushNotificationHelper {
     private static final long DEFAULT_VIBRATION = 300L;
@@ -231,6 +232,21 @@ public class RNPushNotificationHelper {
                 notification.setVibrate(new long[]{0, vibration});
             }
 
+            int badge = -1;
+            if (bundle.containsKey("badge")) {
+                try {
+                    String badgeAsString = bundle.getString("badge");
+                    if (badgeAsString != null) {
+                        badge = Integer.parseInt(badgeAsString);
+                    }
+                } catch (Exception e) {
+                    badge = -1;
+                }
+            }
+            if (badge > -1) {
+                ShortcutBadger.applyCount(mContext, badge);
+            }
+
             Notification info = notification.build();
             info.defaults |= Notification.DEFAULT_LIGHTS;
 
@@ -246,6 +262,8 @@ public class RNPushNotificationHelper {
     }
 
     public void cancelAll() {
+        ShortcutBadger.removeCount(mContext);
+
         NotificationManager notificationManager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
