@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Random;
@@ -54,10 +55,11 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         sendBroadcast(intent);
 
         // If contentAvailable is set to true, then send out a remote fetch event
-        if(bundle.getBoolean("contentAvailable", false)) {
+        if(bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
+            Log.d(bundle.toString(), "Received a notification with remote fetch enabled");
             Intent remoteFetchIntent = new Intent("RNPushNotificationRemoteFetch");
-            intent.putExtra("notification", bundle);
-            sendBroadcast(intent);
+            remoteFetchIntent.putExtra("notification", bundle);
+            sendBroadcast(remoteFetchIntent);
         }
 
         if (!isRunning) {

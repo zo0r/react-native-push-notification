@@ -44,6 +44,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         mRandomNumberGenerator = new Random(System.currentTimeMillis());
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
+        registerNotificationsRemoteFetch();
     }
 
     @Override
