@@ -187,6 +187,10 @@ public class RNPushNotificationHelper {
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 notification.setSound(defaultSoundUri);
             }
+            
+            if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
+                notification.setOngoing(bundle.getBoolean("ongoing"));
+            }
 
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 notification.setCategory(NotificationCompat.CATEGORY_CALL);
