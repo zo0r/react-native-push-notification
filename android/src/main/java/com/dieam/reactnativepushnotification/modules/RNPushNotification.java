@@ -103,6 +103,20 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }, intentFilter);
     }
 
+    private void registerNotificationsRemoteFetch() {
+        IntentFilter intentFilter = new IntentFilter("RNPushNotificationRemoteFetch");
+        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = intent.getBundleExtra("notification");
+                String bundleString = convertJSON(bundle);
+                WritableMap params = Arguments.createMap();
+                params.putString("dataJSON", bundleString);
+                sendEvent("remoteFetch", params);
+            }
+        }, intentFilter);
+    }
+
     private void notifyNotification(Bundle bundle) {
         String bundleString = convertJSON(bundle);
 
