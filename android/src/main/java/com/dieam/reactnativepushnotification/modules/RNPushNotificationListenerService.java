@@ -48,7 +48,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Boolean isRunning = isApplicationRunning();
 
-        Intent intent = new Intent("RNPushNotificationReceiveNotification");
+        Intent intent = new Intent(this.getPackageName() + ".RNPushNotificationReceiveNotification");
         bundle.putBoolean("foreground", isRunning);
         bundle.putBoolean("userInteraction", false);
         intent.putExtra("notification", bundle);
@@ -57,7 +57,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         // If contentAvailable is set to true, then send out a remote fetch event
         if(bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
             Log.d(bundle.toString(), "Received a notification with remote fetch enabled");
-            Intent remoteFetchIntent = new Intent("RNPushNotificationRemoteFetch");
+            Intent remoteFetchIntent = new Intent(this.getPackageName() + ".RNPushNotificationRemoteFetch");
             remoteFetchIntent.putExtra("notification", bundle);
             sendBroadcast(remoteFetchIntent);
         }

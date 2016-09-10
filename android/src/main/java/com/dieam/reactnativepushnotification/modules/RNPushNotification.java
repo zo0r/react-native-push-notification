@@ -69,7 +69,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }
     }
 
-    @Override
     public void onNewIntent(Intent intent) {
         if (intent.hasExtra("notification")) {
             Bundle bundle = intent.getBundleExtra("notification");
@@ -80,7 +79,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void registerNotificationsRegistration() {
-        IntentFilter intentFilter = new IntentFilter("RNPushNotificationRegisteredToken");
+        IntentFilter intentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationRegisteredToken");
 
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
@@ -95,7 +94,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void registerNotificationsReceiveNotification() {
-        IntentFilter intentFilter = new IntentFilter("RNPushNotificationReceiveNotification");
+        IntentFilter intentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationReceiveNotification");
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -105,7 +104,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void registerNotificationsRemoteFetch() {
-        IntentFilter intentFilter = new IntentFilter("RNPushNotificationRemoteFetch");
+        IntentFilter intentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationRemoteFetch");
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -132,7 +131,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         // Add filter for each actions.
         for (int i=0; i<actions.size(); i++) {
             String action = actions.getString(i);
-            intentFilter.addAction(action);
+            intentFilter.addAction(getReactApplicationContext().getPackageName() + "." + action);
         }
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
@@ -228,7 +227,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         // Ignored, required to implement ActivityEventListener
     }
 

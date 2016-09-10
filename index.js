@@ -19,6 +19,8 @@ var Notifications = {
   onRemoteFetch: false,
 	isLoaded: false,
 
+	isPermissionsRequestPending: false,
+
 	permissions: {
 		alert: true,
 		badge: true,
@@ -95,7 +97,7 @@ Notifications.configure = function(options: Object) {
 	}
 
 	if ( options.requestPermissions !== false ) {
-		this.requestPermissions();
+		this._requestPermissions();
 	}
 
 };
@@ -120,7 +122,11 @@ Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		const soundName = !details.hasOwnProperty("playSound") || details.playSound === true ? 'default' : '';// empty string results in no sound
 
+		// for valid fields see: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html
+		// alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle
+
 		this.handler.presentLocalNotification({
+			alertTitle: details.title,
 			alertBody: details.message,
 			alertAction: details.alertAction,
 			category: details.category,
@@ -206,6 +212,26 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 	}
 };
 
+/* onResultPermissionResult */
+Notifications._onPermissionResult = function() {
+	this.isPermissionsRequestPending = false;
+};
+
+// Prevent requestPermissions called twice if ios result is pending
+Notifications._requestPermissions = function() {
+	if ( Platform.OS === 'ios' ) {
+		if ( this.isPermissionsRequestPending === false ) {
+			this.isPermissionsRequestPending = true;
+			return this.callNative( 'requestPermissions', [ this.permissions ])
+							.then(this._onPermissionResult.bind(this))
+							.catch(this._onPermissionResult.bind(this));
+		}
+	} else if ( typeof this.senderID !== 'undefined' ) {
+		return this.callNative( 'requestPermissions', [ this.senderID ]);
+	}
+};
+
+// Stock requestPermissions function
 Notifications.requestPermissions = function() {
 	if ( Platform.OS === 'ios' ) {
 		return this.callNative( 'requestPermissions', [ this.permissions ]);

@@ -29,6 +29,7 @@ public class RNPushNotificationAttributes {
     private String tag;
     private String repeatType;
     private double repeatTime;
+    private boolean ongoing;
 
     public RNPushNotificationAttributes() {
 
@@ -58,6 +59,7 @@ public class RNPushNotificationAttributes {
         bundle.putString("tag", tag);
         bundle.putString("repeatType", repeatType);
         bundle.putDouble("repeatTime", repeatTime);
+        bundle.putBoolean("ongoing", ongoing);
         return bundle;
     }
 
@@ -84,6 +86,7 @@ public class RNPushNotificationAttributes {
         tag = bundle.getString("tag");
         repeatType = bundle.getString("repeatType");
         repeatTime = bundle.getDouble("repeatTime");
+        ongoing = bundle.getBoolean("ongoing");
     }
 
     public JSONObject toJson() {
@@ -111,6 +114,7 @@ public class RNPushNotificationAttributes {
             jsonObject.put("tag", tag);
             jsonObject.put("repeatType", repeatType);
             jsonObject.put("repeatTime", repeatTime);
+            jsonObject.put("ongoing", ongoing);
         } catch (JSONException e) {
             Log.e("RNPushNotification", "Exception while converting RNPushNotificationAttributes to " +
                     "JSON. Returning an empty object", e);
@@ -143,6 +147,7 @@ public class RNPushNotificationAttributes {
             tag = jsonObject.has("tag") ? jsonObject.getString("tag") : null;
             repeatType = jsonObject.has("repeatType") ? jsonObject.getString("repeatType") : null;
             repeatTime = jsonObject.has("repeatTime") ? jsonObject.getDouble("repeatTime") : 0.0;
+            ongoing = jsonObject.has("ongoing") ? jsonObject.getBoolean("ongoing") : false;
         } catch (JSONException e) {
             Log.e("RNPushNotification", "Exception while initializing RNPushNotificationAttributes from " +
                     "JSON. Some fields may not be set", e);
@@ -175,6 +180,7 @@ public class RNPushNotificationAttributes {
                 ", tag='" + tag + '\'' +
                 ", repeatType='" + repeatType + '\'' +
                 ", repeatTime=" + repeatTime +
+                ", ongoing=" + ongoing +
                 '}';
     }
 

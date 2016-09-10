@@ -26,7 +26,7 @@ import org.json.JSONException;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "RNPushNotification";
-    private static final long DEFAULT_VIBRATION = 1000L;
+    private static final long DEFAULT_VIBRATION = 300L;
     private static final String TAG = RNPushNotificationHelper.class.getSimpleName();
 
     private Context mContext;
@@ -232,6 +232,10 @@ public class RNPushNotificationHelper {
                 }
                 notification.setSound(soundUri);
             }
+            
+            if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
+                notification.setOngoing(bundle.getBoolean("ongoing"));
+            }
 
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 notification.setCategory(NotificationCompat.CATEGORY_CALL);
@@ -281,7 +285,7 @@ public class RNPushNotificationHelper {
                     }
 
                     Intent actionIntent = new Intent();
-                    actionIntent.setAction(action);
+                    actionIntent.setAction(mContext.getPackageName() + "." + action);
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);

@@ -187,6 +187,7 @@ PushNotification.localNotification({
     vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
+    ongoing: false, // (optional) set whether this is an "ongoing" notification
 
     /* iOS only properties */
     alertAction: // (optional) default: view
@@ -194,6 +195,7 @@ PushNotification.localNotification({
     userInfo: // (optional) default: null (object containing additional notification data)
 
     /* iOS and Android properties */
+    title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name in other devices)
     message: "My Notification Message" // (required)
     playSound: false, // (optional) default: true
     sound: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
