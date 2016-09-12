@@ -80,6 +80,10 @@ NotificationsComponent.prototype.removeEventListener = function(type: string, ha
 	_notifHandlers.delete(handler);
 }
 
+NotificationsComponent.prototype.onLoad = function() {
+	RNPushNotification.onLoad();
+};
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()
