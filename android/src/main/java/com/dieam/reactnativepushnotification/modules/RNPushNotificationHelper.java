@@ -390,28 +390,29 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void cancelAllLocalNotifications() {
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
+    public void clearNotifications() {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
+    }
 
+    public void clearNotification(String notificationIdString) {
+        int id = Integer.parseInt(notificationIdString);
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(id);
+    }
+
+    public void cancelAllScheduledNotifications() {
         Set<String> ids = scheduledNotificationsPersistence.getAll().keySet();
 
         Log.i(LOG_TAG, "Cancelling all notifications: " + ids);
 
         for (String id : ids) {
-            this.cancelNotification(id);
+            cancelScheduledNotification(id);
         }
     }
 
-    public void cancelNotification(String notificationIDString) {
-        // remove it from the notifications manager
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.cancel(Integer.parseInt(notificationIDString));
-
+    public void cancelScheduledNotification(String notificationIDString) {
         if (scheduledNotificationsPersistence.contains(notificationIDString)) {
             Log.d(LOG_TAG, "Cancelling notification with ID " + notificationIDString);
 
@@ -424,6 +425,12 @@ public class RNPushNotificationHelper {
             SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
             editor.remove(notificationIDString);
             commit(editor);
+
+            // removed it from the notification center
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.cancel(Integer.parseInt(notificationIDString));
         } else {
             Log.w(LOG_TAG, "Didn't find a notification with " + notificationIDString +
                     " while cancelling a local notification");

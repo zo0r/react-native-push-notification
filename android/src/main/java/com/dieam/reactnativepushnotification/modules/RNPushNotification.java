@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import me.leolin.shortcutbadger.ShortcutBadger;
-
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
 
@@ -191,11 +189,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void cancelAllLocalNotifications() {
-        mRNPushNotificationHelper.cancelAllLocalNotifications();
-    }
-
-    @ReactMethod
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
         // If notification ID is not provided by the user, generate one at random
@@ -247,9 +240,39 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+    /**
+     * Cancels all *scheduled* localNotifications.
+     *
+     * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">rn docs</a>
+     */
+    public void cancelAllLocalNotifications() {
+        mRNPushNotificationHelper.cancelAllScheduledNotifications();
+    }
+
+    @ReactMethod
+    /**
+     * Cancel local notifications. Optionally restricts the set of canceled notifications to those notifications to a single id.
+     *
+     * If the id is not specified, this has the effect of clearing the notification cetner only.  No scheduled
+     * notifications will be cancelled.
+     *
+     * If the id is specified, that single notification will be remove, and if it is a scheduled
+     * notification then it will be cancelled.
+     *
+     * I think the react docs are unclear as to what the exact behaviour of this method should be.  I think
+     * this implementation provides a good amount of functionality.
+     *
+     * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">rn docs</a>
+     */
     public void cancelLocalNotifications(ReadableMap details) {
         String notificationIdString = details.getString("id");
-        mRNPushNotificationHelper.cancelNotification(notificationIdString);
+
+        if(notificationIdString != null) {
+            mRNPushNotificationHelper.clearNotifications();
+        } else {
+            mRNPushNotificationHelper.clearNotification(notificationIdString);
+            mRNPushNotificationHelper.cancelScheduledNotification(notificationIdString);
+        }
     }
 
     @ReactMethod
