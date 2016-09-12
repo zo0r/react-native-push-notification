@@ -46,7 +46,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         bundle.putBoolean("userInteraction", false);
         intent.putExtra("notification", bundle);
 
-        if (!RNPushNotificationQueue.getInstance().getHasLoaded()) {
+        if (!RNPushNotificationQueue.getInstance().isLoaded()) {
             RNPushNotificationQueue.getInstance().push(intent);
         } else {
             sendBroadcast(intent);

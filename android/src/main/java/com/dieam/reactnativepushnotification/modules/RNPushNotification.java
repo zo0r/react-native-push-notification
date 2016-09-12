@@ -184,7 +184,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }
 
 
-        RNPushNotificationQueue.getInstance().setHasLoaded(true);
+        RNPushNotificationQueue.getInstance().setLoaded(true);
         System.out.println("I have loaded!");
     }
 }

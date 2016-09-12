@@ -12,11 +12,11 @@ public class RNPushNotificationQueue {
 
     private Queue<Intent> queue;
 
-    private boolean hasLoaded;
+    private boolean loaded;
 
     private RNPushNotificationQueue()
     {
-        queue = new ArrayBlockingQueue<Intent>();
+        queue = new ArrayBlockingQueue<Intent>(100);
     }
 
     public static RNPushNotificationQueue getInstance() {
@@ -44,11 +44,11 @@ public class RNPushNotificationQueue {
         return queue.isEmpty();
     }
 
-    public boolean isHasLoaded() {
-        return hasLoaded;
+    public boolean isLoaded() {
+        return loaded;
     }
 
-    public void setHasLoaded(boolean hasLoaded) {
-        this.hasLoaded = hasLoaded;
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 }
