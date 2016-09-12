@@ -175,5 +175,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     public void onLoad() {
         Log.d("RN EVENT LISTENER", "I have loaded!!!");
         System.out.println("I have loaded!");
+
+        int i = 1 / 0;
     }
 }
