@@ -216,10 +216,15 @@ In the location notification json specify the full file name:
 
     soundName: 'my_sound.mpx'
 
-## Cancelling scheduled notifications
+## Cancelling notifications
 `PushNotification.cancelLocalNotifications(details: Object)` 
 
-`details` is the `userInfo` object for iOS. For Android, it should be of shape `{id: <notification-id>}` where `<notification-id>` is the notification ID used to schedule the notification.
+The `details` parameter differs between iOS and Android. If none is supplied all notifications are cleared from the notification center.
+
+For iOS it is a `userInfo` object.
+
+For Android, it should be of the form: `{id: "<notification-id>"}`; where `<notification-id>` is the notification ID 
+used to schedule the notification.  If the id is that of a scheduled notification, then that schedule will be cancelled.
 
 Android example:
 ```javascript
