@@ -180,10 +180,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         {
             Intent intent = RNPushNotificationQueue.getInstance().pop();
 
-            sendBroadcast(intent);
+            getReactApplicationContext().sendBroadcast(intent);
         }
 
-       
+
         RNPushNotificationQueue.getInstance().setHasLoaded(true);
         System.out.println("I have loaded!");
     }
