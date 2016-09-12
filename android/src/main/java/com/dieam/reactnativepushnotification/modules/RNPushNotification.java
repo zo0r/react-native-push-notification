@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -29,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
@@ -226,6 +229,11 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             }
         }
         promise.resolve(params);
+    }
+
+    @ReactMethod
+    public void setApplicationIconBadgeNumber(int number) {
+        ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(getReactApplicationContext(), number);
     }
 
     // removed @Override temporarily just to get the buld stable
