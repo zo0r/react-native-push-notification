@@ -14,6 +14,8 @@ public class RNPushNotificationQueue {
 
     private boolean loaded;
 
+    private Intent tempIntent;
+
     private RNPushNotificationQueue()
     {
         queue = new ArrayBlockingQueue<Intent>(100);
@@ -33,11 +35,13 @@ public class RNPushNotificationQueue {
     }
 
     public void push(Intent intent) {
+        tempIntent = intent;
         queue.add(intent);
     }
 
     public Intent pop() {
-        return queue.remove();
+        return tempIntent;
+        //return queue.remove();
     }
 
     public boolean isEmpty() {
