@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
+import main.java.com.dieam.reactnativepushnotification.modules.RNPushNotificationQueue;
 import org.json.JSONObject;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
@@ -44,7 +45,12 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         bundle.putBoolean("foreground", isRunning);
         bundle.putBoolean("userInteraction", false);
         intent.putExtra("notification", bundle);
-        sendBroadcast(intent);
+
+        if (!RNPushNotificationQueue.getInstance().getHasLoaded()) {
+            RNPushNotificationQueue.getInstance().push(intent);
+        } else {
+            sendBroadcast(intent);
+        }
 
         if (!isRunning) {
             new RNPushNotificationHelper(getApplication()).sendNotification(bundle);

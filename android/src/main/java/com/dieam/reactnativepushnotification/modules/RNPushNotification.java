@@ -21,6 +21,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import main.java.com.dieam.reactnativepushnotification.modules.RNPushNotificationQueue;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -174,8 +175,16 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void onLoad() {
         Log.d("RN EVENT LISTENER", "I have loaded!!!");
-        System.out.println("I have loaded!");
 
-        int i = 1 / 0;
+        if(!RNPushNotificationQueue.getInstance().isEmpty())
+        {
+            Intent intent = RNPushNotificationQueue.getInstance().pop();
+
+            sendBroadcast(intent);
+        }
+
+       
+        RNPushNotificationQueue.getInstance().setHasLoaded(true);
+        System.out.println("I have loaded!");
     }
 }
