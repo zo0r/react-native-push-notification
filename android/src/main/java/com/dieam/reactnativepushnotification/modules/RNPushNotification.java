@@ -171,6 +171,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 String bundleString = convertJSON(bundle);
                 params.putString("dataJSON", bundleString);
             }
+
+            RNPushNotificationQueue.getInstance().push(intent);
         }
         promise.resolve(params);
     }
