@@ -16,7 +16,7 @@ var Notifications = {
 	onRegister: false,
 	onError: false,
 	onNotification: false,
-
+  onRemoteFetch: false,
 	isLoaded: false,
 
 	isPermissionsRequestPending: false,
@@ -71,12 +71,18 @@ Notifications.configure = function(options: Object) {
 		this.senderID = options.senderID;
 	}
 
+	if ( typeof options.onRemoteFetch !== 'undefined' ) {
+		this.onRemoteFetch = options.onRemoteFetch;
+	}
+
 	if ( this.isLoaded === false ) {
 		this._onRegister = this._onRegister.bind(this);
 		this._onNotification = this._onNotification.bind(this);
+		this._onRemoteFetch = this._onRemoteFetch.bind(this);
 		this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
+		Platform.OS === 'android' ? this.callNative( 'addEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
 
 		if ( typeof options.popInitialNotification === 'undefined' ||
 			 options.popInitialNotification === true ) {
@@ -101,6 +107,7 @@ Notifications.unregister = function() {
 	this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
 	this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
 	this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification ] )
+	Platform.OS === 'android' ? this.callNative( 'removeEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
 };
 
 /**
@@ -160,6 +167,12 @@ Notifications._onRegister = function(token: String) {
 		});
 	}
 };
+
+Notifications._onRemoteFetch = function(notificationData: Object) {
+	if ( this.onRemoteFetch !== false ) {
+		this.onRemoteFetch(notificationData)
+	}
+} 
 
 Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( isFromBackground === null ) {
@@ -236,6 +249,10 @@ Notifications.scheduleLocalNotification = function() {
 	return this.callNative('scheduleLocalNotification', arguments);
 };
 
+Notifications.cancelLocalNotifications = function() {
+	return this.callNative('cancelLocalNotifications', arguments);
+};
+
 Notifications.cancelAllLocalNotifications = function() {
 	return this.callNative('cancelAllLocalNotifications', arguments);
 };
@@ -261,5 +278,14 @@ Notifications.abandonPermissions = function() {
 Notifications.checkPermissions = function() {
 	return this.callNative('checkPermissions', arguments);
 };
+
+Notifications.registerNotificationActions = function() {
+	return this.callNative('registerNotificationActions', arguments)
+}
+
+Notifications.clearAllNotifications = function() {
+	// Only available for Android
+	return this.callNative('clearAllNotifications', arguments)
+}
 
 module.exports = Notifications;

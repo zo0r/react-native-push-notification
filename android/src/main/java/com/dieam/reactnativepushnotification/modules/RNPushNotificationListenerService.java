@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.util.Log;
 
 import java.util.List;
+import java.util.Random;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -38,6 +40,12 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
     private void sendNotification(Bundle bundle) {
 
+        // If notification ID is not provided by the user for push notification, generate one at random
+        if ( bundle.getString("id") == null ) {
+            Random randomNumberGenerator = new Random(System.currentTimeMillis());
+            bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
+        }
+
         Boolean isRunning = isApplicationRunning();
 
         Intent intent = new Intent(this.getPackageName() + ".RNPushNotificationReceiveNotification");
@@ -45,6 +53,14 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         bundle.putBoolean("userInteraction", false);
         intent.putExtra("notification", bundle);
         sendBroadcast(intent);
+
+        // If contentAvailable is set to true, then send out a remote fetch event
+        if(bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
+            Log.d(bundle.toString(), "Received a notification with remote fetch enabled");
+            Intent remoteFetchIntent = new Intent(this.getPackageName() + ".RNPushNotificationRemoteFetch");
+            remoteFetchIntent.putExtra("notification", bundle);
+            sendBroadcast(remoteFetchIntent);
+        }
 
         if (!isRunning) {
             new RNPushNotificationHelper(getApplication()).sendNotification(bundle);
