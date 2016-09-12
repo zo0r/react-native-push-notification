@@ -6,33 +6,87 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+
 public class RNPushNotificationAttributes {
-    private String id;
-    private String message;
-    private double fireDate;
-    private String title;
-    private String ticker;
-    private boolean autoCancel;
-    private String largeIcon;
-    private String smallIcon;
-    private String bigText;
-    private String subText;
-    private String number;
-    private String sound;
-    private String color;
-    private String group;
-    private boolean userInteraction;
-    private boolean playSound;
-    private boolean vibrate;
-    private double vibration;
-    private String actions;
-    private String tag;
-    private String repeatType;
-    private double repeatTime;
-    private boolean ongoing;
+    private final String id;
+    private final String message;
+    private final double fireDate;
+    private final String title;
+    private final String ticker;
+    private final boolean autoCancel;
+    private final String largeIcon;
+    private final String smallIcon;
+    private final String bigText;
+    private final String subText;
+    private final String number;
+    private final String sound;
+    private final String color;
+    private final String group;
+    private final boolean userInteraction;
+    private final boolean playSound;
+    private final boolean vibrate;
+    private final double vibration;
+    private final String actions;
+    private final String tag;
+    private final String repeatType;
+    private final double repeatTime;
+    private final boolean ongoing;
 
-    public RNPushNotificationAttributes() {
+    public RNPushNotificationAttributes(Bundle bundle) {
+        id = bundle.getString("id");
+        message = bundle.getString("message");
+        fireDate = bundle.getDouble("fireDate");
+        title = bundle.getString("title");
+        ticker = bundle.getString("ticker");
+        autoCancel = bundle.getBoolean("autoCancel");
+        largeIcon = bundle.getString("largeIcon");
+        smallIcon = bundle.getString("smallIcon");
+        bigText = bundle.getString("bigText");
+        subText = bundle.getString("subText");
+        number = bundle.getString("number");
+        sound = bundle.getString("sound");
+        color = bundle.getString("color");
+        group = bundle.getString("group");
+        userInteraction = bundle.getBoolean("userInteraction");
+        playSound = bundle.getBoolean("playSound");
+        vibrate = bundle.getBoolean("vibrate");
+        vibration = bundle.getDouble("vibration");
+        actions = bundle.getString("actions");
+        tag = bundle.getString("tag");
+        repeatType = bundle.getString("repeatType");
+        repeatTime = bundle.getDouble("repeatTime");
+        ongoing = bundle.getBoolean("ongoing");
+    }
 
+    public RNPushNotificationAttributes(JSONObject jsonObject) {
+        try {
+            id = jsonObject.has("id") ? jsonObject.getString("id") : null;
+            message = jsonObject.has("message") ? jsonObject.getString("message") : null;
+            fireDate = jsonObject.has("fireDate") ? jsonObject.getDouble("fireDate") : 0.0;
+            title = jsonObject.has("title") ? jsonObject.getString("title") : null;
+            ticker = jsonObject.has("ticker") ? jsonObject.getString("ticker") : null;
+            autoCancel = jsonObject.has("autoCancel") ? jsonObject.getBoolean("autoCancel") : true;
+            largeIcon = jsonObject.has("largeIcon") ? jsonObject.getString("largeIcon") : null;
+            smallIcon = jsonObject.has("smallIcon") ? jsonObject.getString("smallIcon") : null;
+            bigText = jsonObject.has("bigText") ? jsonObject.getString("bigText") : null;
+            subText = jsonObject.has("subText") ? jsonObject.getString("subText") : null;
+            number = jsonObject.has("number") ? jsonObject.getString("number") : null;
+            sound = jsonObject.has("sound") ? jsonObject.getString("sound") : null;
+            color = jsonObject.has("color") ? jsonObject.getString("color") : null;
+            group = jsonObject.has("group") ? jsonObject.getString("group") : null;
+            userInteraction = jsonObject.has("userInteraction") ? jsonObject.getBoolean("userInteraction") : false;
+            playSound = jsonObject.has("playSound") ? jsonObject.getBoolean("playSound") : true;
+            vibrate = jsonObject.has("vibrate") ? jsonObject.getBoolean("vibrate") : true;
+            vibration = jsonObject.has("vibration") ? jsonObject.getDouble("vibration") : 1000;
+            actions = jsonObject.has("actions") ? jsonObject.getString("actions") : null;
+            tag = jsonObject.has("tag") ? jsonObject.getString("tag") : null;
+            repeatType = jsonObject.has("repeatType") ? jsonObject.getString("repeatType") : null;
+            repeatTime = jsonObject.has("repeatTime") ? jsonObject.getDouble("repeatTime") : 0.0;
+            ongoing = jsonObject.has("ongoing") ? jsonObject.getBoolean("ongoing") : false;
+        } catch (JSONException e) {
+            throw new IllegalStateException("Exception while initializing RNPushNotificationAttributes from JSON", e);
+        }
     }
 
     public Bundle toBundle() {
@@ -63,32 +117,6 @@ public class RNPushNotificationAttributes {
         return bundle;
     }
 
-    public void fromBundle(Bundle bundle) {
-        id = bundle.getString("id");
-        message = bundle.getString("message");
-        fireDate = bundle.getDouble("fireDate");
-        title = bundle.getString("title");
-        ticker = bundle.getString("ticker");
-        autoCancel = bundle.getBoolean("autoCancel");
-        largeIcon = bundle.getString("largeIcon");
-        smallIcon = bundle.getString("smallIcon");
-        bigText = bundle.getString("bigText");
-        subText = bundle.getString("subText");
-        number = bundle.getString("number");
-        sound = bundle.getString("sound");
-        color = bundle.getString("color");
-        group = bundle.getString("group");
-        userInteraction = bundle.getBoolean("userInteraction");
-        playSound = bundle.getBoolean("playSound");
-        vibrate = bundle.getBoolean("vibrate");
-        vibration = bundle.getDouble("vibration");
-        actions = bundle.getString("actions");
-        tag = bundle.getString("tag");
-        repeatType = bundle.getString("repeatType");
-        repeatTime = bundle.getDouble("repeatTime");
-        ongoing = bundle.getBoolean("ongoing");
-    }
-
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -116,42 +144,11 @@ public class RNPushNotificationAttributes {
             jsonObject.put("repeatTime", repeatTime);
             jsonObject.put("ongoing", ongoing);
         } catch (JSONException e) {
-            Log.e("RNPushNotification", "Exception while converting RNPushNotificationAttributes to " +
+            Log.e(LOG_TAG, "Exception while converting RNPushNotificationAttributes to " +
                     "JSON. Returning an empty object", e);
             return new JSONObject();
         }
         return jsonObject;
-    }
-
-    public void fromJson(JSONObject jsonObject) {
-        try {
-            id = jsonObject.has("id") ? jsonObject.getString("id") : null;
-            message = jsonObject.has("message") ? jsonObject.getString("message") : null;
-            fireDate = jsonObject.has("fireDate") ? jsonObject.getDouble("fireDate") : 0.0;
-            title = jsonObject.has("title") ? jsonObject.getString("title") : null;
-            ticker = jsonObject.has("ticker") ? jsonObject.getString("ticker") : null;
-            autoCancel = jsonObject.has("autoCancel") ? jsonObject.getBoolean("autoCancel") : true;
-            largeIcon = jsonObject.has("largeIcon") ? jsonObject.getString("largeIcon") : null;
-            smallIcon = jsonObject.has("smallIcon") ? jsonObject.getString("smallIcon") : null;
-            bigText = jsonObject.has("bigText") ? jsonObject.getString("bigText") : null;
-            subText = jsonObject.has("subText") ? jsonObject.getString("subText") : null;
-            number = jsonObject.has("number") ? jsonObject.getString("number") : null;
-            sound = jsonObject.has("sound") ? jsonObject.getString("sound") : null;
-            color = jsonObject.has("color") ? jsonObject.getString("color") : null;
-            group = jsonObject.has("group") ? jsonObject.getString("group") : null;
-            userInteraction = jsonObject.has("userInteraction") ? jsonObject.getBoolean("userInteraction") : false;
-            playSound = jsonObject.has("playSound") ? jsonObject.getBoolean("playSound") : true;
-            vibrate = jsonObject.has("vibrate") ? jsonObject.getBoolean("vibrate") : true;
-            vibration = jsonObject.has("vibration") ? jsonObject.getDouble("vibration") : 1000;
-            actions = jsonObject.has("actions") ? jsonObject.getString("actions") : null;
-            tag = jsonObject.has("tag") ? jsonObject.getString("tag") : null;
-            repeatType = jsonObject.has("repeatType") ? jsonObject.getString("repeatType") : null;
-            repeatTime = jsonObject.has("repeatTime") ? jsonObject.getDouble("repeatTime") : 0.0;
-            ongoing = jsonObject.has("ongoing") ? jsonObject.getBoolean("ongoing") : false;
-        } catch (JSONException e) {
-            Log.e("RNPushNotification", "Exception while initializing RNPushNotificationAttributes from " +
-                    "JSON. Some fields may not be set", e);
-        }
     }
 
     @Override

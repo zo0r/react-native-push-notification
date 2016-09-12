@@ -1,17 +1,19 @@
 package com.dieam.reactnativepushnotification.modules;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
-
-import java.util.List;
-import java.util.Random;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONObject;
+
+import java.util.List;
+import java.util.Random;
+
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
 
@@ -41,7 +43,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     private void sendNotification(Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
-        if ( bundle.getString("id") == null ) {
+        if (bundle.getString("id") == null) {
             Random randomNumberGenerator = new Random(System.currentTimeMillis());
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
@@ -55,8 +57,8 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         sendBroadcast(intent);
 
         // If contentAvailable is set to true, then send out a remote fetch event
-        if(bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
-            Log.d(bundle.toString(), "Received a notification with remote fetch enabled");
+        if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
+            Log.d(LOG_TAG, "Received a notification with remote fetch enabled");
             Intent remoteFetchIntent = new Intent(this.getPackageName() + ".RNPushNotificationRemoteFetch");
             remoteFetchIntent.putExtra("notification", bundle);
             sendBroadcast(remoteFetchIntent);
@@ -70,9 +72,9 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     private boolean isApplicationRunning() {
         ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo processInfo : processInfos) {
+        for (RunningAppProcessInfo processInfo : processInfos) {
             if (processInfo.processName.equals(getApplication().getPackageName())) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                     for (String d : processInfo.pkgList) {
                         return true;
                     }

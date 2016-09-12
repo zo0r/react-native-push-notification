@@ -120,7 +120,17 @@ Notifications.unregister = function() {
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
-		const soundName = !details.hasOwnProperty("playSound") || details.playSound === true ? 'default' : '';// empty string results in no sound
+		let soundName = 'default'; // play sound (and vibrate) as default behaviour
+
+		if(details.hasOwnProperty("playSound")) {
+			if(details.playSound) {
+				if(details.soundName) {
+					soundName = details.soundName;
+				}
+			} else {
+				soundName = '';// empty string results in no sound (and no vibration)
+			}
+		}
 
 		// for valid fields see: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html
 		// alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle

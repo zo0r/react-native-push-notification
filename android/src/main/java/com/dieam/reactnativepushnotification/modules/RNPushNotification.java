@@ -1,8 +1,8 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,18 +30,20 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import android.util.Log;
-
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
+    public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
+
     private RNPushNotificationHelper mRNPushNotificationHelper;
-    private final Random mRandomNumberGenerator;
+    private final Random mRandomNumberGenerator = new Random(System.currentTimeMillis());
 
     public RNPushNotification(ReactApplicationContext reactContext) {
         super(reactContext);
 
         reactContext.addActivityEventListener(this);
-        mRNPushNotificationHelper = new RNPushNotificationHelper((Application) reactContext.getApplicationContext());
-        mRandomNumberGenerator = new Random(System.currentTimeMillis());
+
+        Application applicationContext = (Application) reactContext.getApplicationContext();
+        mRNPushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
         registerNotificationsRemoteFetch();
@@ -98,7 +100,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-               notifyNotification(intent.getBundleExtra("notification"));
+                notifyNotification(intent.getBundleExtra("notification"));
             }
         }, intentFilter);
     }
@@ -129,7 +131,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     private void registerNotificationsReceiveNotificationActions(ReadableArray actions) {
         IntentFilter intentFilter = new IntentFilter();
         // Add filter for each actions.
-        for (int i=0; i<actions.size(); i++) {
+        for (int i = 0; i < actions.size(); i++) {
             String action = actions.getString(i);
             intentFilter.addAction(getReactApplicationContext().getPackageName() + "." + action);
         }
@@ -187,14 +189,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void cancelAllLocalNotifications() {
-        mRNPushNotificationHelper.cancelAll();
+        mRNPushNotificationHelper.cancelAllLocalNotifications();
     }
 
     @ReactMethod
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
         // If notification ID is not provided by the user, generate one at random
-        if ( bundle.getString("id") == null ) {
+        if (bundle.getString("id") == null) {
             bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
         }
         mRNPushNotificationHelper.sendNotification(bundle);
@@ -204,7 +206,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     public void scheduleLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
         // If notification ID is not provided by the user, generate one at random
-        if ( bundle.getString("id") == null ) {
+        if (bundle.getString("id") == null) {
             bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
         }
         mRNPushNotificationHelper.sendNotificationScheduled(bundle);
@@ -226,9 +228,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         promise.resolve(params);
     }
 
-    @Override
+    // removed @Override temporarily just to get the buld stable
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        // Ignored, required to implement ActivityEventListener
+        // Ignored, required to implement ActivityEventListener for RN < 0.33
+    }
+
+    // removed @Override temporarily just to get the buld stable
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Ignored, required to implement ActivityEventListener for RN 0.33
     }
 
     @ReactMethod
@@ -240,10 +247,5 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void registerNotificationActions(ReadableArray actions) {
         registerNotificationsReceiveNotificationActions(actions);
-    }
-
-    @ReactMethod
-    public void clearAllNotifications() {
-        mRNPushNotificationHelper.clearAllNotifications();
     }
 }
