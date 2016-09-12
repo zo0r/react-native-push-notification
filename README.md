@@ -214,7 +214,7 @@ In iOS, add your custom sound file to the project `Resources` in xCode.
 
 In the location notification json specify the full file name:
 
-    soundName: 'my_sound.mpx'
+    soundName: 'my_sound.mp3'
 
 ## Cancelling notifications
 `PushNotification.cancelLocalNotifications(details: Object)` 
