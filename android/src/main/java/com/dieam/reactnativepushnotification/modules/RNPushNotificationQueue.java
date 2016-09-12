@@ -4,21 +4,22 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import android.content.Intent;
+import android.os.Bundle;
 
 
 public class RNPushNotificationQueue {
 
     private static RNPushNotificationQueue instance;
 
-    private Queue<Intent> queue;
+    private Queue<Bundle> queue;
 
     private boolean loaded;
 
-    private Intent tempIntent;
+    private Bundle tempIntent;
 
     private RNPushNotificationQueue()
     {
-        queue = new ArrayBlockingQueue<Intent>(100);
+        queue = new ArrayBlockingQueue<Bundle>(100);
     }
 
     public static RNPushNotificationQueue getInstance() {
@@ -34,12 +35,12 @@ public class RNPushNotificationQueue {
         this.instance = instance;
     }
 
-    public void push(Intent intent) {
-        tempIntent = intent;
-        queue.add(intent);
+    public void push(Bundle bundle) {
+        tempIntent = bundle;
+        queue.add(bundle);
     }
 
-    public Intent pop() {
+    public Bundle pop() {
         return tempIntent;
         //return queue.remove();
     }

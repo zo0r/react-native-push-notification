@@ -51,7 +51,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         if (!RNPushNotificationQueue.getInstance().isLoaded()) {
             Log.d("RN", "Pushing new notification");
-            RNPushNotificationQueue.getInstance().push(intent);
+        //    RNPushNotificationQueue.getInstance().push(intent);
         } else {
             Log.d("RN", "sendBroadcast" + intent.toString());
             sendBroadcast(intent);

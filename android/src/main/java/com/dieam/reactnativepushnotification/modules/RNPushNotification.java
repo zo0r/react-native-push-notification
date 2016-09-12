@@ -172,7 +172,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 params.putString("dataJSON", bundleString);
             }
 
-            RNPushNotificationQueue.getInstance().push(intent);
+            RNPushNotificationQueue.getInstance().push(bundle);
         }
         promise.resolve(params);
     }
@@ -188,10 +188,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
         if(!RNPushNotificationQueue.getInstance().isEmpty())
         {
-            Intent intent = RNPushNotificationQueue.getInstance().pop();
+            Bundle intent = RNPushNotificationQueue.getInstance().pop();
             Log.d("RN EVENT LISTENER", "intent to string: " + intent.toString());
-            Log.d("RN EVENT LISTENER", "intent extras: " + intent.getExtras().toString());
-            new RNPushNotificationHelper(getCurrentActivity().getApplication()).sendNotification(intent.getBundleExtra("notification"));
+          //  Log.d("RN EVENT LISTENER", "intent extras: " + intent.getExtras().toString());
+            mRNPushNotificationHelper.sendNotification(intent);
         }
 
 
