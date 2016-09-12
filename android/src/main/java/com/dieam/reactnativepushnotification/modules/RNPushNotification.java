@@ -191,7 +191,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             Intent intent = RNPushNotificationQueue.getInstance().pop();
             Log.d("RN EVENT LISTENER", "intent to string: " + intent.toString());
             Log.d("RN EVENT LISTENER", "intent extras: " + intent.getExtras().toString());
-            getReactApplicationContext().sendBroadcast(intent);
+            new RNPushNotificationHelper(getApplication()).sendNotification(intent.getBundleExtra("notification"));
         }
 
 
