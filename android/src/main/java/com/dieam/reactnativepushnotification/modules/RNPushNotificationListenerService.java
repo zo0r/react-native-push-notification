@@ -17,6 +17,8 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
+        Log.d("RN", "onMessageReceived");
+
         JSONObject data = getPushData(bundle.getString("data"));
         if (data != null) {
             if (!bundle.containsKey("message")) {

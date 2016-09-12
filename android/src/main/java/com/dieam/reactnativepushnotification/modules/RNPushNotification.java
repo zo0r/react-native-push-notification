@@ -65,6 +65,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onNewIntent(Intent intent) {
+        Log.d("RN EVENT LISTENER", "onNewIntent");
+
         if (intent.hasExtra("notification")) {
             Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
@@ -99,6 +101,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void notifyNotification(Bundle bundle) {
+        Log.d("RN EVENT LISTENER", "notifyNotification");
+
+
         String bundleString = convertJSON(bundle);
 
         WritableMap params = Arguments.createMap();
@@ -153,6 +158,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void getInitialNotification(Promise promise) {
+
+        Log.d("RN EVENT LISTENER", "getInitialNotification");
+
         WritableMap params = Arguments.createMap();
         Activity activity = getCurrentActivity();
         if (activity != null) {
