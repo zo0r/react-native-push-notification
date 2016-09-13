@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
-import main.java.com.dieam.reactnativepushnotification.modules.RNPushNotificationQueue;
 import org.json.JSONObject;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
