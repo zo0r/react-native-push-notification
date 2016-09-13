@@ -192,7 +192,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
           //  Log.d("RN EVENT LISTENER", "intent extras: " + intent.getExtras().toString());
             mRNPushNotificationHelper.sendNotification(intent);
         }
-
+        Intent intent=new Intent();
+        intent.setAction("com.kametventures.driven.POP_NOTIFICATION");
+        intent.putExtra("url",uri.toString());
+        getCurrentActivity().sendBroadcast(intent);
 
         RNPushNotificationQueue.getInstance().setLoaded(true);
         System.out.println("I have loaded!");
