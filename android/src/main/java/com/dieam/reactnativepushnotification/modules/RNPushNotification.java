@@ -229,49 +229,46 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(getReactApplicationContext(), number);
     }
 
-    // removed @Override temporarily just to get the buld stable
+    // removed @Override temporarily just to get it working on different versions of RN
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        // Ignored, required to implement ActivityEventListener for RN < 0.33
+        onActivityResult(requestCode, resultCode, data);
     }
 
-    // removed @Override temporarily just to get the buld stable
+    // removed @Override temporarily just to get it working on different versions of RN
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Ignored, required to implement ActivityEventListener for RN 0.33
     }
 
     @ReactMethod
     /**
-     * Cancels all *scheduled* localNotifications.
+     * Cancels all scheduled local notifications, and removes all entries from the notification
+     * centre.
      *
-     * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">rn docs</a>
+     * We're attempting to keep feature parity with the RN iOS implementation in
+     * <a href="https://github.com/facebook/react-native/blob/master/Libraries/PushNotificationIOS/RCTPushNotificationManager.m#L289">RCTPushNotificationManager</a>.
+     *
+     * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">RN docs</a>
      */
     public void cancelAllLocalNotifications() {
         mRNPushNotificationHelper.cancelAllScheduledNotifications();
+        mRNPushNotificationHelper.clearNotifications();
     }
 
     @ReactMethod
     /**
-     * Cancel local notifications. Optionally restricts the set of canceled notifications to those notifications to a single id.
+     * Cancel scheduled notifications, and removes notifications from the notification centre.
      *
-     * If the id is not specified, this has the effect of clearing the notification cetner only.  No scheduled
-     * notifications will be cancelled.
+     * Note - as we are trying to achieve feature parity with iOS, this method cannot be used
+     * to remove specific alerts from the notification centre.
      *
-     * If the id is specified, that single notification will be remove, and if it is a scheduled
-     * notification then it will be cancelled.
+     * todo: change it to accept something like a user details map that can be used to match one or more notifications (so its the same as iOS)
      *
-     * I think the react docs are unclear as to what the exact behaviour of this method should be.  I think
-     * this implementation provides a good amount of functionality.
-     *
-     * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">rn docs</a>
+     * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">RN docs</a>
      */
-    public void cancelLocalNotifications(ReadableMap details) {
-        String notificationIdString = details.getString("id");
-
-        if(notificationIdString != null) {
-            mRNPushNotificationHelper.clearNotifications();
-        } else {
-            mRNPushNotificationHelper.clearNotification(notificationIdString);
-            mRNPushNotificationHelper.cancelScheduledNotification(notificationIdString);
+    public void cancelLocalNotifications(ReadableArray notificationIds) {
+        for (int i = 0; i < notificationIds.size(); i++) {
+            String id = notificationIds.getString(i);
+            mRNPushNotificationHelper.cancelScheduledNotification(id);
         }
     }
 
