@@ -168,9 +168,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 bundle.putBoolean("foreground", false);
                 String bundleString = convertJSON(bundle);
                 params.putString("dataJSON", bundleString);
-            }
+                Log.d("RN EVENT LISTENER", "PUSHING!!!");
 
-            RNPushNotificationQueue.getInstance().push(bundle);
+                RNPushNotificationQueue.getInstance().push(bundle);
+            }
         }
         promise.resolve(params);
     }
