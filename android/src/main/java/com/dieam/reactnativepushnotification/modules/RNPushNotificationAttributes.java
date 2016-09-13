@@ -1,7 +1,12 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +14,30 @@ import org.json.JSONObject;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationAttributes {
+    private static final String ID = "id";
+    private static final String MESSAGE = "message";
+    private static final String FIRE_DATE = "fireDate";
+    private static final String TITLE = "title";
+    private static final String TICKER = "ticker";
+    private static final String AUTO_CANCEL = "autoCancel";
+    private static final String LARGE_ICON = "largeIcon";
+    private static final String SMALL_ICON = "smallIcon";
+    private static final String BIG_TEXT = "bigText";
+    private static final String SUB_TEXT = "subText";
+    private static final String NUMBER = "number";
+    private static final String SOUND = "sound";
+    private static final String COLOR = "color";
+    private static final String GROUP = "group";
+    private static final String USER_INTERACTION = "userInteraction";
+    private static final String PLAY_SOUND = "playSound";
+    private static final String VIBRATE = "vibrate";
+    private static final String VIBRATION = "vibration";
+    private static final String ACTIONS = "actions";
+    private static final String TAG = "tag";
+    private static final String REPEAT_TYPE = "repeatType";
+    private static final String REPEAT_TIME = "repeatTime";
+    private static final String ONGOING = "ongoing";
+
     private final String id;
     private final String message;
     private final double fireDate;
@@ -34,115 +63,170 @@ public class RNPushNotificationAttributes {
     private final boolean ongoing;
 
     public RNPushNotificationAttributes(Bundle bundle) {
-        id = bundle.getString("id");
-        message = bundle.getString("message");
-        fireDate = bundle.getDouble("fireDate");
-        title = bundle.getString("title");
-        ticker = bundle.getString("ticker");
-        autoCancel = bundle.getBoolean("autoCancel");
-        largeIcon = bundle.getString("largeIcon");
-        smallIcon = bundle.getString("smallIcon");
-        bigText = bundle.getString("bigText");
-        subText = bundle.getString("subText");
-        number = bundle.getString("number");
-        sound = bundle.getString("sound");
-        color = bundle.getString("color");
-        group = bundle.getString("group");
-        userInteraction = bundle.getBoolean("userInteraction");
-        playSound = bundle.getBoolean("playSound");
-        vibrate = bundle.getBoolean("vibrate");
-        vibration = bundle.getDouble("vibration");
-        actions = bundle.getString("actions");
-        tag = bundle.getString("tag");
-        repeatType = bundle.getString("repeatType");
-        repeatTime = bundle.getDouble("repeatTime");
-        ongoing = bundle.getBoolean("ongoing");
+        id = bundle.getString(ID);
+        message = bundle.getString(MESSAGE);
+        fireDate = bundle.getDouble(FIRE_DATE);
+        title = bundle.getString(TITLE);
+        ticker = bundle.getString(TICKER);
+        autoCancel = bundle.getBoolean(AUTO_CANCEL);
+        largeIcon = bundle.getString(LARGE_ICON);
+        smallIcon = bundle.getString(SMALL_ICON);
+        bigText = bundle.getString(BIG_TEXT);
+        subText = bundle.getString(SUB_TEXT);
+        number = bundle.getString(NUMBER);
+        sound = bundle.getString(SOUND);
+        color = bundle.getString(COLOR);
+        group = bundle.getString(GROUP);
+        userInteraction = bundle.getBoolean(USER_INTERACTION);
+        playSound = bundle.getBoolean(PLAY_SOUND);
+        vibrate = bundle.getBoolean(VIBRATE);
+        vibration = bundle.getDouble(VIBRATION);
+        actions = bundle.getString(ACTIONS);
+        tag = bundle.getString(TAG);
+        repeatType = bundle.getString(REPEAT_TYPE);
+        repeatTime = bundle.getDouble(REPEAT_TIME);
+        ongoing = bundle.getBoolean(ONGOING);
     }
 
-    public RNPushNotificationAttributes(JSONObject jsonObject) {
+    private RNPushNotificationAttributes(JSONObject jsonObject) {
         try {
-            id = jsonObject.has("id") ? jsonObject.getString("id") : null;
-            message = jsonObject.has("message") ? jsonObject.getString("message") : null;
-            fireDate = jsonObject.has("fireDate") ? jsonObject.getDouble("fireDate") : 0.0;
-            title = jsonObject.has("title") ? jsonObject.getString("title") : null;
-            ticker = jsonObject.has("ticker") ? jsonObject.getString("ticker") : null;
-            autoCancel = jsonObject.has("autoCancel") ? jsonObject.getBoolean("autoCancel") : true;
-            largeIcon = jsonObject.has("largeIcon") ? jsonObject.getString("largeIcon") : null;
-            smallIcon = jsonObject.has("smallIcon") ? jsonObject.getString("smallIcon") : null;
-            bigText = jsonObject.has("bigText") ? jsonObject.getString("bigText") : null;
-            subText = jsonObject.has("subText") ? jsonObject.getString("subText") : null;
-            number = jsonObject.has("number") ? jsonObject.getString("number") : null;
-            sound = jsonObject.has("sound") ? jsonObject.getString("sound") : null;
-            color = jsonObject.has("color") ? jsonObject.getString("color") : null;
-            group = jsonObject.has("group") ? jsonObject.getString("group") : null;
-            userInteraction = jsonObject.has("userInteraction") ? jsonObject.getBoolean("userInteraction") : false;
-            playSound = jsonObject.has("playSound") ? jsonObject.getBoolean("playSound") : true;
-            vibrate = jsonObject.has("vibrate") ? jsonObject.getBoolean("vibrate") : true;
-            vibration = jsonObject.has("vibration") ? jsonObject.getDouble("vibration") : 1000;
-            actions = jsonObject.has("actions") ? jsonObject.getString("actions") : null;
-            tag = jsonObject.has("tag") ? jsonObject.getString("tag") : null;
-            repeatType = jsonObject.has("repeatType") ? jsonObject.getString("repeatType") : null;
-            repeatTime = jsonObject.has("repeatTime") ? jsonObject.getDouble("repeatTime") : 0.0;
-            ongoing = jsonObject.has("ongoing") ? jsonObject.getBoolean("ongoing") : false;
+            id = jsonObject.has(ID) ? jsonObject.getString(ID) : null;
+            message = jsonObject.has(MESSAGE) ? jsonObject.getString(MESSAGE) : null;
+            fireDate = jsonObject.has(FIRE_DATE) ? jsonObject.getDouble(FIRE_DATE) : 0.0;
+            title = jsonObject.has(TITLE) ? jsonObject.getString(TITLE) : null;
+            ticker = jsonObject.has(TICKER) ? jsonObject.getString(TICKER) : null;
+            autoCancel = jsonObject.has(AUTO_CANCEL) ? jsonObject.getBoolean(AUTO_CANCEL) : true;
+            largeIcon = jsonObject.has(LARGE_ICON) ? jsonObject.getString(LARGE_ICON) : null;
+            smallIcon = jsonObject.has(SMALL_ICON) ? jsonObject.getString(SMALL_ICON) : null;
+            bigText = jsonObject.has(BIG_TEXT) ? jsonObject.getString(BIG_TEXT) : null;
+            subText = jsonObject.has(SUB_TEXT) ? jsonObject.getString(SUB_TEXT) : null;
+            number = jsonObject.has(NUMBER) ? jsonObject.getString(NUMBER) : null;
+            sound = jsonObject.has(SOUND) ? jsonObject.getString(SOUND) : null;
+            color = jsonObject.has(COLOR) ? jsonObject.getString(COLOR) : null;
+            group = jsonObject.has(GROUP) ? jsonObject.getString(GROUP) : null;
+            userInteraction = jsonObject.has(USER_INTERACTION) ? jsonObject.getBoolean(USER_INTERACTION) : false;
+            playSound = jsonObject.has(PLAY_SOUND) ? jsonObject.getBoolean(PLAY_SOUND) : true;
+            vibrate = jsonObject.has(VIBRATE) ? jsonObject.getBoolean(VIBRATE) : true;
+            vibration = jsonObject.has(VIBRATION) ? jsonObject.getDouble(VIBRATION) : 1000;
+            actions = jsonObject.has(ACTIONS) ? jsonObject.getString(ACTIONS) : null;
+            tag = jsonObject.has(TAG) ? jsonObject.getString(TAG) : null;
+            repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
+            repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
+            ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
         } catch (JSONException e) {
             throw new IllegalStateException("Exception while initializing RNPushNotificationAttributes from JSON", e);
         }
     }
 
+    @NonNull
+    public static RNPushNotificationAttributes fromJson(String notificationAttributesJson) throws JSONException {
+        JSONObject jsonObject = new JSONObject(notificationAttributesJson);
+        return new RNPushNotificationAttributes(jsonObject);
+    }
+
+    /**
+     * User to find notifications:
+     *
+     * https://github.com/facebook/react-native/blob/master/Libraries/PushNotificationIOS/RCTPushNotificationManager.m#L294
+     *
+     * @param userInfo map of fields to match
+     * @return true all fields in userInfo object match, false otherwise
+     */
+    public boolean matches(ReadableMap userInfo) {
+        Bundle bundle = toBundle();
+
+        ReadableMapKeySetIterator iterator = userInfo.keySetIterator();
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+
+            if (!bundle.containsKey(key))
+                return false;
+
+            switch (userInfo.getType(key)) {
+                case Null: {
+                    if (bundle.get(key) != null)
+                        return false;
+                    break;
+                }
+                case Boolean: {
+                    if (userInfo.getBoolean(key) != bundle.getBoolean(key))
+                        return false;
+                    break;
+                }
+                case Number: {
+                    if ((userInfo.getDouble(key) != bundle.getDouble(key)) && (userInfo.getInt(key) != bundle.getInt(key)))
+                        return false;
+                    break;
+                }
+                case String: {
+                    if (!userInfo.getString(key).equals(bundle.getString(key)))
+                        return false;
+                    break;
+                }
+                case Map:
+                    return false;//there are no maps in the bundle
+                case Array:
+                    return false;//there are no arrays in the bundle
+            }
+        }
+
+        return true;
+    }
+
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-        bundle.putString("id", id);
-        bundle.putString("message", message);
-        bundle.putDouble("fireDate", fireDate);
-        bundle.putString("title", title);
-        bundle.putString("ticker", ticker);
-        bundle.putBoolean("autoCancel", autoCancel);
-        bundle.putString("largeIcon", largeIcon);
-        bundle.putString("smallIcon", smallIcon);
-        bundle.putString("bigText", bigText);
-        bundle.putString("subText", subText);
-        bundle.putString("number", number);
-        bundle.putString("sound", sound);
-        bundle.putString("color", color);
-        bundle.putString("group", group);
-        bundle.putBoolean("userInteraction", userInteraction);
-        bundle.putBoolean("playSound", playSound);
-        bundle.putBoolean("vibrate", vibrate);
-        bundle.putDouble("vibration", vibration);
-        bundle.putString("actions", actions);
-        bundle.putString("tag", tag);
-        bundle.putString("repeatType", repeatType);
-        bundle.putDouble("repeatTime", repeatTime);
-        bundle.putBoolean("ongoing", ongoing);
+        bundle.putString(ID, id);
+        bundle.putString(MESSAGE, message);
+        bundle.putDouble(FIRE_DATE, fireDate);
+        bundle.putString(TITLE, title);
+        bundle.putString(TICKER, ticker);
+        bundle.putBoolean(AUTO_CANCEL, autoCancel);
+        bundle.putString(LARGE_ICON, largeIcon);
+        bundle.putString(SMALL_ICON, smallIcon);
+        bundle.putString(BIG_TEXT, bigText);
+        bundle.putString(SUB_TEXT, subText);
+        bundle.putString(NUMBER, number);
+        bundle.putString(SOUND, sound);
+        bundle.putString(COLOR, color);
+        bundle.putString(GROUP, group);
+        bundle.putBoolean(USER_INTERACTION, userInteraction);
+        bundle.putBoolean(PLAY_SOUND, playSound);
+        bundle.putBoolean(VIBRATE, vibrate);
+        bundle.putDouble(VIBRATION, vibration);
+        bundle.putString(ACTIONS, actions);
+        bundle.putString(TAG, tag);
+        bundle.putString(REPEAT_TYPE, repeatType);
+        bundle.putDouble(REPEAT_TIME, repeatTime);
+        bundle.putBoolean(ONGOING, ongoing);
         return bundle;
     }
 
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("id", id);
-            jsonObject.put("message", message);
-            jsonObject.put("fireDate", fireDate);
-            jsonObject.put("title", title);
-            jsonObject.put("ticker", ticker);
-            jsonObject.put("autoCancel", autoCancel);
-            jsonObject.put("largeIcon", largeIcon);
-            jsonObject.put("smallIcon", smallIcon);
-            jsonObject.put("bigText", bigText);
-            jsonObject.put("subText", subText);
-            jsonObject.put("number", number);
-            jsonObject.put("sound", sound);
-            jsonObject.put("color", color);
-            jsonObject.put("group", group);
-            jsonObject.put("userInteraction", userInteraction);
-            jsonObject.put("playSound", playSound);
-            jsonObject.put("vibrate", vibrate);
-            jsonObject.put("vibration", vibration);
-            jsonObject.put("actions", actions);
-            jsonObject.put("tag", tag);
-            jsonObject.put("repeatType", repeatType);
-            jsonObject.put("repeatTime", repeatTime);
-            jsonObject.put("ongoing", ongoing);
+            jsonObject.put(ID, id);
+            jsonObject.put(MESSAGE, message);
+            jsonObject.put(FIRE_DATE, fireDate);
+            jsonObject.put(TITLE, title);
+            jsonObject.put(TICKER, ticker);
+            jsonObject.put(AUTO_CANCEL, autoCancel);
+            jsonObject.put(LARGE_ICON, largeIcon);
+            jsonObject.put(SMALL_ICON, smallIcon);
+            jsonObject.put(BIG_TEXT, bigText);
+            jsonObject.put(SUB_TEXT, subText);
+            jsonObject.put(NUMBER, number);
+            jsonObject.put(SOUND, sound);
+            jsonObject.put(COLOR, color);
+            jsonObject.put(GROUP, group);
+            jsonObject.put(USER_INTERACTION, userInteraction);
+            jsonObject.put(PLAY_SOUND, playSound);
+            jsonObject.put(VIBRATE, vibrate);
+            jsonObject.put(VIBRATION, vibration);
+            jsonObject.put(ACTIONS, actions);
+            jsonObject.put(TAG, tag);
+            jsonObject.put(REPEAT_TYPE, repeatType);
+            jsonObject.put(REPEAT_TIME, repeatTime);
+            jsonObject.put(ONGOING, ongoing);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Exception while converting RNPushNotificationAttributes to " +
                     "JSON. Returning an empty object", e);
@@ -189,83 +273,4 @@ public class RNPushNotificationAttributes {
         return fireDate;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getTicker() {
-        return ticker;
-    }
-
-    public boolean isAutoCancel() {
-        return autoCancel;
-    }
-
-    public String getLargeIcon() {
-        return largeIcon;
-    }
-
-    public String getSmallIcon() {
-        return smallIcon;
-    }
-
-    public String getBigText() {
-        return bigText;
-    }
-
-    public String getSubText() {
-        return subText;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public String getSound() {
-        return sound;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public boolean isUserInteraction() {
-        return userInteraction;
-    }
-
-    public boolean isPlaySound() {
-        return playSound;
-    }
-
-    public boolean isVibrate() {
-        return vibrate;
-    }
-
-    public double getVibration() {
-        return vibration;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public String getActions() {
-        return actions;
-    }
-
-    public String getRepeatType() {
-        return repeatType;
-    }
-
-    public double getRepeatTime() {
-        return repeatTime;
-    }
 }

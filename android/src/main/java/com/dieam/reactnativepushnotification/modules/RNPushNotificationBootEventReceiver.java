@@ -33,8 +33,7 @@ public class RNPushNotificationBootEventReceiver extends BroadcastReceiver {
                 try {
                     String notificationAttributesJson = sharedPreferences.getString(id, null);
                     if (notificationAttributesJson != null) {
-                        JSONObject jsonObject = new JSONObject(notificationAttributesJson);
-                        RNPushNotificationAttributes notificationAttributes = new RNPushNotificationAttributes(jsonObject);
+                        RNPushNotificationAttributes notificationAttributes = RNPushNotificationAttributes.fromJson(notificationAttributesJson);
 
                         if (notificationAttributes.getFireDate() < System.currentTimeMillis()) {
                             Log.i(LOG_TAG, "RNPushNotificationBootEventReceiver: Showing notification for " +

@@ -21,13 +21,15 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.facebook.react.bridge.ReadableMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Arrays;
-import java.util.Set;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
@@ -60,7 +62,7 @@ public class RNPushNotificationHelper {
         return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
-    private PendingIntent getScheduleNotificationIntent(Bundle bundle) {
+    private PendingIntent toScheduleNotificationIntent(Bundle bundle) {
         int notificationID = Integer.parseInt(bundle.getString("id"));
 
         Intent notificationIntent = new Intent(context, RNPushNotificationPublisher.class);
@@ -115,7 +117,7 @@ public class RNPushNotificationHelper {
 
         // If the fireDate is in past, this will fire immediately and show the
         // notification to the user
-        PendingIntent pendingIntent = getScheduleNotificationIntent(bundle);
+        PendingIntent pendingIntent = toScheduleNotificationIntent(bundle);
 
         Log.d(LOG_TAG, String.format("Setting a notification with id %s at time %s",
                 bundle.getString("id"), Long.toString(fireDate)));
@@ -268,8 +270,7 @@ public class RNPushNotificationHelper {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            NotificationManager notificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = notificationManager();
 
             notification.setContentIntent(pendingIntent);
 
@@ -391,53 +392,64 @@ public class RNPushNotificationHelper {
     }
 
     public void clearNotifications() {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Log.i(LOG_TAG, "Clearing alerts from the notification centre");
+
+        NotificationManager notificationManager = notificationManager();
         notificationManager.cancelAll();
     }
 
-    public void clearNotification(String notificationIdString) {
-        int id = Integer.parseInt(notificationIdString);
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(id);
-    }
-
     public void cancelAllScheduledNotifications() {
-        Set<String> ids = scheduledNotificationsPersistence.getAll().keySet();
+        Log.i(LOG_TAG, "Cancelling all notifications");
 
-        Log.i(LOG_TAG, "Cancelling all notifications: " + ids);
-
-        for (String id : ids) {
+        for (String id : scheduledNotificationsPersistence.getAll().keySet()) {
             cancelScheduledNotification(id);
         }
     }
 
-    public void cancelScheduledNotification(String notificationIDString) {
+    public void cancelScheduledNotification(ReadableMap userInfo) {
+        for (String id : scheduledNotificationsPersistence.getAll().keySet()) {
+            try {
+                String notificationAttributesJson = scheduledNotificationsPersistence.getString(id, null);
+                if (notificationAttributesJson != null) {
+                    RNPushNotificationAttributes notificationAttributes = fromJson(notificationAttributesJson);
+                    if(notificationAttributes.matches(userInfo)) {
+                        cancelScheduledNotification(id);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.w(LOG_TAG, "Problem dealing with scheduled notification " + id, e);
+            }
+        }
+    }
+
+    private void cancelScheduledNotification(String notificationIDString) {
+        Log.i(LOG_TAG, "Cancelling notification: " + notificationIDString);
+
+        // remove it from the alarm manger schedule
+        Bundle b = new Bundle();
+        b.putString("id", notificationIDString);
+        getAlarmManager().cancel(toScheduleNotificationIntent(b));
+
         if (scheduledNotificationsPersistence.contains(notificationIDString)) {
-            Log.d(LOG_TAG, "Cancelling notification with ID " + notificationIDString);
-
-            // remove it from the alarm manger schedule
-            Bundle b = new Bundle();
-            b.putString("id", notificationIDString);
-            getAlarmManager().cancel(getScheduleNotificationIntent(b));
-
             // remove it from local storage
             SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
             editor.remove(notificationIDString);
             commit(editor);
-
-            // removed it from the notification center
-            NotificationManager notificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            notificationManager.cancel(Integer.parseInt(notificationIDString));
         } else {
-            Log.w(LOG_TAG, "Didn't find a notification with " + notificationIDString +
-                    " while cancelling a local notification");
+            Log.w(LOG_TAG, "Unable to find notification " + notificationIDString);
         }
+
+        // removed it from the notification center
+        NotificationManager notificationManager = notificationManager();
+
+        notificationManager.cancel(Integer.parseInt(notificationIDString));
     }
 
-    private void commit(SharedPreferences.Editor editor) {
+    private NotificationManager notificationManager() {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    private static void commit(SharedPreferences.Editor editor) {
         if (Build.VERSION.SDK_INT < 9) {
             editor.commit();
         } else {

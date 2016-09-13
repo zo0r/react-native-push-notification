@@ -261,15 +261,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      * Note - as we are trying to achieve feature parity with iOS, this method cannot be used
      * to remove specific alerts from the notification centre.
      *
-     * todo: change it to accept something like a user details map that can be used to match one or more notifications (so its the same as iOS)
-     *
      * @see <a href="https://facebook.github.io/react-native/docs/pushnotificationios.html">RN docs</a>
      */
-    public void cancelLocalNotifications(ReadableArray notificationIds) {
-        for (int i = 0; i < notificationIds.size(); i++) {
-            String id = notificationIds.getString(i);
-            mRNPushNotificationHelper.cancelScheduledNotification(id);
-        }
+    public void cancelLocalNotifications(ReadableMap userInfo) {
+        mRNPushNotificationHelper.cancelScheduledNotification(userInfo);
     }
 
     @ReactMethod
