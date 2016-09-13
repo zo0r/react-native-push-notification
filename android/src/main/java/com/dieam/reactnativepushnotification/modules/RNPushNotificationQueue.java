@@ -1,4 +1,4 @@
-package main.java.com.dieam.reactnativepushnotification.modules;
+package com.dieam.reactnativepushnotification.modules;
 
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;

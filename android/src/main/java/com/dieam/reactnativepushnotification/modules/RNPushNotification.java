@@ -21,7 +21,6 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import main.java.com.dieam.reactnativepushnotification.modules.RNPushNotificationQueue;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,7 +62,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }
     }
 
-    @Override
     public void onNewIntent(Intent intent) {
         Log.d("RN EVENT LISTENER", "onNewIntent");
 
