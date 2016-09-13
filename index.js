@@ -236,4 +236,8 @@ Notifications.checkPermissions = function() {
 	return this.callNative('checkPermissions', arguments);
 };
 
+Notifications.popInitialNotification = function() {
+	return this.callNative('popInitialNotification', arguments);
+};
+
 module.exports = Notifications;
