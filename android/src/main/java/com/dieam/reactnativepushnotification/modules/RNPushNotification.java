@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -63,8 +62,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     public void onNewIntent(Intent intent) {
-        Log.d("RN EVENT LISTENER", "onNewIntent");
-
         if (intent.hasExtra("notification")) {
             Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
@@ -99,9 +96,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     private void notifyNotification(Bundle bundle) {
-        Log.d("RN EVENT LISTENER", "notifyNotification");
-
-
         String bundleString = convertJSON(bundle);
 
         WritableMap params = Arguments.createMap();
@@ -156,9 +150,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void getInitialNotification(Promise promise) {
-
-        Log.d("RN EVENT LISTENER", "getInitialNotification");
-
         WritableMap params = Arguments.createMap();
         Activity activity = getCurrentActivity();
         if (activity != null) {
@@ -168,9 +159,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 bundle.putBoolean("foreground", false);
                 String bundleString = convertJSON(bundle);
                 params.putString("dataJSON", bundleString);
-                Log.d("RN EVENT LISTENER", "PUSHING!!!");
-
-                RNPushNotificationQueue.getInstance().push(bundle);
             }
         }
         promise.resolve(params);
@@ -183,20 +171,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void onLoad() {
-        Log.d("RN EVENT LISTENER", "I have loaded!!!");
-
-        if(!RNPushNotificationQueue.getInstance().isEmpty())
-        {
-            Bundle intent = RNPushNotificationQueue.getInstance().pop();
-            Log.d("RN EVENT LISTENER", "intent to string: " + intent.toString());
-          //  Log.d("RN EVENT LISTENER", "intent extras: " + intent.getExtras().toString());
-            mRNPushNotificationHelper.sendNotification(intent);
-        }
         Intent intent=new Intent();
         intent.setAction("com.kametventures.driven.POP_NOTIFICATION");
         getCurrentActivity().sendBroadcast(intent);
-
-        RNPushNotificationQueue.getInstance().setLoaded(true);
-        System.out.println("I have loaded!");
     }
 }

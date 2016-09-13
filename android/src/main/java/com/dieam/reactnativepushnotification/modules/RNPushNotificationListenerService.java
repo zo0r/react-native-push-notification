@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
-import android.util.Log;
 
 import java.util.List;
 
@@ -16,8 +15,6 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
-        Log.d("RN", "onMessageReceived");
-
         JSONObject data = getPushData(bundle.getString("data"));
         if (data != null) {
             if (!bundle.containsKey("message")) {
@@ -48,13 +45,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         bundle.putBoolean("userInteraction", false);
         intent.putExtra("notification", bundle);
 
-        if (!RNPushNotificationQueue.getInstance().isLoaded()) {
-            Log.d("RN", "Pushing new notification");
-        //    RNPushNotificationQueue.getInstance().push(intent);
-        } else {
-            Log.d("RN", "sendBroadcast" + intent.toString());
-            sendBroadcast(intent);
-        }
+        sendBroadcast(intent);
 
         if (!isRunning) {
             new RNPushNotificationHelper(getApplication()).sendNotification(bundle);
