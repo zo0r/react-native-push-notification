@@ -37,7 +37,7 @@ public class RNPushNotificationQueue {
 
     public void push(Bundle bundle) {
         tempIntent = bundle;
-        queue.add(bundle);
+       // queue.add(bundle);
     }
 
     public Bundle pop() {
@@ -46,7 +46,8 @@ public class RNPushNotificationQueue {
     }
 
     public boolean isEmpty() {
-        return queue.isEmpty();
+        //return queue.isEmpty();
+        return tempIntent == null;
     }
 
     public boolean isLoaded() {
