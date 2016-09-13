@@ -170,7 +170,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void onLoad() {
+    public void popInitialNotification() {
         Intent intent=new Intent();
         intent.setAction("com.kametventures.driven.POP_NOTIFICATION");
         getCurrentActivity().sendBroadcast(intent);
