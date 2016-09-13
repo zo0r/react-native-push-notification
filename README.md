@@ -222,21 +222,12 @@ In the location notification json specify the full file name:
 
 `PushNotification.cancelLocalNotifications(details);` 
 
-The behaviour of the `details` parameter differs between iOS and Android:
-
-The native iOS implementation allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
-matched notification is cancelled and its alerts removed from the notification centre.
+The the `details` parameter allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
+matched notification is cancelled and its alerts removed from the notification centre.  The RN docs suggest this is an optional parameter, but
+it is not.
 
 ```javascript
-PushNotification.cancelLocalNotifications({title: 'some title'});
-```
-
-For Android, the `details` parameter is a list of notification ids. As with iOS, matched *scheduled* notifications are canceled and removed 
-from the notification centre.
-
-Android example:
-```javascript
-PushNotification.cancelLocalNotifications(['123', 'abc']);
+PushNotification.cancelLocalNotifications({id: '123'});
 ```
 
 ### 2) cancelAllLocalNotifications
