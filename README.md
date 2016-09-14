@@ -242,13 +242,17 @@ Cancels all scheduled notifications AND clears the notifications alerts that are
 
 `PushNotification.setApplicationIconBadgeNumber(number: number)` 
 
-Works natively in iOS, and uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such with not work on all Android devices.
+Works natively in iOS.
+
+Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such with not work on all Android devices.
 
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
 
 ## iOS Only Methods
 `PushNotification.checkPermissions(callback: Function)` Check permissions
+
+`PushNotification.setApplicationIconBadgeNumber(number: number)` set badge number
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
 
