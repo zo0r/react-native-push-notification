@@ -165,10 +165,8 @@ Notification object example:
 }
 ```
 
-## Local and Schedule Notifications
+## Local Notifications
 `PushNotification.localNotification(details: Object)`
-
-`PushNotification.localNotificationSchedule(details: Object)`
 
 EXAMPLE:
 ```javascript
@@ -194,18 +192,25 @@ PushNotification.localNotification({
     userInfo: // (optional) default: null (object containing additional notification data)
 
     /* iOS and Android properties */
-    title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name in other devices)
+    title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name on other iOS devices)
     message: "My Notification Message" // (required)
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
 });
+```
 
+## Scheduled Notifications
+`PushNotification.localNotificationSchedule(details: Object)`
+
+EXAMPLE:
+```javascript
 PushNotification.localNotificationSchedule({
   message: "My Notification Message", // (required)
   date: new Date(Date.now() + (60 * 1000)) // in 60 secs
 });
 ```
+
 ## Custom sounds
 
 In android, add your custom sound file to `[project_root]/android/app/src/main/res/raw`
@@ -251,8 +256,6 @@ Same parameters as `PushNotification.localNotification()`
 
 ## iOS Only Methods
 `PushNotification.checkPermissions(callback: Function)` Check permissions
-
-`PushNotification.setApplicationIconBadgeNumber(number: number)` set badge number
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
 
