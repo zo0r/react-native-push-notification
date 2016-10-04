@@ -84,16 +84,18 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 		Platform.OS === 'android' ? this.callNative( 'addEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
 
-		if ( typeof options.popInitialNotification === 'undefined' ||
-			 options.popInitialNotification === true ) {
-			this.popInitialNotification(function(firstNotification) {
-				if ( firstNotification !== null ) {
-					this._onNotification(firstNotification, true);
-				}
-			}.bind(this));
-		}
-
 		this.isLoaded = true;
+	}
+
+	// Process popInitialNotification each time configure() is called, not only once-on-load.
+	// This allows us to popInitialNotification on a second call to configure().
+	if ( typeof options.popInitialNotification === 'undefined' ||
+		 options.popInitialNotification === true ) {
+		this.popInitialNotification(function(firstNotification) {
+			if ( firstNotification !== null ) {
+				this._onNotification(firstNotification, true);
+			}
+		}.bind(this));
 	}
 
 	if ( options.requestPermissions !== false ) {
