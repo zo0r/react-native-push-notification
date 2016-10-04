@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
@@ -120,7 +121,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }, intentFilter);
     }
 
-    private void notifyNotification(Bundle bundle) {
+    void notifyNotification(Bundle bundle) {
         String bundleString = convertJSON(bundle);
 
         WritableMap params = Arguments.createMap();
