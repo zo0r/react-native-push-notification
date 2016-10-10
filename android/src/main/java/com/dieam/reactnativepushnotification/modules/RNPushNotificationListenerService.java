@@ -2,27 +2,22 @@ package com.dieam.reactnativepushnotification.modules;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
-import com.dieam.reactnativepushnotification.modules.RNPushNotification;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONObject;
 
-import java.lang.Runnable;
 import java.util.List;
 import java.util.Random;
-
-import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
 
@@ -59,7 +54,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                     // Otherwise wait for construction, then send the notification
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
-                            sendNotification((ReactApplicationContext)context, bundle);
+                          sendNotification((ReactApplicationContext)context, bundle);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
@@ -89,24 +84,14 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Boolean isRunning = isApplicationRunning();
 
-        Intent intent = new Intent(this.getPackageName() + ".RNPushNotificationReceiveNotification");
+        RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
         bundle.putBoolean("foreground", isRunning);
         bundle.putBoolean("userInteraction", false);
-        intent.putExtra("notification", bundle);
-        sendBroadcast(intent);
+        jsDelivery.notifyNotification(bundle);
 
         // If contentAvailable is set to true, then send out a remote fetch event
         if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
-            Log.d(LOG_TAG, "Received a notification with remote fetch enabled");
-            Intent remoteFetchIntent = new Intent(this.getPackageName() + ".RNPushNotificationRemoteFetch");
-            remoteFetchIntent.putExtra("notification", bundle);
-            sendBroadcast(remoteFetchIntent);
-        }
-
-        if (!isRunning) {
-            // Run the notification on the JS thread
-            RNPushNotification pushNotification = new RNPushNotification(context);
-            pushNotification.notifyNotification(bundle);
+            jsDelivery.notifyRemoteFetch(bundle);
         }
     }
 
