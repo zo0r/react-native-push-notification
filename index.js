@@ -159,7 +159,7 @@ Notifications.localNotification = function(details: Object) {
 Notifications.localNotificationSchedule = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		this.handler.scheduleLocalNotification({
-			fireDate: details.date,
+			fireDate: details.date.toISOString(),
 			alertBody: details.message,
 			userInfo: details.userInfo
 		});
@@ -184,7 +184,7 @@ Notifications._onRemoteFetch = function(notificationData: Object) {
 	if ( this.onRemoteFetch !== false ) {
 		this.onRemoteFetch(notificationData)
 	}
-} 
+}
 
 Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( isFromBackground === null ) {
