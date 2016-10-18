@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationPublisher extends BroadcastReceiver {
     final static String NOTIFICATION_ID = "notificationId";
@@ -14,7 +15,12 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         int id = intent.getIntExtra(NOTIFICATION_ID, 0);
         long currentTime = System.currentTimeMillis();
-        Log.i("ReactSystemNotification", "NotificationPublisher: Prepare To Publish: " + id + ", Now Time: " + currentTime);
-        new RNPushNotificationHelper((Application)context.getApplicationContext(), context).sendNotification(intent.getExtras());
+
+        Log.i(LOG_TAG, "NotificationPublisher: Prepare To Publish: " + id + ", Now Time: " + currentTime);
+
+        Application applicationContext = (Application) context.getApplicationContext();
+
+        new RNPushNotificationHelper(applicationContext)
+                .sendNotification(intent.getExtras());
     }
 }

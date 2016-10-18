@@ -27,8 +27,16 @@ project.xcworkspace
 .idea
 .gradle
 local.properties
+*.iml
 
 # node.js
 #
 node_modules/*
 npm-debug.log
+
+android/android.iml
+android/gradle.properties
+android/gradle/
+android/gradlew
+android/gradlew.bat
+android/src/main/gen

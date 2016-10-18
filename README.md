@@ -1,8 +1,18 @@
 # React Native Push Notifications
-[![npm version](https://badge.fury.io/js/react-native-push-notification.svg)](http://badge.fury.io/js/react-native-push-notification)
-[![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?maxAge=2592000)](https://img.shields.io/npm/dm/react-native-push-notification.svg?maxAge=2592000)
+[![npm version](https://badge.fury.io/js/react-native-push-notification.svg?update=5)](http://badge.fury.io/js/react-native-push-notification)
+[![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?update=5)](http://badge.fury.io/js/react-native-push-notification)
 
 React Native Local and Remote Notifications for iOS and Android
+
+## Supported React Native Versions
+| Component Version     | RN Versions    | README     |
+|-----------------------|---------------|------------|
+| **1.0.7**          | **<= 0.27**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/f42723817f1687e0da23e6753eb8a9f0385b6ac5/README.md)   |
+| **1.0.8**          | **0.28**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/2eafd1961273ca6a82ad4dd6514fbf1d1a829089/README.md)   |
+| **2.0.1**          | **0.29**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/c7ab7cd84ea19e42047379aefaf568bb16a81936/README.md)   |
+| **2.0.2**          | **0.30, 0.31, 0.32**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/a0f7d44e904ba0b92933518e5bf6b444f1c90abb/README.md)   |
+| **>= 2.1.0**          | **>= 0.33**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/a359e5c00954aa324136eaa9808333d6ca246171/README.md)   |
+
 
 ## Installation
 `npm install react-native-push-notification`
@@ -21,6 +31,7 @@ The component uses PushNotificationIOS for the iOS part.
 dependencies {
     ...
 
+    compile project(':react-native-push-notification')
     compile ('com.google.android.gms:play-services-gcm:8.1.0') {
         force = true;
     }
@@ -30,13 +41,13 @@ dependencies {
 In your `AndroidManifest.xml`
 ```xml
     .....
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
         <receiver
@@ -48,8 +59,13 @@ In your `AndroidManifest.xml`
                 <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
-
-	<receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
+        
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
         <service
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
@@ -58,8 +74,7 @@ In your `AndroidManifest.xml`
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-        
-        .....
+     .....
 
 ```
 
@@ -71,70 +86,30 @@ include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 ```
 
-In `android/app/build.gradle`
-
-```gradle
-...
-
-dependencies {
-    ...
-
-    compile project(':react-native-push-notification')
-}
-```
-
-Register module (in `MainActivity.java`)
+Register module (in `MainApplication.java`)
 
 ```java
-import android.content.Intent; // <--- Import Intent
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
 
-public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
+public class MainApplication extends Application implements ReactApplication {
 
-  private ReactNativePushNotificationPackage mReactNativePushNotificationPackage; // <------ Add Package Variable
-
-    /**
-     * Returns the name of the main component registered from JavaScript.
-     * This is used to schedule rendering of the component.
-     */
-    @Override
-    protected String getMainComponentName() {
-        return "YOUR_APP_NAME";
-    }
-
-    /**
-     * Returns whether dev mode should be enabled.
-     * This enables e.g. the dev menu.
-     */
-    @Override
-    protected boolean getUseDeveloperSupport() {
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+      @Override
+      protected boolean getUseDeveloperSupport() {
         return BuildConfig.DEBUG;
-    }
+      }
 
-   /**
-   * A list of packages used by the app. If the app uses additional views
-   * or modules besides the default ones, add more packages here.
-   */
-    @Override
-    protected List<ReactPackage> getPackages() {
-      mReactNativePushNotificationPackage = new ReactNativePushNotificationPackage(this); // <------ Initialize the Package
+      @Override
+      protected List<ReactPackage> getPackages() {
+
       return Arrays.<ReactPackage>asList(
-        new MainReactPackage(),
-        new VectorIconsPackage(),
-        new FabricPackage(),
-        mReactNativePushNotificationPackage // <---- Add the Package
+          new MainReactPackage(),
+          new ReactNativePushNotificationPackage() // <---- Add the Package
       );
     }
+  };
 
-    // Add onNewIntent
-    @Override
-    protected void onNewIntent (Intent intent) {
-      super.onNewIntent(intent);
-
-      mReactNativePushNotificationPackage.newIntent(intent);
-    }
-
-    ....
+  ....
 }
 ```
 
@@ -154,7 +129,7 @@ PushNotification.configure({
         console.log( 'NOTIFICATION:', notification );
     },
 
-    // ANDROID ONLY: (optional) GCM Sender ID.
+    // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications) 
     senderID: "YOUR GCM SENDER ID",
 
     // IOS ONLY (optional): default: all - Permissions to register.
@@ -169,8 +144,8 @@ PushNotification.configure({
     popInitialNotification: true,
 
     /**
-      * IOS ONLY: (optional) default: true
-      * - Specified if permissions will requested or not,
+      * (optional) default: true
+      * - Specified if permissions (ios) and token (android and ios) will requested or not,
       * - if not, you must call PushNotificationsHandler.requestPermissions() later
       */
     requestPermissions: true,
@@ -184,40 +159,97 @@ Notification object example:
 ```javascript
 {
     foreground: false, // BOOLEAN: If the notification was received in foreground or not
+    userInteraction: false, // BOOLEAN: If the notification was opened by the user from the notification area or not
     message: 'My Notification Message', // STRING: The notification message
     data: {}, // OBJECT: The push data
 }
 ```
 
-## Local and Schedule Notifications
+## Local Notifications
 `PushNotification.localNotification(details: Object)`
-
-`PushNotification.localNotificationSchedule(details: Object)`
 
 EXAMPLE:
 ```javascript
 PushNotification.localNotification({
     /* Android Only Properties */
-    id: 0, // (optional) default: Autogenerated Unique ID
-    title: "My Notification Title", // (optional)
+    id: '0', // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
     ticker: "My Notification Ticker", // (optional)
-    autoCancel: true, (optional) default: true
+    autoCancel: true, // (optional) default: true
     largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
     smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
     bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
     subText: "This is a subText", // (optional) default: none
-    number: 10, // (optional) default: none (Cannot be zero)
     color: "red", // (optional) default: system default
+    vibrate: true, // (optional) default: true
+    vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+    tag: 'some_tag', // (optional) add tag to message
+    group: "group", // (optional) add group to message
+    ongoing: false, // (optional) set whether this is an "ongoing" notification
+
+    /* iOS only properties */
+    alertAction: // (optional) default: view
+    category: // (optional) default: null
+    userInfo: // (optional) default: null (object containing additional notification data)
 
     /* iOS and Android properties */
-    message: "My Notification Message" // (required)
-});
-
-PushNotification.localNotificationSchedule({
-	message: "My Notification Message", // (required)
-	date: new Date(Date.now() + (60 * 1000)) // in 60 secs
+    title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name on other iOS devices)
+    message: "My Notification Message", // (required)
+    playSound: false, // (optional) default: true
+    soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+    number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
 });
 ```
+
+## Scheduled Notifications
+`PushNotification.localNotificationSchedule(details: Object)`
+
+EXAMPLE:
+```javascript
+PushNotification.localNotificationSchedule({
+  message: "My Notification Message", // (required)
+  date: new Date(Date.now() + (60 * 1000)) // in 60 secs
+});
+```
+
+## Custom sounds
+
+In android, add your custom sound file to `[project_root]/android/app/src/main/res/raw`
+
+In iOS, add your custom sound file to the project `Resources` in xCode.
+
+In the location notification json specify the full file name:
+
+    soundName: 'my_sound.mp3'
+
+## Cancelling notifications
+
+### 1) cancelLocalNotifications
+
+`PushNotification.cancelLocalNotifications(details);` 
+
+The the `details` parameter allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
+matched notification is cancelled and its alerts removed from the notification centre.  The RN docs suggest this is an optional parameter, but
+it is not.
+
+```javascript
+PushNotification.cancelLocalNotifications({id: '123'});
+```
+
+### 2) cancelAllLocalNotifications
+
+`PushNotification.cancelAllLocalNotifications()` 
+
+Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
+
+*NOTE: there is currently no api for removing specific notification alerts from the notification centre.*
+
+## Set application badge icon
+
+`PushNotification.setApplicationIconBadgeNumber(number: number)` 
+
+Works natively in iOS.
+
+Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such with not work on all Android devices.
 
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
@@ -225,13 +257,6 @@ Same parameters as `PushNotification.localNotification()`
 ## iOS Only Methods
 `PushNotification.checkPermissions(callback: Function)` Check permissions
 
-`PushNotification.setApplicationIconBadgeNumber(number: number)` set badge number
-
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
 
 `PushNotification.abandonPermissions()` Abandon permissions
-
-### TODO
-- [X] Add `PushNotification.localNotificationSchedule()` Android support
-- [ ] Restore Android local notifications after reboot
-
