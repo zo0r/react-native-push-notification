@@ -197,6 +197,8 @@ PushNotification.localNotification({
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+    repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
+    actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
 ```
 
@@ -243,13 +245,56 @@ Cancels all scheduled notifications AND clears the notifications alerts that are
 
 *NOTE: there is currently no api for removing specific notification alerts from the notification centre.*
 
+## Repeating Notifications ##
+
+(Android only) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
+
+For iOS, the repeating notification should land soon. It has already been merged to the [master](https://github.com/facebook/react-native/pull/10337)
+
+## Notification Actions ##
+
+(Android only) [Refer](https://github.com/zo0r/react-native-push-notification/issues/151) to this issue to see an example of a notification action.
+
+Two things are required to setup notification actions.
+
+### 1) Specify notification actions for a notification
+This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notificaiton action that will be presented with the notification.
+
+For e.g. `actions: '["Accept", "Reject"]'  // Must be in string format` 
+ 
+The array itself is specified in string format to circumvent some problems because of the way JSON arrays are handled by react-native android bridge.
+
+### 2) Specify handlers for the notification actions
+For each action specified in the `actions` field, we need to add a handler that is called when the user clicks on the action. This can be done in the `componentWillMount` of your main app file or in a separate file which is imported in your main app file. Notification actions handlers can be configured as below:
+
+```
+import PushNotificationAndroid from 'react-native-push-notification'
+
+(function() {
+  // Register all the valid actions for notifications here and add the action handler for each action
+  PushNotificationAndroid.registerNotificationActions(['Accept','Reject','Yes','No']);
+  DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+    console.log ('Notification action received: ' + action);
+    const info = JSON.parse(action.dataJSON);
+    if (info.action == 'Accept') {
+      // Do work pertaining to Accept action here
+    } else if (info.action == 'Reject') {
+      // Do work pertaining to Reject action here
+    }
+    // Add all the required actions handlers
+  });
+})();
+```
+
+For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
+
 ## Set application badge icon
 
 `PushNotification.setApplicationIconBadgeNumber(number: number)` 
 
 Works natively in iOS.
 
-Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such with not work on all Android devices.
+Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such will not work on all Android devices.
 
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
