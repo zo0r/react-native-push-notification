@@ -313,7 +313,14 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            // I think this needs a comment - whats it for?
+            // Remove the notification from the shared preferences once it has been shown
+            // to avoid showing the notification again when the phone is rebooted. If the
+            // notification is not removed, then every time the phone is rebooted, we will
+            // try to reschedule all the notifications stored in shared preferences and since
+            // these notifications will be in the past time, they will be shown immediately
+            // to the user which we shouldn't do. So, remove the notification from the shared
+            // preferences once it has been shown to the user. If it is a repeating notification
+            // it will be scheduled again.
             if (scheduledNotificationsPersistence.getString(notificationIdString, null) != null) {
                 SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
                 editor.remove(notificationIdString);
