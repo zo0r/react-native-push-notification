@@ -197,7 +197,8 @@ PushNotification.localNotification({
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-    repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number if milliseconds between each interval
+    repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
+    actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
 ```
 
@@ -266,6 +267,7 @@ The array itself is specified in string format to circumvent some problems becau
 ### 2) Specify handlers for the notification actions
 For each action specified in the `actions` field, we need to add a handler that is called when the user clicks on the action. This can be done in the `componentWillMount` of your main app file or in a separate file which is imported in your main app file. Notification actions handlers can be configured as below:
 
+```
 import PushNotificationAndroid from 'react-native-push-notification'
 
 (function() {
