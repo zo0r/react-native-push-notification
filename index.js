@@ -122,6 +122,8 @@ Notifications.unregister = function() {
  */
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
+		// https://developer.apple.com/reference/uikit/uilocalnotification
+		
 		let soundName = 'default'; // play sound (and vibrate) as default behaviour
 
 		if(details.hasOwnProperty("playSound")) {
