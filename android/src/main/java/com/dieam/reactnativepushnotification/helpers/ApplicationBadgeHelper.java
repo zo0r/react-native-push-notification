@@ -31,17 +31,28 @@ public class ApplicationBadgeHelper {
 
   private Boolean applyAutomaticBadger;
   private Boolean applySamsungBadger;
+  private boolean triedComponentName;
   private ComponentName componentName;
 
   private ApplicationBadgeHelper() {
   }
 
   public void setApplicationIconBadgeNumber(Context context, int number) {
-    if (null == componentName) {
-      componentName = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName()).getComponent();
+    if (null == componentName && !triedComponentName) {
+      triedComponentName = true;
+      componentName = tryComponentName(context);
     }
     tryAutomaticBadge(context, number);
     tryLegacySamsungBadge(context, number);
+  }
+
+  private ComponentName tryComponentName(Context context) {
+    try {
+      return context.getPackageManager().getLaunchIntentForPackage(context.getPackageName()).getComponent();
+    } catch (Exception e) {
+      FLog.w(LOG_TAG, "Failed to resolve component name; cannot attempt Samsung badge.", e);
+      return null;
+    }
   }
 
   private void tryAutomaticBadge(Context context, int number) {
@@ -89,6 +100,9 @@ public class ApplicationBadgeHelper {
   }
 
   private boolean applyLegacySamsungBadge(Context context, int number) {
+    if (componentName == null) {
+      return false;
+    }
     try {
       LEGACY_SAMSUNG_BADGER.executeBadge(context, componentName, number);
       return true;
