@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import android.app.Application;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Random;
 
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+
 public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
@@ -37,6 +40,8 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                 ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
             }
         }
+
+        Log.e(LOG_TAG, "RNPushNotificationListenerService.onMessageReceived: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -92,6 +97,14 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         // If contentAvailable is set to true, then send out a remote fetch event
         if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
             jsDelivery.notifyRemoteFetch(bundle);
+        }
+
+        Log.e(LOG_TAG, "RNPushNotificationListenerService.sendNotification: " + bundle);
+
+        if (!isRunning) {
+            Application applicationContext = (Application) context.getApplicationContext();
+            RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+            pushNotificationHelper.sendNotification(bundle);
         }
     }
 
