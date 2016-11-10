@@ -87,10 +87,10 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
-        Boolean isRunning = isApplicationRunning();
+        Boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
-        bundle.putBoolean("foreground", isRunning);
+        bundle.putBoolean("foreground", isForeground);
         bundle.putBoolean("userInteraction", false);
         jsDelivery.notifyNotification(bundle);
 
@@ -101,14 +101,14 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Log.e(LOG_TAG, "RNPushNotificationListenerService.sendNotification: " + bundle);
 
-        if (!isRunning) {
+        if (!isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendNotification(bundle);
         }
     }
 
-    private boolean isApplicationRunning() {
+    private boolean isApplicationInForeground() {
         ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         for (RunningAppProcessInfo processInfo : processInfos) {
