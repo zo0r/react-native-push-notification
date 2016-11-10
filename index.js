@@ -203,7 +203,8 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				data: data.getData(),
 				badge: data.getBadgeCount(),
 				alert: data.getAlert(),
-				sound: data.getSound()
+				sound: data.getSound(),
+				finish: data.finish
 			});
 		} else {
 			var notificationData = {
