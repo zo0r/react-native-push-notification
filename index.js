@@ -124,17 +124,11 @@ Notifications.unregister = function() {
 Notifications.localNotification = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
 		// https://developer.apple.com/reference/uikit/uilocalnotification
-		
-		let soundName = 'default'; // play sound (and vibrate) as default behaviour
 
-		if(details.hasOwnProperty("playSound")) {
-			if(details.playSound) {
-				if(details.soundName) {
-					soundName = details.soundName;
-				}
-			} else {
-				soundName = '';// empty string results in no sound (and no vibration)
-			}
+		let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
+
+		if (details.hasOwnProperty('playSound') && !details.playSound) {
+			soundName = ''; // empty string results in no sound (and no vibration)
 		}
 
 		// for valid fields see: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html
