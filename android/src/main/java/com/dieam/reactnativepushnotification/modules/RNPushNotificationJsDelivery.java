@@ -2,7 +2,6 @@ package com.dieam.reactnativepushnotification.modules;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -13,8 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Set;
-
-import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 /**
  * Created by lambert on 2016/10/09.

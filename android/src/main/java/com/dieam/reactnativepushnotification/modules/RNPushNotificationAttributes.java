@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.facebook.react.bridge.ReadableType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,7 +125,7 @@ public class RNPushNotificationAttributes {
 
     /**
      * User to find notifications:
-     *
+     * <p>
      * https://github.com/facebook/react-native/blob/master/Libraries/PushNotificationIOS/RCTPushNotificationManager.m#L294
      *
      * @param userInfo map of fields to match
