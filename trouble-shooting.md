@@ -27,9 +27,9 @@ There are a number of different types of notification, and they have subtly diff
 
 ## 1. local notifications
 
-Local notifications are sent from your JS/RN app and appear as alerts in the notification centre, where they sit until the user removes them.  They can contain text as well as sounds, vibrations images and more etc.  Different operating systems support different features.  You can send one by calling the `PushNotification.localNotification` method as described in the docs.  Local notifications can also be scheduled to run at a later date.
+Local notifications are sent from your JS/RN app and appear as alerts in the notification centre, where they sit until the user removes them.  They can contain text as well as sounds, vibrations, colour, images etc.  Different operating systems support different features.  You can send one by calling the `PushNotification.localNotification` method as described in the docs.  Local notifications can also be scheduled to run at a later date.
 
-If a user taps an alert your app will be started or brought to the foreground and `onNotification` will be called.
+If a user taps an alert, your app will be started or brought to the foreground and `onNotification` will be called.
 
 #### Android local notifications
 
@@ -62,7 +62,7 @@ Your server will send something like this to GCM:
 }
 ```
 
-Your app will not be invoked.
+Your app will not be invoked when this is received.
 
 #### iOS _noisy_ remote push notifications
 
@@ -81,7 +81,7 @@ Your server will send something like this to APNS:
 }
 ```
 
-Your app will not be invoked if it is running in the background, the notification will result in an alert in the notification centre.  If you app is running in the foreground, `onNotification` will be called with something like:
+Your app will not be invoked if it is running in the background, and the notification will result in an alert in the notification centre.  If you app is running in the foreground, `onNotification` will be called with something like:
 
 ```json
 {
