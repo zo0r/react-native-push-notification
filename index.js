@@ -209,6 +209,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 		} else {
 			var notificationData = {
 				foreground: ! isFromBackground,
+  			finish: () => {},
 				...data
 			};
 
