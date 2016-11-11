@@ -41,7 +41,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             }
         }
 
-        Log.e(LOG_TAG, "RNPushNotificationListenerService.onMessageReceived: " + bundle);
+        Log.v(LOG_TAG, "onMessageReceived: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -99,7 +99,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        Log.e(LOG_TAG, "RNPushNotificationListenerService.sendNotification: " + bundle);
+        Log.v(LOG_TAG, "sendNotification: " + bundle);
 
         if (!isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
