@@ -2,6 +2,13 @@
 
 Before submitting an issue please take a moment to read though the following. Most issues are common and some solutions are listed here.
 
+Known bugs and issues:
+
+ * (Android) Tapping an alert in the notification centre will sometimes not result in `onNotification` being called.
+ * (Android) Not all local notification features are supported yet (PRs welcome)
+ * (iOS) The OS can penalise your app for not calling the completion handler and will stop (or delay) sending notifications to your app. This will be supported from RN-0.38.
+ 
+
 # Android
 
  * Use a physical device for remote push notifications. They will not work on an emulator.
@@ -14,23 +21,24 @@ Before submitting an issue please take a moment to read though the following. Mo
 # iOS
 
  * Use a physical device for remote push notifications. They will not work on a simulator.
- * If remote push notifications stop after a while its possible that the OS has penalised your app for not calling the `completionHandler`.  This will be supported from RN-0.38.
-
+ 
 # About notifications...
 
-There are a number of different types of notification, and they have subtly different behaviours.  There are essentially 4 types of notification, let's call them _local notifications_ (1), _noisy remote push notifications_ (2), _silent remote push notifications_ (3) and _mixed remote push notifications_ (4).
+There are a number of different types of notification, and they have subtly different behaviours.  There are essentially 4 types, let's call them _local notifications_ (1), _noisy remote push notifications_ (2), _silent remote push notifications_ (3) and _mixed remote push notifications_ (4).
 
 ## 1. local notifications
 
-Local notifications are sent from your JS/RN app to the notification centre, where they sit until either the user removes them.  They can contain text, as well as sounds, vibrations etc.  Different operating systems support different features.  You can send one by calling the `PushNotification.localNotification` method as described in the docs.  Local notifications can also be scheduled to run at a later date.
+Local notifications are sent from your JS/RN app to the notification centre, where they sit until either the user removes them.  They can contain text as well as sounds, vibrations images and more etc.  Different operating systems support different features.  You can send one by calling the `PushNotification.localNotification` method as described in the docs.  Local notifications can also be scheduled to run at a later date.
 
 #### Android local notifications
 
-These are highly customisable (more so than _noisy_ remote push notifications) **but** this library doesn't yet support all the features, such as "grouping".
+These are highly customisable (more so than _noisy_ remote push notifications) **but** this library doesn't yet support all features, for example you cannot stack notification using the "grouping" feature.
 
 ## 2. _noisy_ remote push notifications
 
-_Noisy_ remote push notifications are sent from a server, such as the Apple Push Notification Service (APNS), or the Google Cloud Messaging Service (GCM).  They appear only in the notification centre and do not interact with your application in any way when they are delivered.  Like local notifications they have a visual (or audible) element.
+_Noisy_ remote push notifications are sent from a server, such as the Apple Push Notification Service (APNS), or the Google Cloud Messaging Service (GCM).  They appear only as alerts in the notification centre and may not interact with your application in any way when they are delivered.  Like local notifications they have a visual (or audible) element.
+
+When a user taps an alert in the notification centre that was created by a _noisy_ remote push notification, your app will be either started or brought to the foreground.  The `onNotification` method will fired.
 
 #### Android _noisy_ remote push notifications
 
@@ -52,6 +60,50 @@ Your server will send something like this to GCM:
   }
 }
 ```
+
+Your app will not be invoked.
+
+#### iOS _noisy_ remote push notifications
+
+Your server will send something like this to APNS:
+
+```json
+{
+  "aps": {
+    "alert": {
+      "body": "the body text",
+      "title": "the title"
+    },
+    "badge": 6,
+    "sound": " default"
+  }
+}
+```
+
+Your app will not be invoked if it is running in the background, the notification will result in an alert in the notification centre.  If you app is running in the foreground, `onNotification` will be called with something like:
+
+```json
+{
+  "foreground": true,
+  "userInteraction": false,
+  "message": {
+    "title": "the title",
+    "body": "the body text"
+  },
+  "data": {
+    "remote": true,
+    "notificationId": "A3DC5EEE-FF97-4695-B562-3A7E89E43199"
+  },
+  "badge": 4,
+  "alert": {
+    "title": "the title",
+    "body": "the body text"
+  },
+  "sound": " default"
+}
+```
+
+Tapping the alert in the notification centre will start or bring the app to the foreground and `onNotification` will be called.
 
 ## 3. _silent_ remote push notifications
 
@@ -75,7 +127,7 @@ Your server will send something like this to GCM:
 }
 ```
 
-The crucial bit is presence of the _data_ field.  Your app will receive something like:
+The crucial bit is presence of the `data` field.  Your RN/JS app will receive something like:
 
 ```json
 {
@@ -89,6 +141,33 @@ The crucial bit is presence of the _data_ field.  Your app will receive somethin
 ```
 
 If your Android app is not running when a _silent_ notification is received then this library will start it.  It will be started in the background however, and if the OS starts your app in this way it will not start the react-native lifecycle.  This means that if your notification delivery code relies on the react-native lifecycle then it will not get invoked in this situation.  You need to structure your app in such a way that `PushNotification.configure` gets called as a side effect of merely importing the root `index.android.js` file.
+
+#### iOS _silent_ remote push notifications
+
+Send something like this to the APNS:
+
+```json
+{
+  "aps": {
+    "content-available": 1
+  },
+  "payload": "{\"your-key\":\"your-value\"}"
+}
+```
+
+The crucial bit is presence of the `"content-available": 1` field.  Your RN/JS app will receive something like:
+
+```json
+{
+  "foreground": true,
+  "userInteraction": false,
+  "data": {
+    "remote": true,
+    "payload": "{\"your-key\":\"your-value\"}",
+    "notificationId": "8D8C24FF-B4F0-4D13-BA0E-295D0E474279"
+  }
+}
+```
 
 ## 4. _mixed_ remote push notifications
 
@@ -113,3 +192,23 @@ Android doesn't directly support mixed notifications.  If you try to combine the
 ```
 
 The resulting local notification will include the message as well as a few other (optional) fields: _title_, _sound_ and _colour_
+
+#### iOS _mixed_ remote push notifications
+
+Just combine the above _silent_ and _noisy_ notifications and send to APNS:
+
+```json
+{
+  "aps": {
+    "alert": {
+      "body": "body 16:03:49.889",
+      "title": "title"
+    },
+    "badge": 1,
+    "sound": "default"
+  },
+  "payload": "{\"your-key\":\"your-value\"}"
+}
+```
+
+It will be delivered to both the notification centre **and** your app if the app is running in the background, but only to your app if its running in the foreground.
