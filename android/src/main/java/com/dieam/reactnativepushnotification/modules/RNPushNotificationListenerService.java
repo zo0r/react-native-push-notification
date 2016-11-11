@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import android.app.Application;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Random;
 
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+
 public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
@@ -37,6 +40,8 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                 ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
             }
         }
+
+        Log.e(LOG_TAG, "RNPushNotificationListenerService.onMessageReceived: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -82,10 +87,10 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
-        Boolean isRunning = isApplicationRunning();
+        Boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
-        bundle.putBoolean("foreground", isRunning);
+        bundle.putBoolean("foreground", isForeground);
         bundle.putBoolean("userInteraction", false);
         jsDelivery.notifyNotification(bundle);
 
@@ -93,9 +98,17 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
             jsDelivery.notifyRemoteFetch(bundle);
         }
+
+        Log.e(LOG_TAG, "RNPushNotificationListenerService.sendNotification: " + bundle);
+
+        if (!isForeground) {
+            Application applicationContext = (Application) context.getApplicationContext();
+            RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+            pushNotificationHelper.sendNotification(bundle);
+        }
     }
 
-    private boolean isApplicationRunning() {
+    private boolean isApplicationInForeground() {
         ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         for (RunningAppProcessInfo processInfo : processInfos) {
