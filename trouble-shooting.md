@@ -4,12 +4,11 @@ Before submitting an issue please take a moment to read though the following. Mo
 
 Known bugs and issues:
 
- * (Android) Tapping an alert in the notification centre will sometimes not result in `onNotification` being called.
+ * (Android) Tapping an alert in the notification centre will sometimes not result in `onNotification` being called [issue 281](https://github.com/zo0r/react-native-push-notification/issues/281)
  * (Android) Not all local notification features are supported yet (PRs welcome)
- * (iOS) The OS can penalise your app for not calling the completion handler and will stop (or delay) sending notifications to your app. This will be supported from RN-0.38.
+ * (iOS) The OS can penalise your app for not calling the completion handler and will stop (or delay) sending notifications to your app. This will be supported from RN-0.38 [PR 227](https://github.com/zo0r/react-native-push-notification/pull/277)
  
-
-# Android
+# Android tips
 
  * Use a physical device for remote push notifications. They will not work on an emulator.
  * Try _grepping_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto whats happening.
@@ -18,7 +17,7 @@ Known bugs and issues:
  * Take a look at the [google docs](https://developers.google.com/cloud-messaging/http-server-ref#notification-payload-support) for more about remote push notifications.
  * Bages do not work on all devices, you should see an error being logged once when the app starts if the setting a badge isn't supported
 
-# iOS
+# iOS tips
 
  * Use a physical device for remote push notifications. They will not work on a simulator.
  
@@ -28,7 +27,9 @@ There are a number of different types of notification, and they have subtly diff
 
 ## 1. local notifications
 
-Local notifications are sent from your JS/RN app to the notification centre, where they sit until either the user removes them.  They can contain text as well as sounds, vibrations images and more etc.  Different operating systems support different features.  You can send one by calling the `PushNotification.localNotification` method as described in the docs.  Local notifications can also be scheduled to run at a later date.
+Local notifications are sent from your JS/RN app and appear as alerts in the notification centre, where they sit until the user removes them.  They can contain text as well as sounds, vibrations images and more etc.  Different operating systems support different features.  You can send one by calling the `PushNotification.localNotification` method as described in the docs.  Local notifications can also be scheduled to run at a later date.
+
+If a user taps an alert your app will be started or brought to the foreground and `onNotification` will be called.
 
 #### Android local notifications
 
