@@ -17,12 +17,18 @@ React Native Local and Remote Notifications for iOS and Android
 ## Installation
 `npm install react-native-push-notification`
 
-## iOS Installation
+`react-native link`
+
+## Issues
+
+Having a problem?  Read the [troubleshooting](./trouble-shooting.md) guide before raising an issue.
+
+## iOS manual Installation
 The component uses PushNotificationIOS for the iOS part.
 
 [Please see: PushNotificationIOS](https://facebook.github.io/react-native/docs/pushnotificationios.html#content)
 
-## Android Installation
+## Android manual Installation
 
 **NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `8.1.0` for your version):**
 ```gradle
@@ -86,7 +92,7 @@ include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 ```
 
-Register module (in `MainApplication.java`)
+Manually register module in `MainApplication.java` (if you did not use `react-native link`):
 
 ```java
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
