@@ -11,16 +11,18 @@ Known bugs and issues:
 # Android tips
 
  * Use a physical device for remote push notifications. They will not work on an emulator.
- * Try _grepping_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto whats happening.
+ * Try _"grepping"_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto whats happening.
  * Your CGM `senderID` can be obtained by obtaining a file from your google console called `google-services.json`.  From this file use the `project_number` as your ID.
  * `Native module cannot be null` error happens when your project isn't _linked_ correctly.  Please re-read the installation instructions, specifically the bit about `react-native link` and `MainApplication.java`.
  * Take a look at the [google docs](https://developers.google.com/cloud-messaging/http-server-ref#notification-payload-support) for more about remote push notifications.
- * Bages do not work on all devices, you should see an error being logged once when the app starts if the setting a badge isn't supported
+ * Bages do not work on all devices, you should see an error being logged once when the app starts if the setting a badge isn't supported.
 
 # iOS tips
 
  * Use a physical device for remote push notifications. They will not work on a simulator.
- 
+ * Add a log statement (`NSLog(@"push-notification received: %@", notification);`) to your `didReceiveRemoteNotification` method in `AppDelegate.m`
+ * Look out for `APNS` log messages in the device logs.
+  
 # About notifications...
 
 There are a number of different types of notification, and they have subtly different behaviours.  There are essentially 4 types, let's call them _local notifications_ (1), _noisy remote push notifications_ (2), _silent remote push notifications_ (3) and _mixed remote push notifications_ (4).
@@ -169,6 +171,8 @@ The crucial bit is presence of the `"content-available": 1` field.  Your RN/JS a
   }
 }
 ```
+
+After you have processed the notification you must call isn't `finish` method (as of RN 0.38).
 
 ## 4. _mixed_ remote push notifications
 
