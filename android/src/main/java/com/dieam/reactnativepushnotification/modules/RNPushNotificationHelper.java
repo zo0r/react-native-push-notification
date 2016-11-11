@@ -128,7 +128,7 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendNotification(Bundle bundle) {
+    public void sendToNotificationCentre(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {

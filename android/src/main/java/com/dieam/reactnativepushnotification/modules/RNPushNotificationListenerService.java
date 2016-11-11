@@ -54,12 +54,12 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                 ReactContext context = mReactInstanceManager.getCurrentReactContext();
                 // If it's constructed, send a notification
                 if (context != null) {
-                    sendNotification((ReactApplicationContext)context, bundle);
+                    handleRemotePushNotification((ReactApplicationContext)context, bundle);
                 } else {
                     // Otherwise wait for construction, then send the notification
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
-                          sendNotification((ReactApplicationContext)context, bundle);
+                          handleRemotePushNotification((ReactApplicationContext)context, bundle);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
@@ -79,7 +79,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         }
     }
 
-    private void sendNotification(ReactApplicationContext context, Bundle bundle) {
+    private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
         if (bundle.getString("id") == null) {
@@ -104,7 +104,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         if (!isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
-            pushNotificationHelper.sendNotification(bundle);
+            pushNotificationHelper.sendToNotificationCentre(bundle);
         }
     }
 
