@@ -158,7 +158,8 @@ Notifications.localNotificationSchedule = function(details: Object) {
 		this.handler.scheduleLocalNotification({
 			fireDate: details.date.toISOString(),
 			alertBody: details.message,
-			userInfo: details.userInfo
+			userInfo: details.userInfo,
+			repeatInterval: details.repeatType
 		});
 	} else {
 		details.fireDate = details.date.getTime();
