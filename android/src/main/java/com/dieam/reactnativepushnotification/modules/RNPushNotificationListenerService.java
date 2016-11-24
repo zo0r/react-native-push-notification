@@ -2,6 +2,7 @@ package com.dieam.reactnativepushnotification.modules;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Random;
 
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+
 public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
@@ -31,12 +34,20 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             if (!bundle.containsKey("title")) {
                 bundle.putString("title", data.optString("title", null));
             }
+            if (!bundle.containsKey("sound")) {
+                bundle.putString("soundName", data.optString("sound", null));
+            }
+            if (!bundle.containsKey("color")) {
+                bundle.putString("color", data.optString("color", null));
+            }
 
             final int badge = data.optInt("badge", -1);
             if (badge >= 0) {
                 ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
             }
         }
+
+        Log.v(LOG_TAG, "onMessageReceived: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -45,16 +56,16 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         handler.post(new Runnable() {
             public void run() {
                 // Construct and load our normal React JS code bundle
-                ReactInstanceManager mReactInstanceManager = ((ReactApplication)getApplication()).getReactNativeHost().getReactInstanceManager();
+                ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplication()).getReactNativeHost().getReactInstanceManager();
                 ReactContext context = mReactInstanceManager.getCurrentReactContext();
                 // If it's constructed, send a notification
                 if (context != null) {
-                    sendNotification((ReactApplicationContext)context, bundle);
+                    handleRemotePushNotification((ReactApplicationContext) context, bundle);
                 } else {
                     // Otherwise wait for construction, then send the notification
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
-                          sendNotification((ReactApplicationContext)context, bundle);
+                            handleRemotePushNotification((ReactApplicationContext) context, bundle);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
@@ -74,7 +85,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         }
     }
 
-    private void sendNotification(ReactApplicationContext context, Bundle bundle) {
+    private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
         if (bundle.getString("id") == null) {
@@ -82,10 +93,10 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
-        Boolean isRunning = isApplicationRunning();
+        Boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
-        bundle.putBoolean("foreground", isRunning);
+        bundle.putBoolean("foreground", isForeground);
         bundle.putBoolean("userInteraction", false);
         jsDelivery.notifyNotification(bundle);
 
@@ -93,9 +104,17 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
             jsDelivery.notifyRemoteFetch(bundle);
         }
+
+        Log.v(LOG_TAG, "sendNotification: " + bundle);
+
+        if (!isForeground) {
+            Application applicationContext = (Application) context.getApplicationContext();
+            RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+            pushNotificationHelper.sendToNotificationCentre(bundle);
+        }
     }
 
-    private boolean isApplicationRunning() {
+    private boolean isApplicationInForeground() {
         ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         for (RunningAppProcessInfo processInfo : processInfos) {

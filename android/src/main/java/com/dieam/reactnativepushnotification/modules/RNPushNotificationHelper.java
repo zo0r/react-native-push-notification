@@ -128,7 +128,7 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendNotification(Bundle bundle) {
+    public void sendToNotificationCentre(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -137,7 +137,8 @@ public class RNPushNotificationHelper {
             }
 
             if (bundle.getString("message") == null) {
-                Log.e(LOG_TAG, "No message specified for the notification: " + bundle);
+                // this happens when a 'data' notification is received - we do not synthesize a local notification in this case
+                Log.d(LOG_TAG, "Cannot send to notification centre because there is no 'message' field in: " + bundle);
                 return;
             }
 
@@ -419,7 +420,7 @@ public class RNPushNotificationHelper {
                 String notificationAttributesJson = scheduledNotificationsPersistence.getString(id, null);
                 if (notificationAttributesJson != null) {
                     RNPushNotificationAttributes notificationAttributes = fromJson(notificationAttributesJson);
-                    if(notificationAttributes.matches(userInfo)) {
+                    if (notificationAttributes.matches(userInfo)) {
                         cancelScheduledNotification(id);
                     }
                 }
