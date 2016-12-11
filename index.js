@@ -155,23 +155,32 @@ Notifications.localNotification = function(details: Object) {
  */
 Notifications.localNotificationSchedule = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
-
 		let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
 		if (details.hasOwnProperty('playSound') && !details.playSound) {
 			soundName = ''; // empty string results in no sound (and no vibration)
 		}
 
-		this.handler.scheduleLocalNotification({
+		const iosDetails = {
 			fireDate: details.date.toISOString(),
 			alertBody: details.message,
 			soundName: soundName,
 			applicationIconBadgeNumber: parseInt(details.number, 10),
-			userInfo: details.userInfo
-		});
+			userInfo: details.userInfo,
+			repeatInterval: details.repeatType
+		}
+		// ignore Android only repeatType
+		if (!details.repeatType || details.repeatType === 'time') {
+			delete iosDetails.repeatInterval;
+		}
+		this.handler.scheduleLocalNotification(iosDetails);
 	} else {
 		details.fireDate = details.date.getTime();
 		delete details.date;
+		// ignore iOS only repeatType
+		if (['year', 'month'].includes(details.repeatType)) {
+			delete details.repeatType;
+		}
 		this.handler.scheduleLocalNotification(details);
 	}
 };
