@@ -257,6 +257,10 @@ public class RNPushNotificationHelper {
                 notification.setOngoing(bundle.getBoolean("ongoing"));
             }
 
+            if (bundle.containsKey("usesChronometer") || bundle.getBoolean("usesChronometer")) {
+              notification.setUsesChronometer(bundle.getBoolean("usesChronometer"));
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 notification.setCategory(NotificationCompat.CATEGORY_CALL);
 
