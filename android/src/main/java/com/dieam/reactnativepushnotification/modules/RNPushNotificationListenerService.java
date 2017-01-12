@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.os.Build.VERSION;
+import android.app.usage.UsageStatsManager;
+import android.app.usage.UsageStats;
+import android.content.Context;
+
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
@@ -15,10 +20,13 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.google.android.gms.gcm.GcmListenerService;
 
+
 import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
@@ -93,7 +101,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
-        Boolean isForeground = false; //isApplicationInForeground();
+        Boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
         bundle.putBoolean("foreground", isForeground);
@@ -115,7 +123,12 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     }
 
     private boolean isApplicationInForeground() {
+        if(VERSION.SDK_INT < 21){
+            return appInForegroundForOldApi();
+        }
         ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningServiceInfo> serviceInfos = activityManager.getRunningServices(Integer.MAX_VALUE);        
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         for (RunningAppProcessInfo processInfo : processInfos) {
             if (processInfo.processName.equals(getApplication().getPackageName())) {
@@ -127,5 +140,12 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             }
         }
         return false;
+    }
+
+
+    private boolean appInForegroundForOldApi() {        
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        String mm=(manager.getRunningTasks(1).get(0)).topActivity.getPackageName();
+        return (mm.equals(getApplication().getPackageName()));
     }
 }
