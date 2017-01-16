@@ -430,6 +430,10 @@ public class RNPushNotificationHelper {
         }
     }
 
+    public void cancelScheduledNotificationById(String notificationIDString) {
+        cancelScheduledNotification(notificationIDString);
+    }
+
     private void cancelScheduledNotification(String notificationIDString) {
         Log.i(LOG_TAG, "Cancelling notification: " + notificationIDString);
 
