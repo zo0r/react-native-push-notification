@@ -155,10 +155,17 @@ Notifications.localNotification = function(details: Object) {
  */
 Notifications.localNotificationSchedule = function(details: Object) {
 	if ( Platform.OS === 'ios' ) {
+        let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
+
+        if (details.hasOwnProperty('playSound') && !details.playSound) {
+            soundName = ''; // empty string results in no sound (and no vibration)
+        }
+
 		this.handler.scheduleLocalNotification({
 			fireDate: details.date.toISOString(),
 			alertBody: details.message,
-			userInfo: details.userInfo
+			userInfo: details.userInfo,
+            soundName: soundName
 		});
 	} else {
 		details.fireDate = details.date.getTime();
