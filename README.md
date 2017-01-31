@@ -23,6 +23,10 @@ React Native Local and Remote Notifications for iOS and Android
 
 Having a problem?  Read the [troubleshooting](./trouble-shooting.md) guide before raising an issue.
 
+## Pull Reuqests
+
+[Please read...](./submitting-a-pull-request.md)
+
 ## iOS manual Installation
 The component uses PushNotificationIOS for the iOS part.
 

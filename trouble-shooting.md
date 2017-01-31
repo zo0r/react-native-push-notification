@@ -217,3 +217,10 @@ Just combine the above _silent_ and _noisy_ notifications and send to APNS:
 ```
 
 It will be delivered to both the notification centre **and** your app if the app is running in the background, but only to your app if its running in the foreground.
+
+#### Some useful links
+
+ * http://www.fantageek.com/blog/2016/04/15/push-notification-in-practice/
+ * https://devcenter.verivo.com/display/doc/Handling+Push+Notifications+on+iOS
+ * https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1
+ * http://stackoverflow.com/questions/12071726/how-to-use-beginbackgroundtaskwithexpirationhandler-for-already-running-task-in
