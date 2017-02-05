@@ -147,7 +147,7 @@ If your Android app is not running when a _silent_ notification is received then
 
 #### iOS _silent_ remote push notifications
 
-Send something like this to the APNS:
+Send something like this to the APNS (here are the [docs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html#//apple_ref/doc/uid/TP40008194-CH11-SW1)):
 
 ```json
 {
@@ -158,7 +158,11 @@ Send something like this to the APNS:
 }
 ```
 
-The crucial bit is presence of the `"content-available": 1` field.  Your RN/JS app will receive something like:
+This is a _pure_ silent push notification.  It must not include a badge, sound or any alert text.  These types of silent notifications are of limited use.  They MUST be sent with a priority of 5 (10 is the default) and are subject to delays - basically, the OS may delay delivery if the battery is low and the phone isn't plugged in.
+
+You can create an alternative _non-pure_ iOS silent push notification by adding an empty string as the alert body.  This will be delivered as a high priority message and will not be subject to OS imposed delays.
+
+The crucial bit of an iOS silent notification is presence of the `"content-available": 1` field.  Your RN/JS app will receive something like:
 
 ```json
 {
