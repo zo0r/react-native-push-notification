@@ -160,7 +160,7 @@ Send something like this to the APNS (here are the [docs](https://developer.appl
 
 This is a _pure_ silent push notification.  It must not include a badge, sound or any alert text.  These types of silent notifications are of limited use.  They MUST be sent with a priority of 5 (10 is the default) and are subject to delays - basically, the OS may delay delivery if the battery is low and the phone isn't plugged in.
 
-You can create an alternative _non-pure_ iOS silent push notification by adding an empty string as the alert body.  This will be delivered as a high priority message and will not be subject to OS imposed delays.
+You can create an alternative _non-pure_ iOS silent push notification by adding an empty string as the alert body or sound name (see this [discussion](http://stackoverflow.com/questions/19239737/silent-push-notification-in-ios-7-does-not-work)).  This will be delivered as a high priority message and will not be subject to OS imposed delays.  Obviously this is a bit of a hack.  A better approach to silent push notifications is to use [react-native-voip-push-notification](https://github.com/ianlin/react-native-voip-push-notification).
 
 The crucial bit of an iOS silent notification is presence of the `"content-available": 1` field.  Your RN/JS app will receive something like:
 
