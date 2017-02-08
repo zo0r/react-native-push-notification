@@ -56,22 +56,32 @@ public class RNPushNotificationJsDelivery {
 
         sendEvent("notificationActionReceived", params);
     }
-
-    String convertJSON(Bundle bundle) {
+    String convertJSON(Bundle bundle){
+        JSONObject json = this.convertJSONNested(bundle);
+        if(json == null){
+            return null;
+        }
+        return json.toString();
+    }
+    JSONObject convertJSONNested(Bundle bundle){
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {
             try {
+                Object obj = bundle.get(key);
+                if (obj instanceof Bundle) {
+                    obj = convertJSONNested((Bundle)obj);
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    json.put(key, JSONObject.wrap(bundle.get(key)));
+                    json.put(key, JSONObject.wrap(obj));
                 } else {
-                    json.put(key, bundle.get(key));
+                    json.put(key, obj);
                 }
             } catch (JSONException e) {
                 return null;
             }
         }
-        return json.toString();
+        return json;
     }
 
 }
