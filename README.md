@@ -23,7 +23,7 @@ React Native Local and Remote Notifications for iOS and Android
 
 Having a problem?  Read the [troubleshooting](./trouble-shooting.md) guide before raising an issue.
 
-## Pull Reuqests
+## Pull Requests
 
 [Please read...](./submitting-a-pull-request.md)
 
