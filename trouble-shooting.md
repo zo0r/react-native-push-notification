@@ -12,7 +12,7 @@ Known bugs and issues:
 
  * Use a physical device for remote push notifications. They will not work on an emulator.
  * Try _"grepping"_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto whats happening.
- * Your CGM `senderID` can be obtained by obtaining a file from your google console called `google-services.json`.  From this file use the `project_number` as your ID.
+ * Your GCM `senderID` can be obtained by obtaining a file from your google console called `google-services.json`.  From this file use the `project_number` as your ID.
  * `Native module cannot be null` error happens when your project isn't _linked_ correctly.  Please re-read the installation instructions, specifically the bit about `react-native link` and `MainApplication.java`.
  * Take a look at the [google docs](https://developers.google.com/cloud-messaging/http-server-ref#notification-payload-support) for more about remote push notifications.
  * Bages do not work on all devices, you should see an error being logged once when the app starts if the setting a badge isn't supported.
