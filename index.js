@@ -167,7 +167,8 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			alertBody: details.message,
 			soundName: soundName,
 			applicationIconBadgeNumber: parseInt(details.number, 10),
-			userInfo: details.userInfo
+			userInfo: details.userInfo,
+			repeatInterval: details.repeatType
 		});
 	} else {
 		details.fireDate = details.date.getTime();
