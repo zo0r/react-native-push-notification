@@ -177,6 +177,14 @@ Notifications.localNotificationSchedule = function(details: Object) {
 	}
 };
 
+Notifications.cancelLocalNotifications = function(details) {
+	if ( Platform.OS === 'ios' ) {
+		this.handler.cancelLocalNotifications(details);
+	} else {
+		this.callNative('cancelLocalNotifications', arguments);
+	}
+};
+
 /* Internal Functions */
 Notifications._onRegister = function(token: String) {
 	if ( this.onRegister !== false ) {
@@ -266,10 +274,6 @@ Notifications.presentLocalNotification = function() {
 
 Notifications.scheduleLocalNotification = function() {
 	return this.callNative('scheduleLocalNotification', arguments);
-};
-
-Notifications.cancelLocalNotifications = function() {
-	return this.callNative('cancelLocalNotifications', arguments);
 };
 
 Notifications.cancelAllLocalNotifications = function() {
