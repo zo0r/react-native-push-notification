@@ -15,7 +15,7 @@ React Native Local and Remote Notifications for iOS and Android
 
 
 ## Installation
-`npm install react-native-push-notification`
+`npm install react-native-push-notification --save`
 
 `react-native link`
 
