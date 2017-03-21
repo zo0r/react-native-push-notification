@@ -167,12 +167,21 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			alertBody: details.message,
 			soundName: soundName,
 			applicationIconBadgeNumber: parseInt(details.number, 10),
-			userInfo: details.userInfo
+			userInfo: details.userInfo,
+			repeatInterval: details.repeatType
 		});
 	} else {
 		details.fireDate = details.date.getTime();
 		delete details.date;
 		this.handler.scheduleLocalNotification(details);
+	}
+};
+
+Notifications.cancelLocalNotifications = function(details) {
+	if ( Platform.OS === 'ios' ) {
+		this.handler.cancelLocalNotifications(details);
+	} else {
+		this.callNative('cancelLocalNotifications', arguments);
 	}
 };
 
@@ -265,10 +274,6 @@ Notifications.presentLocalNotification = function() {
 
 Notifications.scheduleLocalNotification = function() {
 	return this.callNative('scheduleLocalNotification', arguments);
-};
-
-Notifications.cancelLocalNotifications = function() {
-	return this.callNative('cancelLocalNotifications', arguments);
 };
 
 Notifications.cancelAllLocalNotifications = function() {
