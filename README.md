@@ -251,9 +251,27 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 `PushNotification.cancelAllLocalNotifications()` 
 
-Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
+Cancels all scheduled notifications.
 
-*NOTE: there is currently no api for removing specific notification alerts from the notification centre.*
+## Remove notifications
+
+### 1) getDeliveredNotifications (iOS only)
+
+`PushNotification.getDeliveredNotifications(callback: (notifications: [Object]) => void)` 
+
+Provides you with a list of the app’s notifications that are still displayed in Notification Center.
+
+### 2) removeDeliveredNotifications (iOS only)
+
+`PushNotification.removeDeliveredNotifications(identifiers: [string])` 
+
+Removes the specified notifications from Notification Center.
+
+### 3) removeAllDeliveredNotifications (iOS only)
+
+`PushNotification.removeAllDeliveredNotifications()` 
+
+Removes all delivered notifications from Notification Center.
 
 ## Repeating Notifications ##
 

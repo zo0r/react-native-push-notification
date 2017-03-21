@@ -306,4 +306,22 @@ Notifications.clearAllNotifications = function() {
 	return this.callNative('clearAllNotifications', arguments)
 }
 
+Notifications.removeAllDeliveredNotifications = function() {
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removeAllDeliveredNotifications')
+  }
+}
+
+Notifications.removeDeliveredNotifications = function() {
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removeDeliveredNotifications', arguments)
+  }
+}
+
+Notifications.getDeliveredNotifications = function() {
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('getDeliveredNotifications', arguments)
+  }
+}
+
 module.exports = Notifications;
