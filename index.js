@@ -165,9 +165,10 @@ Notifications.localNotificationSchedule = function(details: Object) {
 		this.handler.scheduleLocalNotification({
 			fireDate: details.date.toISOString(),
 			alertBody: details.message,
+			userInfo: details.userInfo,
+			repeatInterval: details.repeatType,
 			soundName: soundName,
 			applicationIconBadgeNumber: parseInt(details.number, 10),
-			userInfo: details.userInfo
 		});
 	} else {
 		details.fireDate = details.date.getTime();
