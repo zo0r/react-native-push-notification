@@ -200,6 +200,8 @@ PushNotification.localNotification({
     alertAction: // (optional) default: view
     category: // (optional) default: null
     userInfo: // (optional) default: null (object containing additional notification data)
+    largeIconUrl: // (optional) default: null (Set URL of a image and not null)
+    circleLargeIconUrl: true // (optional) default: false
 
     /* iOS and Android properties */
     title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name on other iOS devices)

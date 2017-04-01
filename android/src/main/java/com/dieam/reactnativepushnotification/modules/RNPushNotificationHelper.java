@@ -21,7 +21,15 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.net.URL;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import com.facebook.react.bridge.ReadableMap;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -128,6 +136,29 @@ public class RNPushNotificationHelper {
         }
     }
 
+    private Bitmap getCircleBitmap(Bitmap bitmap) {
+      final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+      bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+      final Canvas canvas = new Canvas(output);
+
+      final int color = Color.RED;
+      final Paint paint = new Paint();
+      final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+      final RectF rectF = new RectF(rect);
+
+      paint.setAntiAlias(true);
+      canvas.drawARGB(0, 0, 0, 0);
+      paint.setColor(color);
+      canvas.drawOval(rectF, paint);
+
+      paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+      canvas.drawBitmap(bitmap, rect, rect, paint);
+
+      bitmap.recycle();
+
+      return output;
+    }
+
     public void sendToNotificationCentre(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
@@ -173,6 +204,8 @@ public class RNPushNotificationHelper {
 
             String largeIcon = bundle.getString("largeIcon");
 
+            String largeIconUrl = bundle.getString("largeIconUrl");
+
             String subText = bundle.getString("subText");
 
             if (subText != null) {
@@ -211,8 +244,26 @@ public class RNPushNotificationHelper {
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
 
-            if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                notification.setLargeIcon(largeIconBitmap);
+            if (largeIconUrl != null) {
+              Bitmap imageUrl = null;
+
+              try {
+
+                Log.i("ReactSystemNotification", "start to get image from URL : " + largeIconUrl);
+                URL url = new URL(largeIconUrl);
+                imageUrl = BitmapFactory.decodeStream(url.openStream());
+                Log.i("ReactSystemNotification", "finishing to get image from URL");
+
+              } catch (Exception e) {
+                Log.e("ReactSystemNotification", "Error when getting image from URL" + e.getStackTrace());
+              }
+              if (bundle.getBoolean("circleLargeIconUrl")) {
+                notification.setLargeIcon(getCircleBitmap(imageUrl));
+              } else {
+                notification.setLargeIcon(imageUrl);
+              }
+            } else if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+              notification.setLargeIcon(largeIconBitmap);
             }
 
             notification.setSmallIcon(smallIconResId);
