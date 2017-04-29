@@ -39,7 +39,7 @@ These are highly customisable (more so than _noisy_ remote push notifications) *
 
 ## 2. _noisy_ remote push notifications
 
-_Noisy_ remote push notifications are sent from a server, such as the Apple Push Notification Service (APNS), or the Google Cloud Messaging Service (GCM).  They appear only as alerts in the notification centre and may not interact with your application in any way when they are delivered.  Like local notifications they have a visual (or audible) element.
+_Noisy_ remote push notifications are sent from a server, such as the Apple Push Notification Service (APNS), or the Google Cloud Messaging Service (GCM).  When the app is in the background, they appear only as alerts in the notification centre and may not interact with your application in any way when they are delivered.  Like local notifications they have a visual (or audible) element.
 
 When a user taps an alert in the notification centre that was created by a _noisy_ remote push notification, your app will be either started or brought to the foreground.  The `onNotification` method will fired.
 
