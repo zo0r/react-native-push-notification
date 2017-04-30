@@ -58,20 +58,29 @@ public class RNPushNotificationJsDelivery {
     }
 
     String convertJSON(Bundle bundle) {
+        try {
+            JSONObject json = convertJSONObject(bundle);
+            return json.toString();
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+    
+    // a Bundle is not a map, so we have to convert it explicitly
+    JSONObject convertJSONObject(Bundle bundle) throws JSONException {
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    json.put(key, JSONObject.wrap(bundle.get(key)));
-                } else {
-                    json.put(key, bundle.get(key));
-                }
-            } catch (JSONException e) {
-                return null;
+            Object value = bundle.get(key);
+            if (value instanceof Bundle) {
+                json.put(key, convertJSONObject((Bundle)value));
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                json.put(key, JSONObject.wrap(value));
+            } else {
+                json.put(key, value);
             }
         }
-        return json.toString();
+        return json;
     }
 
 }
