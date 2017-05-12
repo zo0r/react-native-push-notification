@@ -165,10 +165,14 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			fireDate: details.date.toISOString(),
 			alertBody: details.message,
 			soundName: soundName,
-			applicationIconBadgeNumber: parseInt(details.number, 10),
 			userInfo: details.userInfo,
 			repeatInterval: details.repeatType
+		};
+
+		if(details.number) {
+			iosDetails.applicationIconBadgeNumber = parseInt(details.number, 10);
 		}
+
 		// ignore Android only repeatType
 		if (!details.repeatType || details.repeatType === 'time') {
 			delete iosDetails.repeatInterval;
