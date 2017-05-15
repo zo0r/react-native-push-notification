@@ -420,7 +420,7 @@ public class RNPushNotificationHelper {
                 String notificationAttributesJson = scheduledNotificationsPersistence.getString(id, null);
                 if (notificationAttributesJson != null) {
                     RNPushNotificationAttributes notificationAttributes = fromJson(notificationAttributesJson);
-                    if (notificationAttributes.matches(userInfo)) {
+                    if (notificationAttributes.getId().equals(userInfo.getString("id"))) {
                         cancelScheduledNotification(id);
                     }
                 }
