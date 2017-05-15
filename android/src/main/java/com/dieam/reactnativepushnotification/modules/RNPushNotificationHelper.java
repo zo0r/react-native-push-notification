@@ -161,7 +161,6 @@ public class RNPushNotificationHelper {
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
@@ -255,6 +254,10 @@ public class RNPushNotificationHelper {
 
             if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
                 notification.setOngoing(bundle.getBoolean("ongoing"));
+            }
+
+            if (bundle.containsKey("usesChronometer") || bundle.getBoolean("usesChronometer")) {
+              notification.setUsesChronometer(bundle.getBoolean("usesChronometer"));
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -197,6 +197,7 @@ PushNotification.localNotification({
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
     ongoing: false, // (optional) set whether this is an "ongoing" notification
+    usesChronometer: false // (optional) sets whether the notification should display the chronometer
 
     /* iOS only properties */
     alertAction: // (optional) default: view
