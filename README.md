@@ -212,6 +212,13 @@ PushNotification.localNotification({
 });
 ```
 
+## Handling Initial Notification
+By default the initial notification is popped automatically.
+
+To manually pop the initial notification configure the `popInitialNotification` value to `false` and call `PushNotification.popInitialNotification()`. This will result in your `onNotification` handler being called with the initial notification.
+
+Optionally pass a custom handler function to the `PushNotification.popInitialNotification` method if you would like to have a different handler for initial notifications than the `onNotification` handler.
+
 ## Scheduled Notifications
 `PushNotification.localNotificationSchedule(details: Object)`
 
