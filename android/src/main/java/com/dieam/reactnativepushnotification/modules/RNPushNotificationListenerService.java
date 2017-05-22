@@ -130,11 +130,13 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         List<ActivityManager.RunningServiceInfo> serviceInfos = activityManager.getRunningServices(Integer.MAX_VALUE);        
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
-        for (RunningAppProcessInfo processInfo : processInfos) {
-            if (processInfo.processName.equals(getApplication().getPackageName())) {
-                if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String d : processInfo.pkgList) {
-                        return true;
+        if (processInfos != null) {
+            for (RunningAppProcessInfo processInfo : processInfos) {
+                if (processInfo.processName.equals(getApplication().getPackageName())) {
+                    if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                        for (String d : processInfo.pkgList) {
+                            return true;
+                        }
                     }
                 }
             }

@@ -12,7 +12,7 @@ Known bugs and issues:
 
  * Use a physical device for remote push notifications. They will not work on an emulator.
  * Try _"grepping"_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto whats happening.
- * Your CGM `senderID` can be obtained by obtaining a file from your google console called `google-services.json`.  From this file use the `project_number` as your ID.
+ * Your GCM `senderID` can be obtained by obtaining a file from your google console called `google-services.json`.  From this file use the `project_number` as your ID.
  * `Native module cannot be null` error happens when your project isn't _linked_ correctly.  Please re-read the installation instructions, specifically the bit about `react-native link` and `MainApplication.java`.
  * Take a look at the [google docs](https://developers.google.com/cloud-messaging/http-server-ref#notification-payload-support) for more about remote push notifications.
  * Bages do not work on all devices, you should see an error being logged once when the app starts if the setting a badge isn't supported.
@@ -39,7 +39,7 @@ These are highly customisable (more so than _noisy_ remote push notifications) *
 
 ## 2. _noisy_ remote push notifications
 
-_Noisy_ remote push notifications are sent from a server, such as the Apple Push Notification Service (APNS), or the Google Cloud Messaging Service (GCM).  They appear only as alerts in the notification centre and may not interact with your application in any way when they are delivered.  Like local notifications they have a visual (or audible) element.
+_Noisy_ remote push notifications are sent from a server, such as the Apple Push Notification Service (APNS), or the Google Cloud Messaging Service (GCM).  When the app is in the background, they appear only as alerts in the notification centre and may not interact with your application in any way when they are delivered.  Like local notifications they have a visual (or audible) element.
 
 When a user taps an alert in the notification centre that was created by a _noisy_ remote push notification, your app will be either started or brought to the foreground.  The `onNotification` method will fired.
 
@@ -147,7 +147,7 @@ If your Android app is not running when a _silent_ notification is received then
 
 #### iOS _silent_ remote push notifications
 
-Send something like this to the APNS:
+Send something like this to the APNS (here are the [docs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html#//apple_ref/doc/uid/TP40008194-CH11-SW1)):
 
 ```json
 {
@@ -158,7 +158,11 @@ Send something like this to the APNS:
 }
 ```
 
-The crucial bit is presence of the `"content-available": 1` field.  Your RN/JS app will receive something like:
+This is a _pure_ silent push notification.  It must not include a badge, sound or any alert text.  These types of silent notifications are of limited use.  They MUST be sent with a priority of 5 (10 is the default) and are subject to delays - basically, the OS may delay delivery if the battery is low and the phone isn't plugged in.
+
+You can create an alternative _non-pure_ iOS silent push notification by adding an empty string as the alert body or sound name (see this [discussion](http://stackoverflow.com/questions/19239737/silent-push-notification-in-ios-7-does-not-work)).  This will be delivered as a high priority message and will not be subject to OS imposed delays.  Obviously this is a bit of a hack.  A better approach to silent push notifications is to use [react-native-voip-push-notification](https://github.com/ianlin/react-native-voip-push-notification).
+
+The crucial bit of an iOS silent notification is presence of the `"content-available": 1` field.  Your RN/JS app will receive something like:
 
 ```json
 {
@@ -217,3 +221,10 @@ Just combine the above _silent_ and _noisy_ notifications and send to APNS:
 ```
 
 It will be delivered to both the notification centre **and** your app if the app is running in the background, but only to your app if its running in the foreground.
+
+#### Some useful links
+
+ * http://www.fantageek.com/blog/2016/04/15/push-notification-in-practice/
+ * https://devcenter.verivo.com/display/doc/Handling+Push+Notifications+on+iOS
+ * https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1
+ * http://stackoverflow.com/questions/12071726/how-to-use-beginbackgroundtaskwithexpirationhandler-for-already-running-task-in
