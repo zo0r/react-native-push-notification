@@ -4,7 +4,7 @@
   "description": "React Native Local and Remote Notifications",
   "main": "index",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "react-component",
@@ -32,5 +32,13 @@
     }
   },
   "author": "zo0r <http://zo0r.me>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "babel-jest": "^20.0.3",
+    "jest": "^20.0.4",
+    "regenerator-runtime": "^0.10.5"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
 }

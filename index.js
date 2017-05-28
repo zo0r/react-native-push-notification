@@ -90,6 +90,7 @@ Notifications.configure = function(options: Object) {
 
 	if ( this.hasPoppedInitialNotification === false &&
 			( options.popInitialNotification === undefined || options.popInitialNotification === true ) ) {
+		this.popInitialNotification = this.popInitialNotification.bind(this);
 		this.popInitialNotification();
 		this.hasPoppedInitialNotification = true;
 	}
@@ -299,7 +300,7 @@ Notifications.popInitialNotification = function(handler) {
 		} else if ( result !== null ) {
 			this._onNotification(result, true);
 		}
-	});
+	}.bind(this));
 };
 
 Notifications.abandonPermissions = function() {
