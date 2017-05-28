@@ -19,6 +19,8 @@ React Native Local and Remote Notifications for iOS and Android
 
 `react-native link`
 
+**NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
+
 ## Issues
 
 Having a problem?  Read the [troubleshooting](./trouble-shooting.md) guide before raising an issue.
@@ -69,7 +71,7 @@ In your `AndroidManifest.xml`
                 <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
-        
+
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
             <intent-filter>
@@ -139,7 +141,7 @@ PushNotification.configure({
         console.log( 'NOTIFICATION:', notification );
     },
 
-    // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications) 
+    // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
     senderID: "YOUR GCM SENDER ID",
 
     // IOS ONLY (optional): default: all - Permissions to register.
@@ -244,7 +246,7 @@ In the location notification json specify the full file name:
 
 ### 1) cancelLocalNotifications
 
-`PushNotification.cancelLocalNotifications(details);` 
+`PushNotification.cancelLocalNotifications(details);`
 
 The the `details` parameter allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
 matched notification is cancelled and its alerts removed from the notification centre.  The RN docs suggest this is an optional parameter, but
@@ -256,7 +258,7 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 ### 2) cancelAllLocalNotifications
 
-`PushNotification.cancelAllLocalNotifications()` 
+`PushNotification.cancelAllLocalNotifications()`
 
 Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
 
@@ -277,8 +279,8 @@ Two things are required to setup notification actions.
 ### 1) Specify notification actions for a notification
 This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notificaiton action that will be presented with the notification.
 
-For e.g. `actions: '["Accept", "Reject"]'  // Must be in string format` 
- 
+For e.g. `actions: '["Accept", "Reject"]'  // Must be in string format`
+
 The array itself is specified in string format to circumvent some problems because of the way JSON arrays are handled by react-native android bridge.
 
 ### 2) Specify handlers for the notification actions
@@ -307,7 +309,7 @@ For iOS, you can use this [package](https://github.com/holmesal/react-native-ios
 
 ## Set application badge icon
 
-`PushNotification.setApplicationIconBadgeNumber(number: number)` 
+`PushNotification.setApplicationIconBadgeNumber(number: number)`
 
 Works natively in iOS.
 
