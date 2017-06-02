@@ -222,6 +222,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				data: data.getData(),
 				badge: data.getBadgeCount(),
 				alert: data.getAlert(),
+				category: (data.getCategory ? data.getCategory() : undefined),
 				sound: data.getSound()
 			});
 		} else {
