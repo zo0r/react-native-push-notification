@@ -223,12 +223,12 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				badge: data.getBadgeCount(),
 				alert: data.getAlert(),
 				sound: data.getSound(),
-  			finish: (res) => data.finish(res)
+  				finish: (res) => data.finish(res)
 			});
 		} else {
 			var notificationData = {
 				foreground: ! isFromBackground,
-  			finish: () => {},
+  				finish: () => {},
 				...data
 			};
 
