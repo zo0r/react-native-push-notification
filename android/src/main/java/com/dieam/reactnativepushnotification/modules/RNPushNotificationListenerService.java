@@ -23,10 +23,19 @@ import java.util.Random;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
+    public static String previousPushId;
+    public static String currentPushId;
 
     @Override
     public void onMessageReceived(String from, final Bundle bundle) {
         JSONObject data = getPushData(bundle.getString("data"));
+
+        currentPushId = bundle.getString("push_id");
+        if(currentPushId.equals(previousPushId)){
+            Log.v(LOG_TAG, "Ignored duplicated push " + currentPushId);
+            return;
+        }
+
         if (data != null) {
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", "Notification received"));
