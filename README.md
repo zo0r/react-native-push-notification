@@ -125,6 +125,17 @@ public class MainApplication extends Application implements ReactApplication {
 }
 ```
 
+If your app has an @Override on onNewIntent in `MainActivity.java` ensure that function includes a super call on onNewIntent (if your `MainActivity.java` does not have an @Override for onNewIntent skip this):
+
+```java
+    @Override
+    public void onNewIntent(Intent intent) {
+        ...
+        super.onNewIntent(intent);
+        ...
+    }
+```
+
 ## Usage
 ```javascript
 var PushNotification = require('react-native-push-notification');
