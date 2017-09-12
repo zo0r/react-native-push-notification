@@ -22,10 +22,12 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
@@ -223,6 +225,29 @@ public class RNPushNotificationHelper {
             }
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+
+            if (bundle.containsKey("inboxStyle")) {
+                Bundle inboxStyleBundle = bundle.getBundle("inboxStyle");
+                String bigContentTitle = inboxStyleBundle.getString("bigContentTitle");
+                String summaryText = inboxStyleBundle.getString("summaryText");
+                ArrayList<String> lines = inboxStyleBundle.getStringArrayList("lines");
+
+                NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+
+                if (bigContentTitle != null) {
+                    inboxStyle.setBigContentTitle(bigContentTitle);
+                }
+                if (summaryText != null) {
+                    inboxStyle.setSummaryText(summaryText);
+                }
+                if (lines != null) {
+                    for (int i=0; i<lines.size(); i++) {
+                        inboxStyle.addLine(lines.get(i));
+                    }
+                }
+
+                notification.setStyle(inboxStyle);
+            }
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

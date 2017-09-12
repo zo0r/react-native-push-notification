@@ -211,6 +211,15 @@ PushNotification.localNotification({
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
     repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
+	inboxStyle: { // (Android only) See the android doc (https://developer.android.com/reference/android/app/Notification.InboxStyle.html)
+       bigContentTitle: 'title', // (optional)
+       summaryText: 'summary', // (optional)
+       lines: [ // (optional) Array of strings
+		  'line 1',
+		  'line 2',
+		  'line 3'
+	   ]
+    }
 });
 ```
 

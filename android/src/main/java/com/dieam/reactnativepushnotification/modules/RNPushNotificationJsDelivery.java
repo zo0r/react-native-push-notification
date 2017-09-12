@@ -3,7 +3,7 @@ package com.dieam.reactnativepushnotification.modules;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.facebook.react.bridge.Arguments;
+import com.dieam.reactnativepushnotification.helpers.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;

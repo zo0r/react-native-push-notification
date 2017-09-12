@@ -10,8 +10,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
+import com.dieam.reactnativepushnotification.helpers.Arguments;
 import com.facebook.react.bridge.ActivityEventListener;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
