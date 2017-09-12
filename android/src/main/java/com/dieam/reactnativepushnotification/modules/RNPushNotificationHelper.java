@@ -257,7 +257,7 @@ public class RNPushNotificationHelper {
 
                 Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
 
-                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                if (largeIconResId != 0 && (largeIcon != null || !bundle.containsKey("largeIcon"))) {
                     notification.setLargeIcon(largeIconBitmap);
                 }
             }
