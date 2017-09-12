@@ -18,9 +18,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.dieam.reactnativepushnotification.helpers.ImageUtil;
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONArray;
@@ -40,6 +42,10 @@ public class RNPushNotificationHelper {
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
+
+    private static class Options {
+        public Bitmap largeIconBitmap;
+    }
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -128,7 +134,44 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendToNotificationCentre(Bundle bundle) {
+    public void sendToNotificationCentre(final Bundle bundle) {
+        final String largeIcon = bundle.getString("largeIcon");
+        final boolean largeIconCircular = bundle.getBoolean("largeIconCircular", true);
+
+        if (largeIcon != null && largeIcon.contains("://")) {
+            Uri largeIconUri = null;
+            try {
+                largeIconUri = Uri.parse(largeIcon);
+            } catch(Exception ex) {
+                Log.e(LOG_TAG, "Failed to parse largeIcon url", ex);
+            }
+
+            if (largeIconUri != null) {
+                ImageUtil.request(context, largeIconUri, new ImageUtil.RequestResultCallback() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        Options options = new Options();
+                        if (largeIconCircular) {
+                            options.largeIconBitmap = ImageUtil.createCircularBitmap(bitmap);
+                        } else {
+                            options.largeIconBitmap = bitmap;
+                        }
+                        sendToNotificationCentreWithOptions(bundle, options);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        sendToNotificationCentreWithOptions(bundle, null);
+                    }
+                });
+                return;
+            }
+        }
+
+        sendToNotificationCentreWithOptions(bundle, null);
+    }
+
+    public void sendToNotificationCentreWithOptions(Bundle bundle, @Nullable Options options) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -203,16 +246,20 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            if (largeIcon != null) {
-                largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+            if (options != null && options.largeIconBitmap != null) {
+                notification.setLargeIcon(options.largeIconBitmap);
             } else {
-                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-            }
+                if (largeIcon != null) {
+                    largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                } else {
+                    largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                }
 
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+                Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
 
-            if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                notification.setLargeIcon(largeIconBitmap);
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    notification.setLargeIcon(largeIconBitmap);
+                }
             }
 
             notification.setSmallIcon(smallIconResId);
