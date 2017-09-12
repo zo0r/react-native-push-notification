@@ -295,6 +295,30 @@ public class RNPushNotificationHelper {
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
 
+            if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
+                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                String soundName = bundle.getString("soundName");
+                if (soundName != null) {
+                    if (!"default".equalsIgnoreCase(soundName)) {
+ 
+                        // sound name can be full filename, or just the resource name.
+                        // So the strings 'my_sound.mp3' AND 'my_sound' are accepted
+                        // The reason is to make the iOS and android javascript interfaces compatible
+ 
+                        int resId;
+                        if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
+                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+                        } else {
+                            soundName = soundName.substring(0, soundName.lastIndexOf('.'));
+                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+                        }
+ 
+                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+                    }
+                }
+                notification.setSound(soundUri);
+            }
+            
             if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
                 notification.setOngoing(bundle.getBoolean("ongoing"));
             }
