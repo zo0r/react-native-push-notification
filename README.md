@@ -211,14 +211,30 @@ PushNotification.localNotification({
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
     repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
-	inboxStyle: { // (Android only) See the android doc (https://developer.android.com/reference/android/app/Notification.InboxStyle.html)
-       bigContentTitle: 'title', // (optional)
-       summaryText: 'summary', // (optional)
-       lines: [ // (optional) Array of strings
-		  'line 1',
-		  'line 2',
-		  'line 3'
-	   ]
+	  inboxStyle: { // (Android only) See the android doc (https://developer.android.com/reference/android/app/Notification.InboxStyle.html)
+      bigContentTitle: 'title', // (optional)
+      summaryText: 'summary', // (optional)
+      lines: [ // (optional) Array of strings
+        'line 1',
+        'line 2',
+        'line 3'
+      ]
+    },
+    messagingStyle: { // (Android only) See the android doc (https://developer.android.com/reference/android/app/Notification.MessagingStyle.html)
+      userDisplayName: 'myName', // (optional) Name to be displayed for any replies sent by the user
+      conversationTitle: 'My Conversation', // (optional) This should only be used for group messaging and left unset for one-on-one conversations
+      messages: [ // (optional) List of messages
+        {
+          text: 'ehy dude!', // (optional) Text to be displayed as the message content
+          timestamp: Date.now(), // (optional) Time at which the message arrived
+          sender: 'George' // (optional) Name of the sender. Should be null for messages by the current user, in which case the platform will insert 'userDisplayName'.
+        },
+        {
+          text: 'my reply',
+          timestamp: Date.now(),
+          sender: null
+        }
+      ]
     }
 });
 ```
