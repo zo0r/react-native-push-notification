@@ -172,6 +172,7 @@ Notification object example:
 {
     foreground: false, // BOOLEAN: If the notification was received in foreground or not
     userInteraction: false, // BOOLEAN: If the notification was opened by the user from the notification area or not
+    initialNotification: false, // BOOLEAN: IOS only, if notification is from popInitialNotification
     message: 'My Notification Message', // STRING: The notification message
     data: {}, // OBJECT: The push data
 }
