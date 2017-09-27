@@ -205,19 +205,19 @@ Notifications._onRemoteFetch = function(notificationData: Object) {
 	}
 };
 
-Notifications._onNotification = function(data, isFromBackground = null) {
-	if ( isFromBackground === null ) {
-		isFromBackground = (
-			data.foreground === false ||
-			AppState.currentState === 'background'
-		);
-	}
+Notifications._onNotification = function(data, initialNotification = false) {
+    const isFromBackground = (
+    	initialNotification ||
+        data.foreground === false ||
+        AppState.currentState === 'background'
+    );
 
-	if ( this.onNotification !== false ) {
-		if ( Platform.OS === 'ios' ) {
-			this.onNotification({
-				foreground: ! isFromBackground,
-				userInteraction: isFromBackground,
+    if ( this.onNotification !== false ) {
+        if ( Platform.OS === 'ios' ) {
+            this.onNotification({
+                foreground: ! isFromBackground,
+                userInteraction: isFromBackground,
+                initialNotification: initialNotification,
 				message: data.getMessage(),
 				data: data.getData(),
 				badge: data.getBadgeCount(),
