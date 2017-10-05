@@ -50,7 +50,7 @@ dependencies {
 }
 ```
 
-In your `AndroidManifest.xml`
+In your `android/app/src/main/AndroidManifest.xml`
 ```xml
     .....
     <uses-permission android:name="android.permission.WAKE_LOCK" />
