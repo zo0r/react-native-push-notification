@@ -18,6 +18,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -26,6 +27,10 @@ import com.facebook.react.bridge.ReadableMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
@@ -128,6 +133,24 @@ public class RNPushNotificationHelper {
         }
     }
 
+
+
+
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void sendToNotificationCentre(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
@@ -157,7 +180,7 @@ public class RNPushNotificationHelper {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
+            final NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -216,13 +239,21 @@ public class RNPushNotificationHelper {
             }
 
             notification.setSmallIcon(smallIconResId);
-            String bigText = bundle.getString("bigText");
+            final String bigText = bundle.getString("bigText") != null ?  bundle.getString("bigText") : bundle.getString("message");
 
-            if (bigText == null) {
-                bigText = bundle.getString("message");
+
+            String attachmentUrl = bundle.getString("attachment-url");
+
+            if (attachmentUrl != null) {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                Bitmap image = getBitmapFromURL(attachmentUrl);
+                if (image != null) {
+                    notification.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(image));
+                } else {
+                    notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+                }
             }
-
-            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
