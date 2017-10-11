@@ -180,7 +180,7 @@ public class RNPushNotificationHelper {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            final NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -239,7 +239,7 @@ public class RNPushNotificationHelper {
             }
 
             notification.setSmallIcon(smallIconResId);
-            final String bigText = bundle.getString("bigText") != null ?  bundle.getString("bigText") : bundle.getString("message");
+            String bigText = bundle.getString("bigText") != null ?  bundle.getString("bigText") : bundle.getString("message");
 
 
             String attachmentUrl = bundle.getString("attachment-url");
