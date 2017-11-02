@@ -15,6 +15,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.google.android.gms.gcm.GcmListenerService;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -26,24 +27,47 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, final Bundle bundle) {
-        JSONObject data = getPushData(bundle.getString("data"));
-        if (data != null) {
+        JSONObject osCustomdata = getPushData(bundle.getString("custom"));
+        if (osCustomdata != null) {
+            // OneSignal Push Notification
             if (!bundle.containsKey("message")) {
-                bundle.putString("message", data.optString("alert", "Notification received"));
-            }
-            if (!bundle.containsKey("title")) {
-                bundle.putString("title", data.optString("title", null));
-            }
-            if (!bundle.containsKey("sound")) {
-                bundle.putString("soundName", data.optString("sound", null));
-            }
-            if (!bundle.containsKey("color")) {
-                bundle.putString("color", data.optString("color", null));
+                String message = bundle.getString("alert");
+                bundle.putString("message", message != null ? message : "Notification Received");
             }
 
-            final int badge = data.optInt("badge", -1);
-            if (badge >= 0) {
-                ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
+            bundle.putString("soundName", "default");
+
+            bundle.putString("mId", osCustomdata.optString("i"));
+
+            // OneSignal Additional Data
+            String additionalData = osCustomdata.optString("a", null);
+
+            if (additionalData != null) {
+                bundle.putString("data", additionalData);
+            }
+
+            bundle.remove("custom");
+            bundle.remove("alert");
+        } else {
+            JSONObject data = getPushData(bundle.getString("data"));
+            if (data != null) {
+                if (!bundle.containsKey("message")) {
+                    bundle.putString("message", data.optString("alert", "Notification received"));
+                }
+                if (!bundle.containsKey("title")) {
+                    bundle.putString("title", data.optString("title", null));
+                }
+                if (!bundle.containsKey("sound")) {
+                    bundle.putString("soundName", data.optString("sound", null));
+                }
+                if (!bundle.containsKey("color")) {
+                    bundle.putString("color", data.optString("color", null));
+                }
+
+                final int badge = data.optInt("badge", -1);
+                if (badge >= 0) {
+                    ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
+                }
             }
         }
 
