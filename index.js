@@ -331,4 +331,16 @@ Notifications.clearAllNotifications = function() {
 	return this.callNative('clearAllNotifications', arguments)
 }
 
+Notifications.removeAllDeliveredNotifications = function() {
+	return this.callNative('removeAllDeliveredNotifications', arguments);
+}
+
+Notifications.getDeliveredNotifications = function() {
+	return this.callNative('getDeliveredNotifications', arguments);
+}
+
+Notifications.removeDeliveredNotifications = function() {
+	return this.callNative('removeDeliveredNotifications', arguments);
+}
+
 module.exports = Notifications;
