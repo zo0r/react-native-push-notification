@@ -60,12 +60,16 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
             // OneSignal Actions
             JSONArray actions = null;
-            try {
-                actions = new JSONArray(bundle.getString("o"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+            
+            if(bundle.getString("o") != null) {
+                try {
+                    actions = new JSONArray(bundle.getString("o"));
+                } 
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
+            
             if (actions != null) {
                 JSONArray newActions = new JSONArray();
                 for (int i = 0 ; i < actions.length(); i++) {
