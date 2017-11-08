@@ -487,6 +487,11 @@ public class RNPushNotificationHelper {
       StatusBarNotification delivered[] = notificationManager.getActiveNotifications();
       Log.i(LOG_TAG, "Found " + delivered.length + " delivered notifications");
       WritableArray result = Arguments.createArray();
+      /*
+        * stay consistent to the return structure in
+        * https://facebook.github.io/react-native/docs/pushnotificationios.html#getdeliverednotifications
+        * but there is no such thing as a 'userInfo'
+        */
       for (StatusBarNotification notification : delivered) {
         Notification original = notification.getNotification();
         Bundle extras = original.extras;
