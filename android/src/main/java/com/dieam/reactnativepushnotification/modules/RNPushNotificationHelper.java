@@ -12,14 +12,36 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.Paint;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.RemoteInput;
 import android.util.Log;
+import android.media.RingtoneManager;
+
+
+import android.support.annotation.Nullable;
+
+import com.dieam.reactnativepushnotification.R;
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.common.Priority;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import com.facebook.react.bridge.ReadableMap;
 
@@ -34,7 +56,8 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-
+    public static final String REPLY_ACTION = "ACTION_MESSAGE_REPLY";
+    public static final String CONVERSATION_ID = "conversation_id";
     private Context context;
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
@@ -128,8 +151,60 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendToNotificationCentre(Bundle bundle) {
+    public void sendToNotificationCentre(final Bundle bundle) {
+        String imageUrl = bundle.getString("largeIcon");
+        if (imageUrl == null || imageUrl.indexOf("://") == -1) {
+            sendNotificationWithImage(bundle, null);
+            return;
+        }
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+
+        ImageRequest imageRequest = ImageRequestBuilder
+                .newBuilderWithSource(Uri.parse(imageUrl))
+                .setRequestPriority(Priority.HIGH)
+                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                .build();
+
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, context);
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                if (bitmap == null) {
+                    Log.d(LOG_TAG, "Bitmap data source returned success, but bitmap null.");
+                    sendNotificationWithImage(bundle, null);
+
+                    return;
+                }
+
+                Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+                Canvas canvas = new Canvas(output);
+
+                int color = 0xff424242;
+                Paint paint = new Paint();
+                Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+                paint.setAntiAlias(true);
+                canvas.drawARGB(0, 0, 0, 0);
+                paint.setColor(color);
+                canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2, bitmap.getWidth() / 2, paint);
+                paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+                canvas.drawBitmap(bitmap, rect, rect, paint);
+
+                sendNotificationWithImage(bundle, output);
+            }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                sendNotificationWithImage(bundle, null);
+            }
+        }, CallerThreadExecutor.getInstance());
+    }
+
+    public void sendNotificationWithImage(Bundle bundle, Bitmap image) {
         try {
+            Boolean replyNoti = false;
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
                 Log.e(LOG_TAG, "No activity class found for the notification");
@@ -171,10 +246,7 @@ public class RNPushNotificationHelper {
 
             notification.setContentText(bundle.getString("message"));
 
-            String largeIcon = bundle.getString("largeIcon");
-
             String subText = bundle.getString("subText");
-
             if (subText != null) {
                 notification.setSubText(subText);
             }
@@ -185,41 +257,42 @@ public class RNPushNotificationHelper {
             }
 
             int smallIconResId;
-            int largeIconResId;
-
             String smallIcon = bundle.getString("smallIcon");
-
             if (smallIcon != null) {
                 smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
             } else {
                 smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
             }
-
             if (smallIconResId == 0) {
                 smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-
                 if (smallIconResId == 0) {
                     smallIconResId = android.R.drawable.ic_dialog_info;
                 }
             }
 
-            if (largeIcon != null) {
-                largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-            } else {
-                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-            }
-
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-
-            if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                notification.setLargeIcon(largeIconBitmap);
-            }
-
             notification.setSmallIcon(smallIconResId);
             String bigText = bundle.getString("bigText");
-
             if (bigText == null) {
                 bigText = bundle.getString("message");
+            }
+
+            if (image != null) {
+                notification.setLargeIcon(image);
+            } else {
+                int largeIconResId;
+                String largeIcon = bundle.getString("largeIcon");
+
+                if (largeIcon != null) {
+                    largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                } else {
+                    largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                }
+
+                Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    notification.setLargeIcon(largeIconBitmap);
+                }
             }
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
@@ -234,11 +307,11 @@ public class RNPushNotificationHelper {
                 String soundName = bundle.getString("soundName");
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
-
+ 
                         // sound name can be full filename, or just the resource name.
                         // So the strings 'my_sound.mp3' AND 'my_sound' are accepted
                         // The reason is to make the iOS and android javascript interfaces compatible
-
+ 
                         int resId;
                         if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
                             resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
@@ -246,13 +319,13 @@ public class RNPushNotificationHelper {
                             soundName = soundName.substring(0, soundName.lastIndexOf('.'));
                             resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
                         }
-
+ 
                         soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
                     }
                 }
                 notification.setSound(soundUri);
             }
-
+            
             if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
                 notification.setOngoing(bundle.getBoolean("ongoing"));
             }
@@ -302,15 +375,34 @@ public class RNPushNotificationHelper {
                         Log.e(LOG_TAG, "Exception while getting action from actionsArray.", e);
                         continue;
                     }
-
                     Intent actionIntent = new Intent();
                     actionIntent.setAction(context.getPackageName() + "." + action);
-                    // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
-                    notification.addAction(icon, action, pendingActionIntent);
+                    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH && action.equals("Reply")){
+                        replyNoti = true;
+                        String replyLabel = "Escribe aquí tu respuesta...";
+                        final String KEY_TEXT_REPLY = "key_text_reply";
+
+                        RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
+                                .setLabel(replyLabel)
+                                .build();
+                        NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                                icon, replyLabel, pendingActionIntent)
+                                .addRemoteInput(remoteInput)
+                                .setAllowGeneratedReplies(true)
+                                .build();
+
+                        notification.addAction(replyAction);
+                    }
+                    else{
+                        // Add "action" for later identifying which button gets pressed
+                        notification.addAction(icon, action, pendingActionIntent);
+                    }
+                    Log.e(LOG_TAG, "action_: ."+action);
+
                 }
             }
 
@@ -327,7 +419,6 @@ public class RNPushNotificationHelper {
                 editor.remove(notificationIdString);
                 commit(editor);
             }
-
             Notification info = notification.build();
             info.defaults |= Notification.DEFAULT_LIGHTS;
 
