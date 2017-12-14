@@ -93,7 +93,13 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             @Override
             public void onReceive(Context context, Intent intent) {
                 Bundle bundle = intent.getBundleExtra("notification");
-
+                Bundle remoteInput = null;
+                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
+                    remoteInput = RemoteInput.getResultsFromIntent(intent);
+                }
+                if (remoteInput != null) {
+                    bundle.putCharSequence("reply_text", remoteInput.getCharSequence(KEY_TEXT_REPLY));
+                }
                 // Notify the action.
                 mJsDelivery.notifyNotificationAction(bundle);
 
