@@ -321,8 +321,11 @@ PushNotification.localNotificationSchedule({
 To get the text from the notification: 
 
 ```javascript
+DeviceEventEmitter.addListener('notificationActionReceived', function(action){ 
+...
 const info = JSON.parse(action.dataJSON);
 info.reply_text // this will contain the inline reply text. 
+...
 ```
 
 For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
