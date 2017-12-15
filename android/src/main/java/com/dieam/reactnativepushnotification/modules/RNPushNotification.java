@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.app.RemoteInput;
+import android.util.Log;
+
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
@@ -31,6 +34,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     private RNPushNotificationHelper mRNPushNotificationHelper;
     private final Random mRandomNumberGenerator = new Random(System.currentTimeMillis());
     private RNPushNotificationJsDelivery mJsDelivery;
+    private static final String KEY_TEXT_REPLY = "key_text_reply";
 
     public RNPushNotification(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -93,6 +97,15 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             @Override
             public void onReceive(Context context, Intent intent) {
                 Bundle bundle = intent.getBundleExtra("notification");
+                Bundle remoteInput = null;
+
+                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
+                    remoteInput = RemoteInput.getResultsFromIntent(intent);
+                }
+                if (remoteInput != null) {
+                    // Add to reply_text the text written by the user in the notification
+                    bundle.putCharSequence("reply_text", remoteInput.getCharSequence(KEY_TEXT_REPLY));
+                }
 
                 // Notify the action.
                 mJsDelivery.notifyNotificationAction(bundle);
