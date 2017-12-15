@@ -40,6 +40,8 @@ public class RNPushNotificationHelper {
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
+    private static final String KEY_TEXT_REPLY = "key_text_reply";
+
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -309,10 +311,8 @@ public class RNPushNotificationHelper {
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     if(action.equals("ReplyInput")){
-                        //action with inline reply
+                        //Action with inline reply
                         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
-                            final String KEY_TEXT_REPLY = "key_text_reply";
-
                             RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
                                     .setLabel(bundle.getString("reply_placeholder_text"))
                                     .build();
@@ -326,7 +326,7 @@ public class RNPushNotificationHelper {
 
                         }
                         else{
-                            // the notification will not have action
+                            // The notification will not have action
                             break;
                         }
                     }
