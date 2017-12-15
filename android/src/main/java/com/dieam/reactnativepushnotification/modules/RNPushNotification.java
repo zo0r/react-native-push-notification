@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.RemoteInput;
-import android.util.Log;
 
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
