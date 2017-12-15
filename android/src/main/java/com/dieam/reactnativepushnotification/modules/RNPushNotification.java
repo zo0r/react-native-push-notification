@@ -105,7 +105,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                     // Add to reply_text the text written by the user in the notification
                     bundle.putCharSequence("reply_text", remoteInput.getCharSequence(KEY_TEXT_REPLY));
                 }
-
                 // Notify the action.
                 mJsDelivery.notifyNotificationAction(bundle);
 

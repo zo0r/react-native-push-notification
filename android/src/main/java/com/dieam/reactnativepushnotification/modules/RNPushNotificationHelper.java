@@ -323,7 +323,6 @@ public class RNPushNotificationHelper {
                                     .build();
 
                             notification.addAction(replyAction);
-
                         }
                         else{
                             // The notification will not have action
