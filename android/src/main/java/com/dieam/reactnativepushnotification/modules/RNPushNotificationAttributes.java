@@ -36,6 +36,8 @@ public class RNPushNotificationAttributes {
     private static final String REPEAT_TYPE = "repeatType";
     private static final String REPEAT_TIME = "repeatTime";
     private static final String ONGOING = "ongoing";
+    private static final String REPLY_BUTTON_TEXT = "reply_button_text";
+    private static final String REPLAY_PLACEHOLDER_TEXT = "reply_placeholder_text";
 
     private final String id;
     private final String message;
@@ -60,6 +62,8 @@ public class RNPushNotificationAttributes {
     private final String repeatType;
     private final double repeatTime;
     private final boolean ongoing;
+    private final String reply_button_text;
+    private final String reply_placeholder_text;
 
     public RNPushNotificationAttributes(Bundle bundle) {
         id = bundle.getString(ID);
@@ -85,6 +89,8 @@ public class RNPushNotificationAttributes {
         repeatType = bundle.getString(REPEAT_TYPE);
         repeatTime = bundle.getDouble(REPEAT_TIME);
         ongoing = bundle.getBoolean(ONGOING);
+        reply_button_text = bundle.getString(REPLY_BUTTON_TEXT);
+        reply_placeholder_text = bundle.getString(REPLAY_PLACEHOLDER_TEXT);
     }
 
     private RNPushNotificationAttributes(JSONObject jsonObject) {
@@ -112,6 +118,8 @@ public class RNPushNotificationAttributes {
             repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
             repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
+            reply_button_text = jsonObject.has(REPLY_BUTTON_TEXT) ? jsonObject.getString(REPLY_BUTTON_TEXT) : null;
+            reply_placeholder_text = jsonObject.has(REPLAY_PLACEHOLDER_TEXT) ? jsonObject.getString(REPLAY_PLACEHOLDER_TEXT) : null;
         } catch (JSONException e) {
             throw new IllegalStateException("Exception while initializing RNPushNotificationAttributes from JSON", e);
         }
@@ -197,6 +205,8 @@ public class RNPushNotificationAttributes {
         bundle.putString(REPEAT_TYPE, repeatType);
         bundle.putDouble(REPEAT_TIME, repeatTime);
         bundle.putBoolean(ONGOING, ongoing);
+        bundle.putString(REPLY_BUTTON_TEXT, reply_button_text);
+        bundle.putString(REPLAY_PLACEHOLDER_TEXT, reply_placeholder_text);
         return bundle;
     }
 
@@ -226,6 +236,8 @@ public class RNPushNotificationAttributes {
             jsonObject.put(REPEAT_TYPE, repeatType);
             jsonObject.put(REPEAT_TIME, repeatTime);
             jsonObject.put(ONGOING, ongoing);
+            jsonObject.put(REPLY_BUTTON_TEXT, reply_button_text);
+            jsonObject.put(REPLAY_PLACEHOLDER_TEXT, reply_placeholder_text);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Exception while converting RNPushNotificationAttributes to " +
                     "JSON. Returning an empty object", e);
@@ -261,6 +273,8 @@ public class RNPushNotificationAttributes {
                 ", repeatType='" + repeatType + '\'' +
                 ", repeatTime=" + repeatTime +
                 ", ongoing=" + ongoing +
+                ", reply_button_text=" + reply_button_text +
+                ", reply_placeholder_text=" + reply_placeholder_text +
                 '}';
     }
 

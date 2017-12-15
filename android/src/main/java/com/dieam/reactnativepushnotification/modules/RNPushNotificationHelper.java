@@ -40,6 +40,8 @@ public class RNPushNotificationHelper {
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
+    private static final String KEY_TEXT_REPLY = "key_text_reply";
+
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -302,16 +304,35 @@ public class RNPushNotificationHelper {
                         Log.e(LOG_TAG, "Exception while getting action from actionsArray.", e);
                         continue;
                     }
-
                     Intent actionIntent = new Intent();
                     actionIntent.setAction(context.getPackageName() + "." + action);
-                    // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
-                    notification.addAction(icon, action, pendingActionIntent);
-                }
+                    if(action.equals("ReplyInput")){
+                        //Action with inline reply
+                        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
+                            RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
+                                    .setLabel(bundle.getString("reply_placeholder_text"))
+                                    .build();
+                            NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                                    icon, bundle.getString("reply_button_text"), pendingActionIntent)
+                                    .addRemoteInput(remoteInput)
+                                    .setAllowGeneratedReplies(true)
+                                    .build();
+
+                            notification.addAction(replyAction);
+                        }
+                        else{
+                            // The notification will not have action
+                            break;
+                        }
+                    }
+                    else{
+                        // Add "action" for later identifying which button gets pressed
+                        notification.addAction(icon, action, pendingActionIntent);
+                    }
             }
 
             // Remove the notification from the shared preferences once it has been shown
