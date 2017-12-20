@@ -127,6 +127,7 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Usage
 ```javascript
+import { PushNotificationIOS } from 'react-native';
 var PushNotification = require('react-native-push-notification');
 
 PushNotification.configure({
@@ -141,7 +142,7 @@ PushNotification.configure({
         console.log( 'NOTIFICATION:', notification );
 
         // process the notification
-        
+
         // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
         notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
