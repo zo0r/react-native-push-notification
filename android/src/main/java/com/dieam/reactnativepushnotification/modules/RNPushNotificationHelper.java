@@ -204,45 +204,30 @@ public class RNPushNotificationHelper {
             int largeIconResId;
 
             String smallIcon = bundle.getString("smallIcon");
-            Log.d(TAG, "smallIcon is"+smallIcon);
 
             if (smallIcon != null) {
                 smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
             } else {
                 smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
-                Log.d(TAG, "smallIcon is set to"+smallIcon);
-                Log.d(TAG, "smallIconResId is set to"+smallIconResId);
             }
 
             if (smallIconResId == 0) {
-                Log.d(TAG, "smallIconResId is 0 case");
-
                 smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-                Log.d(TAG, "smallIconResId is set to"+smallIconResId);
 
                 if (smallIconResId == 0) {
-                    Log.d(TAG, "smallIconResId is still 0. sad");
                     smallIconResId = android.R.drawable.ic_dialog_info;
-                    Log.d(TAG, "smallIconResId is set to"+smallIconResId);
                 }
             }
 
-            Log.d(TAG, "final smallIconResId is"+smallIconResId);
-            Log.d(TAG, "largeIcon is"+largeIcon);
-
             if (largeIcon != null) {
                 largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-                Log.d(TAG, "largeIcon was not null and largeIconResId is set to"+largeIconResId);
             } else {
                 largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-                Log.d(TAG, "largeIcon was null and largeIconResId was is set to"+largeIconResId);
             }
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-            Log.d(TAG, "largeIconBitmap is"+largeIconBitmap);
 
             if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                Log.d(TAG, "largeIconBitmap is getting set");
                 notification.setLargeIcon(largeIconBitmap);
             }
 
@@ -265,8 +250,6 @@ public class RNPushNotificationHelper {
                 notification.setContentText(message);
                 notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
             }
-
-            //notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -392,29 +375,13 @@ public class RNPushNotificationHelper {
         }
     }
 
-    /**
-    * Added by Shivam Aditya on 08/12/2017.
-    */
     public void sendToNotificationCentre(final Bundle bundle) {
         String imageUrl = bundle.getString("imageUrl");
-//        double bigImageHeight = bundle.getDouble("bigImageHeight");
-//        double bigImageWidth = bundle.getDouble("bigImageWidth");
-//        int bigImageHeightInt = (int) bigImageHeight;
-//        int bigImageWidthInt = (int) bigImageWidth;
-//
-//        Log.d(TAG,"bigImageHeight is: "+bigImageHeightInt);
-//        Log.d(TAG,"bigImageWidth is: "+bigImageWidthInt);
-//        ResizeOptions imageSize = new ResizeOptions(bigImageWidthInt,bigImageHeightInt);
 
         if( imageUrl == null ){
             sendNotificationWithImage( bundle, null );
             return;
         }
-
-//        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
-//                .setDownsampleEnabled(true)
-//                .build();
-//        Fresco.initialize(context, config);
 
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
 
@@ -422,7 +389,6 @@ public class RNPushNotificationHelper {
                 .newBuilderWithSource(Uri.parse(imageUrl))
                 .setRequestPriority(Priority.HIGH)
                 .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
-//                .setResizeOptions(imageSize)
                 .build();
         DataSource<CloseableReference<CloseableImage>> dataSource =
                 imagePipeline.fetchDecodedImage(imageRequest, context);
