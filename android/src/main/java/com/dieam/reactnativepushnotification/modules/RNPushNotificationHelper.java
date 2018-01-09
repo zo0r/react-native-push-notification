@@ -21,6 +21,20 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import android.support.annotation.Nullable;
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.common.Priority;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONArray;
@@ -40,6 +54,8 @@ public class RNPushNotificationHelper {
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
+
+    private String TAG = "RNPushNotificationHelper";
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -128,7 +144,7 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendToNotificationCentre(Bundle bundle) {
+    public void sendNotificationWithImage(Bundle bundle, Bitmap image ) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -150,7 +166,7 @@ public class RNPushNotificationHelper {
 
             Resources res = context.getResources();
             String packageName = context.getPackageName();
-
+            String message = bundle.getString("message");
             String title = bundle.getString("title");
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
@@ -188,30 +204,45 @@ public class RNPushNotificationHelper {
             int largeIconResId;
 
             String smallIcon = bundle.getString("smallIcon");
+            Log.d(TAG, "smallIcon is"+smallIcon);
 
             if (smallIcon != null) {
                 smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
             } else {
                 smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
+                Log.d(TAG, "smallIcon is set to"+smallIcon);
+                Log.d(TAG, "smallIconResId is set to"+smallIconResId);
             }
 
             if (smallIconResId == 0) {
+                Log.d(TAG, "smallIconResId is 0 case");
+
                 smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                Log.d(TAG, "smallIconResId is set to"+smallIconResId);
 
                 if (smallIconResId == 0) {
+                    Log.d(TAG, "smallIconResId is still 0. sad");
                     smallIconResId = android.R.drawable.ic_dialog_info;
+                    Log.d(TAG, "smallIconResId is set to"+smallIconResId);
                 }
             }
 
+            Log.d(TAG, "final smallIconResId is"+smallIconResId);
+            Log.d(TAG, "largeIcon is"+largeIcon);
+
             if (largeIcon != null) {
                 largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                Log.d(TAG, "largeIcon was not null and largeIconResId is set to"+largeIconResId);
             } else {
                 largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                Log.d(TAG, "largeIcon was null and largeIconResId was is set to"+largeIconResId);
             }
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+            Log.d(TAG, "largeIconBitmap is"+largeIconBitmap);
 
             if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                Log.d(TAG, "largeIconBitmap is getting set");
                 notification.setLargeIcon(largeIconBitmap);
             }
 
@@ -222,7 +253,20 @@ public class RNPushNotificationHelper {
                 bigText = bundle.getString("message");
             }
 
-            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            if( image != null ){
+                notification.setStyle(
+                    new NotificationCompat.BigPictureStyle()
+                            .bigPicture(image)
+                            .setBigContentTitle(title)
+                            .setSummaryText( message )
+                );
+            } 
+            else {
+                notification.setContentText(message);
+                notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            }
+
+            //notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -346,6 +390,60 @@ public class RNPushNotificationHelper {
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
+    }
+
+    /**
+    * Added by Shivam Aditya on 08/12/2017.
+    */
+    public void sendToNotificationCentre(final Bundle bundle) {
+        String imageUrl = bundle.getString("imageUrl");
+//        double bigImageHeight = bundle.getDouble("bigImageHeight");
+//        double bigImageWidth = bundle.getDouble("bigImageWidth");
+//        int bigImageHeightInt = (int) bigImageHeight;
+//        int bigImageWidthInt = (int) bigImageWidth;
+//
+//        Log.d(TAG,"bigImageHeight is: "+bigImageHeightInt);
+//        Log.d(TAG,"bigImageWidth is: "+bigImageWidthInt);
+//        ResizeOptions imageSize = new ResizeOptions(bigImageWidthInt,bigImageHeightInt);
+
+        if( imageUrl == null ){
+            sendNotificationWithImage( bundle, null );
+            return;
+        }
+
+//        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+//                .setDownsampleEnabled(true)
+//                .build();
+//        Fresco.initialize(context, config);
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+
+        ImageRequest imageRequest = ImageRequestBuilder
+                .newBuilderWithSource(Uri.parse(imageUrl))
+                .setRequestPriority(Priority.HIGH)
+                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+//                .setResizeOptions(imageSize)
+                .build();
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, context);
+
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                if (bitmap == null) {
+                    Log.d(TAG, "Bitmap data source returned success, but bitmap null.");
+                    sendNotificationWithImage(bundle, null);
+                    return;
+                }
+                sendNotificationWithImage( bundle, bitmap );
+            }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                Log.d(TAG, "Bitmap data source returned failure. Bitmap null");
+                sendNotificationWithImage( bundle, null );
+            }
+        }, CallerThreadExecutor.getInstance());
     }
 
     private void scheduleNextNotificationIfRepeating(Bundle bundle) {
