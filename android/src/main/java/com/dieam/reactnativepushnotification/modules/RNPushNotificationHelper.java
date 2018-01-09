@@ -397,7 +397,6 @@ public class RNPushNotificationHelper {
             @Override
             public void onNewResultImpl(@Nullable Bitmap bitmap) {
                 if (bitmap == null) {
-                    Log.d(TAG, "Bitmap data source returned success, but bitmap null.");
                     sendNotificationWithImage(bundle, null);
                     return;
                 }
@@ -406,7 +405,6 @@ public class RNPushNotificationHelper {
 
             @Override
             public void onFailureImpl(DataSource dataSource) {
-                Log.d(TAG, "Bitmap data source returned failure. Bitmap null");
                 sendNotificationWithImage( bundle, null );
             }
         }, CallerThreadExecutor.getInstance());
