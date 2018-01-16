@@ -147,6 +147,7 @@ PushNotification.configure({
     },
 
     // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+    // GCM/FCM Sender ID is your project Id and NOT your API Key
     senderID: "YOUR GCM SENDER ID",
 
     // IOS ONLY (optional): default: all - Permissions to register.
