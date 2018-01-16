@@ -202,6 +202,7 @@ PushNotification.localNotification({
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
     ongoing: false, // (optional) set whether this is an "ongoing" notification
+    actions: [{id: “actionId”, text: “Display Text”}],  // (optional) See the doc for notification actions to know more
 
     /* iOS only properties */
     alertAction: // (optional) default: view
@@ -215,7 +216,6 @@ PushNotification.localNotification({
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
     repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
-    actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
 ```
 
@@ -270,16 +270,14 @@ For iOS, the repeating notification should land soon. It has already been merged
 
 ## Notification Actions ##
 
-(Android only) [Refer](https://github.com/zo0r/react-native-push-notification/issues/151) to this issue to see an example of a notification action.
-
 Two things are required to setup notification actions.
 
 ### 1) Specify notification actions for a notification
-This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notificaiton action that will be presented with the notification.
+This is done by specifying an `actions` parameters while configuring the local notification. This is an array of objects. Each object represent on action button on notification and each should contain two properties:
+1. `id` - unique action identifier for Android Intent. It will be prefixed by application package name, so you don’t need to provide it here,
+2. `text` - Human readable (and localized) text that will appear on the button.
 
-For e.g. `actions: '["Accept", "Reject"]'  // Must be in string format`
-
-The array itself is specified in string format to circumvent some problems because of the way JSON arrays are handled by react-native android bridge.
+For e.g. `actions: [{id: “firstAction”, text: “Mark as Done”}]
 
 ### 2) Specify handlers for the notification actions
 For each action specified in the `actions` field, we need to add a handler that is called when the user clicks on the action. This can be done in the `componentWillMount` of your main app file or in a separate file which is imported in your main app file. Notification actions handlers can be configured as below:
@@ -289,13 +287,13 @@ import PushNotificationAndroid from 'react-native-push-notification'
 
 (function() {
   // Register all the valid actions for notifications here and add the action handler for each action
-  PushNotificationAndroid.registerNotificationActions(['Accept','Reject','Yes','No']);
+  PushNotificationAndroid.registerNotificationActions(['firstAction','secondAction']); // here provide action id’s from previous step
   DeviceEventEmitter.addListener('notificationActionReceived', function(action){
     console.log ('Notification action received: ' + action);
     const info = JSON.parse(action.dataJSON);
-    if (info.action == 'Accept') {
+    if (info.action == 'firstAction') {
       // Do work pertaining to Accept action here
-    } else if (info.action == 'Reject') {
+    } else if (info.action == 'secondAction') {
       // Do work pertaining to Reject action here
     }
     // Add all the required actions handlers

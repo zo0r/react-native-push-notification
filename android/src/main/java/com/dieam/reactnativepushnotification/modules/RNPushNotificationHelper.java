@@ -26,7 +26,9 @@ import com.facebook.react.bridge.ReadableMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -282,35 +284,25 @@ public class RNPushNotificationHelper {
                 notification.setVibrate(new long[]{0, vibration});
             }
 
-            JSONArray actionsArray = null;
-            try {
-                actionsArray = bundle.getString("actions") != null ? new JSONArray(bundle.getString("actions")) : null;
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "Exception while converting actions to JSON object.", e);
-            }
-
-            if (actionsArray != null) {
-                // No icon for now. The icon value of 0 shows no icon.
+            Serializable actionsRaw = bundle.getSerializable("actions");
+            if (actionsRaw instanceof List) {
                 int icon = 0;
-
-                // Add button for each actions.
-                for (int i = 0; i < actionsArray.length(); i++) {
-                    String action;
-                    try {
-                        action = actionsArray.getString(i);
-                    } catch (JSONException e) {
-                        Log.e(LOG_TAG, "Exception while getting action from actionsArray.", e);
+                List<Bundle> actions = (List<Bundle>) actionsRaw;
+                for (Bundle action : actions) {
+                    String id = action.getString("id");
+                    String text = action.getString("text");
+                    if (id == null || text == null || id.isEmpty() || text.isEmpty()) {
+                        Log.e(LOG_TAG, "id and text must be defined. Action will not be added");
                         continue;
                     }
-
                     Intent actionIntent = new Intent();
-                    actionIntent.setAction(context.getPackageName() + "." + action);
+                    actionIntent.setAction(context.getPackageName() + "." + id);
                     // Add "action" for later identifying which button gets pressed.
-                    bundle.putString("action", action);
+                    bundle.putString("action", id);
                     actionIntent.putExtra("notification", bundle);
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
-                    notification.addAction(icon, action, pendingActionIntent);
+                    notification.addAction(icon, text, pendingActionIntent);
                 }
             }
 
