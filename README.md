@@ -270,35 +270,128 @@ For iOS, the repeating notification should land soon. It has already been merged
 
 ## Notification Actions ##
 
-Two things are required to setup notification actions.
+Couple things are required to setup notification actions.
+
+This implementation ensures that our notification actions will always be executed even when application is not running. In such case, android will start our app in background and then execute headless task. Please also read through [react-native documentation](https://facebook.github.io/react-native/docs/headless-js-android.html) regarding `HeadlessJsTask`.
 
 ### 1) Specify notification actions for a notification
 This is done by specifying an `actions` parameters while configuring the local notification. This is an array of objects. Each object represent on action button on notification and each should contain two properties:
 1. `id` - unique action identifier for Android Intent. It will be prefixed by application package name, so you don’t need to provide it here,
 2. `text` - Human readable (and localized) text that will appear on the button.
 
-For e.g. `actions: [{id: “firstAction”, text: “Mark as Done”}]
+For e.g. `actions: [{id: “firstAction”, text: “Mark as Done”}, {id: “secondActin”, text: “Reject”}]
 
-### 2) Specify handlers for the notification actions
-For each action specified in the `actions` field, we need to add a handler that is called when the user clicks on the action. This can be done in the `componentWillMount` of your main app file or in a separate file which is imported in your main app file. Notification actions handlers can be configured as below:
+### 2) Export HeadlesJsHandler function
+In order to handle notification actions when application is not running. Headless JS handler function must be exported. Detailed description can be found [here](https://facebook.github.io/react-native/docs/headless-js-android.html).
 
 ```
-import PushNotificationAndroid from 'react-native-push-notification'
+import { AppRegistry } from 'react-native'
 
-(function() {
-  // Register all the valid actions for notifications here and add the action handler for each action
-  PushNotificationAndroid.registerNotificationActions(['firstAction','secondAction']); // here provide action id’s from previous step
-  DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-    console.log ('Notification action received: ' + action);
-    const info = JSON.parse(action.dataJSON);
-    if (info.action == 'firstAction') {
-      // Do work pertaining to Accept action here
-    } else if (info.action == 'secondAction') {
-      // Do work pertaining to Reject action here
+const notificationActionHandler = async (data) => {
+  const action = data.notification.action;
+  if (action == ‘firstAction’) { // id of the first action
+    // Do work pertaining to Accept action here
+  } else if (action == ‘secondAction’) { // id of the second action
+    // Do work pretainng to Reject action here
+  }
+  // Add all the requuuirede actions handlers
+}
+
+AppRegistry.registerHeadlessTask(‘YourHeadlessTaskName’, () => { return notificationActionHandler });
+```
+### 3) Create HeadlesJsTaskService
+Implement our `HeadlessJsTaskService` that will execute previously registred headless js task.
+
+```
+package your.app.package.name;
+
+import android.content.Intent;
+
+import com.facebook.react.HeadlessJsTaskService;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.jstasks.HeadlessJsTaskConfig;
+
+import javax.annotation.Nullable;
+
+public class NotificationActionHandlerService extends HeadlessJsTaskService {
+  @Nullable
+  @Override
+  protected HeadlessJsTaskConfig getTaskConfig(Intent intent) {
+    return new HeadlessJsTaskConfig("YourHeadlessTaskName", Arguments.fromBundle(intent.getExtras()), 5000, true);
+  }
+}
+```
+
+### 4) Create BroadcastReceiver
+Implement `BroadcastReveiver` that will listen from pending intents send from the notification action and forward them to our `HeadlessJsTaskService` implementation.
+
+```
+package your.app.package.name;
+
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+
+import com.facebook.react.HeadlessJsTaskService;
+
+import java.util.List;
+
+public class NotificationAcitonHandlerReceiver extends BroadcastReceiver {
+
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    Intent serviceIntent = new Intent(context, NotificationActionHandlerService.class);
+    serviceIntent.putExtras(intent.getExtras());
+    context.startService(serviceIntent);
+
+    // Dismiss the notification popup.
+    Bundle bundle = intent.getBundleExtra("notification");
+    NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+    int notificationID = Integer.parseInt(bundle.getString("id"));
+    manager.cancel(notificationID);
+
+    if (!isAppOnForeground((context))) {
+      HeadlessJsTaskService.acquireWakeLockNow(context);
     }
-    // Add all the required actions handlers
-  });
-})();
+  }
+
+  private boolean isAppOnForeground(Context context) {
+    /**
+     We need to check if app is in foreground otherwise the app will crash.
+     http://stackoverflow.com/questions/8489993/check-android-application-is-in-foreground-or-not
+     **/
+    ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    List<ActivityManager.RunningAppProcessInfo> appProcesses =
+        activityManager.getRunningAppProcesses();
+    if (appProcesses == null) {
+      return false;
+    }
+    final String packageName = context.getPackageName();
+    for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+      if (appProcess.importance ==
+          ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+          appProcess.processName.equals(packageName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+```
+
+### 5) Modify AndroidManifest.xml
+Add `service` and `receiver` with `intent-filter` to your `AndroidMainfest.xml` file.
+
+```
+<service android:name=".NotificationActionHandlerService" />
+<receiver android:name=".NotificatitonAcitonHandlerReceiver"
+    android:exported="true">
+    <intent-filter>
+        <action android:name="${applicationId}.firstAction" />
+        <action android:name="${applicationId}.secondAction" />
+    </intent-filter>
+</receiver>
 ```
 
 For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.

@@ -82,29 +82,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }, intentFilter);
     }
 
-    private void registerNotificationsReceiveNotificationActions(ReadableArray actions) {
-        IntentFilter intentFilter = new IntentFilter();
-        // Add filter for each actions.
-        for (int i = 0; i < actions.size(); i++) {
-            String action = actions.getString(i);
-            intentFilter.addAction(getReactApplicationContext().getPackageName() + "." + action);
-        }
-        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getBundleExtra("notification");
-
-                // Notify the action.
-                mJsDelivery.notifyNotificationAction(bundle);
-
-                // Dismiss the notification popup.
-                NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-                int notificationID = Integer.parseInt(bundle.getString("id"));
-                manager.cancel(notificationID);
-            }
-        }, intentFilter);
-    }
-
     @ReactMethod
     public void requestPermissions(String senderID) {
         ReactContext reactContext = getReactApplicationContext();
@@ -192,10 +169,5 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      */
     public void cancelLocalNotifications(ReadableMap userInfo) {
         mRNPushNotificationHelper.cancelScheduledNotification(userInfo);
-    }
-
-    @ReactMethod
-    public void registerNotificationActions(ReadableArray actions) {
-        registerNotificationsReceiveNotificationActions(actions);
     }
 }
