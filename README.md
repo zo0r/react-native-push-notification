@@ -279,10 +279,12 @@ This is done by specifying an `actions` parameters while configuring the local n
 1. `id` - unique action identifier for Android Intent. It will be prefixed by application package name, so you don’t need to provide it here,
 2. `text` - Human readable (and localized) text that will appear on the button.
 
-For e.g. `actions: [{id: “firstAction”, text: “Mark as Done”}, {id: “secondActin”, text: “Reject”}]
+For e.g. `actions: [{id: “firstAction”, text: “Mark as Done”}, {id: “secondAction”, text: “Reject”}]
 
 ### 2) Export HeadlesJsHandler function
 In order to handle notification actions when application is not running. Headless JS handler function must be exported. Detailed description can be found [here](https://facebook.github.io/react-native/docs/headless-js-android.html).
+
+Remember to use `RNPushNotificationActionHandlerTask` as headless taks name.
 
 ```
 import { AppRegistry } from 'react-native'
@@ -297,95 +299,17 @@ const notificationActionHandler = async (data) => {
   // Add all the requuuirede actions handlers
 }
 
-AppRegistry.registerHeadlessTask(‘YourHeadlessTaskName’, () => { return notificationActionHandler });
+AppRegistry.registerHeadlessTask(
+    ‘RNPushNotificationActionHandlerTask’, // you must use the same name
+    () => { return notificationActionHandler }
+);
 ```
-### 3) Create HeadlesJsTaskService
-Implement our `HeadlessJsTaskService` that will execute previously registred headless js task.
-
-```
-package your.app.package.name;
-
-import android.content.Intent;
-
-import com.facebook.react.HeadlessJsTaskService;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.jstasks.HeadlessJsTaskConfig;
-
-import javax.annotation.Nullable;
-
-public class NotificationActionHandlerService extends HeadlessJsTaskService {
-  @Nullable
-  @Override
-  protected HeadlessJsTaskConfig getTaskConfig(Intent intent) {
-    return new HeadlessJsTaskConfig("YourHeadlessTaskName", Arguments.fromBundle(intent.getExtras()), 5000, true);
-  }
-}
-```
-
-### 4) Create BroadcastReceiver
-Implement `BroadcastReveiver` that will listen from pending intents send from the notification action and forward them to our `HeadlessJsTaskService` implementation.
-
-```
-package your.app.package.name;
-
-import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-
-import com.facebook.react.HeadlessJsTaskService;
-
-import java.util.List;
-
-public class NotificationAcitonHandlerReceiver extends BroadcastReceiver {
-
-  @Override
-  public void onReceive(Context context, Intent intent) {
-    Intent serviceIntent = new Intent(context, NotificationActionHandlerService.class);
-    serviceIntent.putExtras(intent.getExtras());
-    context.startService(serviceIntent);
-
-    // Dismiss the notification popup.
-    Bundle bundle = intent.getBundleExtra("notification");
-    NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-    int notificationID = Integer.parseInt(bundle.getString("id"));
-    manager.cancel(notificationID);
-
-    if (!isAppOnForeground((context))) {
-      HeadlessJsTaskService.acquireWakeLockNow(context);
-    }
-  }
-
-  private boolean isAppOnForeground(Context context) {
-    /**
-     We need to check if app is in foreground otherwise the app will crash.
-     http://stackoverflow.com/questions/8489993/check-android-application-is-in-foreground-or-not
-     **/
-    ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-    List<ActivityManager.RunningAppProcessInfo> appProcesses =
-        activityManager.getRunningAppProcesses();
-    if (appProcesses == null) {
-      return false;
-    }
-    final String packageName = context.getPackageName();
-    for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-      if (appProcess.importance ==
-          ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
-          appProcess.processName.equals(packageName)) {
-        return true;
-      }
-    }
-    return false;
-  }
-}
-```
-
-### 5) Modify AndroidManifest.xml
+### 3) Modify AndroidManifest.xml
 Add `service` and `receiver` with `intent-filter` to your `AndroidMainfest.xml` file.
 
 ```
-<service android:name=".NotificationActionHandlerService" />
-<receiver android:name=".NotificatitonAcitonHandlerReceiver"
+<service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActionService" />
+<receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActionHandlerReceiver"
     android:exported="true">
     <intent-filter>
         <action android:name="${applicationId}.firstAction" />
