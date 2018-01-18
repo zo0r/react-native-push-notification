@@ -15,6 +15,9 @@ public class RNPushNotificationActionHandlerReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
+    if (intent == null || intent.getExtras() == null) {
+      return;
+    }
     Intent serviceIntent = new Intent(context, RNPushNotificationActionService.class);
     serviceIntent.putExtras(intent.getExtras());
     context.startService(serviceIntent);
