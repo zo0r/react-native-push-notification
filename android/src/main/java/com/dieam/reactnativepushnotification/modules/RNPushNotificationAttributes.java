@@ -7,8 +7,16 @@ import android.util.Log;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
@@ -36,6 +44,8 @@ public class RNPushNotificationAttributes {
     private static final String REPEAT_TYPE = "repeatType";
     private static final String REPEAT_TIME = "repeatTime";
     private static final String ONGOING = "ongoing";
+    private static final String ACTION_ID = "id";
+    private static final String ACTION_TEXT = "text";
 
     private final String id;
     private final String message;
@@ -55,7 +65,7 @@ public class RNPushNotificationAttributes {
     private final boolean playSound;
     private final boolean vibrate;
     private final double vibration;
-    private final String actions;
+    private final Serializable actions;
     private final String tag;
     private final String repeatType;
     private final double repeatTime;
@@ -80,7 +90,7 @@ public class RNPushNotificationAttributes {
         playSound = bundle.getBoolean(PLAY_SOUND);
         vibrate = bundle.getBoolean(VIBRATE);
         vibration = bundle.getDouble(VIBRATION);
-        actions = bundle.getString(ACTIONS);
+        actions = bundle.getSerializable(ACTIONS);
         tag = bundle.getString(TAG);
         repeatType = bundle.getString(REPEAT_TYPE);
         repeatTime = bundle.getDouble(REPEAT_TIME);
@@ -107,13 +117,34 @@ public class RNPushNotificationAttributes {
             playSound = jsonObject.has(PLAY_SOUND) ? jsonObject.getBoolean(PLAY_SOUND) : true;
             vibrate = jsonObject.has(VIBRATE) ? jsonObject.getBoolean(VIBRATE) : true;
             vibration = jsonObject.has(VIBRATION) ? jsonObject.getDouble(VIBRATION) : 1000;
-            actions = jsonObject.has(ACTIONS) ? jsonObject.getString(ACTIONS) : null;
+            actions = jsonObject.has(ACTIONS) ? decodeActions(jsonObject) : null;
             tag = jsonObject.has(TAG) ? jsonObject.getString(TAG) : null;
             repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
             repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
         } catch (JSONException e) {
             throw new IllegalStateException("Exception while initializing RNPushNotificationAttributes from JSON", e);
+        }
+    }
+
+    private Serializable decodeActions(JSONObject jsonObject) {
+        try {
+            Object actionsRaw = jsonObject.get(ACTIONS);
+            if (actionsRaw instanceof String) {
+              return (String) actionsRaw;
+            }
+            JSONArray actionsArray = (JSONArray) actionsRaw;
+            ArrayList<Map<String, String>> result = new ArrayList<>(actionsArray.length());
+            for (int i = 0; i < actionsArray.length(); i++) {
+                JSONObject actionRaw = actionsArray.getJSONObject(i);
+                Map<String, String> action = new HashMap<>(2);
+                action.put(ACTION_ID, actionRaw.getString(ACTION_ID));
+                action.put(ACTION_TEXT, actionRaw.getString(ACTION_TEXT));
+                result.add(action);
+            }
+            return result;
+        } catch (JSONException e) {
+            throw new IllegalStateException("Exception while decoding RNPushNotificationAttributes.actions from JSON", e);
         }
     }
 
@@ -192,7 +223,7 @@ public class RNPushNotificationAttributes {
         bundle.putBoolean(PLAY_SOUND, playSound);
         bundle.putBoolean(VIBRATE, vibrate);
         bundle.putDouble(VIBRATION, vibration);
-        bundle.putString(ACTIONS, actions);
+        bundle.putSerializable(ACTIONS, actions);
         bundle.putString(TAG, tag);
         bundle.putString(REPEAT_TYPE, repeatType);
         bundle.putDouble(REPEAT_TIME, repeatTime);
