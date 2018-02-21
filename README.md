@@ -50,8 +50,9 @@ dependencies {
 }
 ```
 
-OR set the play-service-gcm version by setting a root project ext variable, `googlePlayServicesVersion`, to the version in your project.
+**OR** set the play-service-gcm version by setting a root project ext variable, `googlePlayServicesVersion`, to the version in your project.
 This is useful if you need to apply plugin 'com.google.gms.google-services' in app-build.gradle for other google play services in your project.
+
 project-build.gradle
 ```gradle
 ...
