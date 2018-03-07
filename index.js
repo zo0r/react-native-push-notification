@@ -116,8 +116,8 @@ Notifications.unregister = function() {
 /**
  * Local Notifications
  * @param {Object}		details
+ * @param {String}		details.title  -  The title displayed in the notification alert.
  * @param {String}		details.message - The message displayed in the notification alert.
- * @param {String}		details.title  -  ANDROID ONLY: The title displayed in the notification alert.
  * @param {String}		details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
  * @param {Object}		details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
@@ -163,6 +163,7 @@ Notifications.localNotificationSchedule = function(details: Object) {
 
 		const iosDetails = {
 			fireDate: details.date.toISOString(),
+			alertTitle: details.title,
 			alertBody: details.message,
 			soundName: soundName,
 			userInfo: details.userInfo,
