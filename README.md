@@ -202,6 +202,7 @@ PushNotification.localNotification({
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
     ongoing: false, // (optional) set whether this is an "ongoing" notification
+    imageUrl: 'https://imageUrl.png' // (optional) default: none, Add big picture in push notification
 
     /* iOS only properties */
     alertAction: // (optional) default: view
