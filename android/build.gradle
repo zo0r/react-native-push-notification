@@ -43,4 +43,5 @@ dependencies {
     compile 'com.facebook.react:react-native:+'
     compile 'com.google.android.gms:play-services-gcm:+'
     compile 'me.leolin:ShortcutBadger:1.1.8@aar'
+    compile 'com.facebook.fresco:fresco:1.8.1'
 }
