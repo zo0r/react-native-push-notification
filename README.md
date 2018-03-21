@@ -36,17 +36,14 @@ The component uses PushNotificationIOS for the iOS part.
 
 ## Android manual Installation
 
-**NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `8.1.0` for your version):**
+**NOTE: To use a specific `play-service-gcm` version:**
+
+In your `android/build.gradle`
 ```gradle
 ...
 
-dependencies {
-    ...
-
-    compile project(':react-native-push-notification')
-    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
-        force = true;
-    }
+ext {
+    googlePlayServicesVersion = "<Your play services version>" // default: "+"
 }
 ```
 
@@ -141,7 +138,7 @@ PushNotification.configure({
         console.log( 'NOTIFICATION:', notification );
 
         // process the notification
-        
+
         // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
         notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
