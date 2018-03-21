@@ -40,8 +40,6 @@ The component uses PushNotificationIOS for the iOS part.
 
 In your `android/build.gradle`
 ```gradle
-...
-
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
 }
