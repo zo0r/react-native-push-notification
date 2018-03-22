@@ -37,10 +37,12 @@ android {
 }
 
 dependencies {
+    def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion : "+"
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.gms:play-services-gcm:+'
+    compile "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
     compile 'me.leolin:ShortcutBadger:1.1.8@aar'
 }
