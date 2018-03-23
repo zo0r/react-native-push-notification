@@ -36,7 +36,7 @@ The component uses PushNotificationIOS for the iOS part.
 
 ## Android manual Installation
 
-**NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `8.1.0` for your version):**
+**NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `9.0.1` for your version):**
 ```gradle
 ...
 
@@ -44,7 +44,7 @@ dependencies {
     ...
 
     compile project(':react-native-push-notification')
-    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
+    compile ('com.google.android.gms:play-services-gcm:9.0.1') {
         force = true;
     }
 }
