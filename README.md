@@ -42,6 +42,12 @@ In your `android/build.gradle`
 ```gradle
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
+
+    // Other settings
+    compileSdkVersion = "<Your compile SDK version>" // default: 23
+    buildToolsVersion = "<Your build tools version>" // default: "23.0.1"
+    targetSdkVersion = "<Your target SDK version>" // default: 23
+    supportLibVersion = "<Your support lib version>" // default: 23.1.1
 }
 ```
 
