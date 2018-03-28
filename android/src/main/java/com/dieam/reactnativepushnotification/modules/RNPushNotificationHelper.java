@@ -242,12 +242,12 @@ public class RNPushNotificationHelper {
                         int resId;
                         if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
                             resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
-                        } else {
-                            soundName = soundName.substring(0, soundName.lastIndexOf('.'));
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+                            soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+                        } else if (soundName.lastIndexOf('.') != (-1) &&
+                                context.getResources().getIdentifier(soundName.substring(0, soundName.lastIndexOf('.')), "raw", context.getPackageName()) != 0) {
+                            resId = context.getResources().getIdentifier(soundName.substring(0, soundName.lastIndexOf('.')), "raw", context.getPackageName());
+                            soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
                         }
-
-                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
                     }
                 }
                 notification.setSound(soundUri);
