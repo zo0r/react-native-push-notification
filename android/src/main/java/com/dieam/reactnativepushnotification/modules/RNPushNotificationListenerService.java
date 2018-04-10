@@ -29,7 +29,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         JSONObject data = getPushData(bundle.getString("data"));
         if (data != null) {
             if (!bundle.containsKey("message")) {
-                bundle.putString("message", data.optString("alert", "Notification received"));
+                bundle.putString("message", data.optString("alert", null));
             }
             if (!bundle.containsKey("title")) {
                 bundle.putString("title", data.optString("title", null));
