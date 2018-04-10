@@ -91,6 +91,29 @@ In your `AndroidManifest.xml`
 
 ```
 
+If you are using FCM instead of GCM, you should [remove the following lines](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#edit-your-apps-manifest) to avoid receiving notifications both from GCM and FCM.
+
+```diff
+-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+-    <permission
+-        android:name="${applicationId}.permission.C2D_MESSAGE"
+-        android:protectionLevel="signature" />
+-    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
+
+...
+
+-        <receiver
+-            android:name="com.google.android.gms.gcm.GcmReceiver"
+-            android:exported="true"
+-            android:permission="com.google.android.c2dm.permission.SEND" >
+-            <intent-filter>
+-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+-                <category android:name="${applicationId}" />
+-            </intent-filter>
+-        </receiver>
+```
+
+
 In `android/settings.gradle`
 ```gradle
 ...
