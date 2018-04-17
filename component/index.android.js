@@ -30,6 +30,10 @@ NotificationsComponent.prototype.requestPermissions = function(senderID: string)
 	RNPushNotification.requestPermissions(senderID);
 };
 
+NotificationsComponent.prototype.subscribeToTopic = function(topic: string) {
+	RNPushNotification.subscribeToTopic(topic);
+};
+
 NotificationsComponent.prototype.cancelLocalNotifications = function(details: Object) {
 	RNPushNotification.cancelLocalNotifications(details);
 };
@@ -116,4 +120,3 @@ module.exports = {
 	state: false,
 	component: new NotificationsComponent()
 };
-
