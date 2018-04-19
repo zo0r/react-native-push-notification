@@ -215,7 +215,7 @@ PushNotification.localNotification({
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-    repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
+    repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
 ```
@@ -265,9 +265,9 @@ Cancels all scheduled notifications AND clears the notifications alerts that are
 
 ## Repeating Notifications ##
 
-(Android only) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
+(optional) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
 
-For iOS, the repeating notification should land soon. It has already been merged to the [master](https://github.com/facebook/react-native/pull/10337)
+Property `repeatType` could be one of `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
 
 ## Notification Actions ##
 
