@@ -317,9 +317,16 @@ Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on And
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
 
-## iOS Only Methods
+## Checking Notification Permissions
 `PushNotification.checkPermissions(callback: Function)` Check permissions
 
-`PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
+`callback` will be invoked with a `permissions` object:
+- `alert`: boolean
+- `badge`: boolean
+- `sound`: boolean
+
+## iOS Only Methods
+
+`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
 
 `PushNotification.abandonPermissions()` Abandon permissions
