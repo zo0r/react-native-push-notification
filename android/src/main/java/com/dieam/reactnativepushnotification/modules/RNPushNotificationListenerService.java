@@ -28,6 +28,10 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     public void onMessageReceived(String from, final Bundle bundle) {
         JSONObject data = getPushData(bundle.getString("data"));
         if (data != null) {
+            // Copy `twi_body` to `message`
+            if (bundle.containsKey("twi_body")) {
+                bundle.putString("message", bundle.getString("twi_body"));
+            }
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", "Notification received"));
             }
