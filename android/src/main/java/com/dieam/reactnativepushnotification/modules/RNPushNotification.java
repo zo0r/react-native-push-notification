@@ -28,6 +28,7 @@ import java.util.Random;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
+    public static final String CHANNEL_ID = "keybase_channel_id";// The id of the channel. 
 
     private RNPushNotificationHelper mRNPushNotificationHelper;
     private final Random mRandomNumberGenerator = new Random(System.currentTimeMillis());
@@ -45,6 +46,15 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         mJsDelivery = new RNPushNotificationJsDelivery(reactContext);
 
         registerNotificationsRegistration();
+
+        CharSequence name = getString(R.string.channel_name);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        NotificationManager mNotificationManager =
+            (NotificationManager) getSystemService(reactContext.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.OREO) {
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
     }
 
     @Override
