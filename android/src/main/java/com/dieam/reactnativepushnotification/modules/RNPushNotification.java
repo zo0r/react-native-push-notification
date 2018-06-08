@@ -2,11 +2,13 @@ package com.dieam.reactnativepushnotification.modules;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -47,12 +49,12 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
         registerNotificationsRegistration();
 
-        CharSequence name = getString(R.string.channel_name);
+        CharSequence name = "Keybase channel";
         int importance = NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
         NotificationManager mNotificationManager =
-            (NotificationManager) getSystemService(reactContext.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.OREO) {
+            (NotificationManager) reactContext.getSystemService(reactContext.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mNotificationManager.createNotificationChannel(mChannel);
         }
     }
