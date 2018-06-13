@@ -21,9 +21,6 @@ public class RNPushNotificationBootEventReceiver extends BroadcastReceiver {
         Log.i(LOG_TAG, "RNPushNotificationBootEventReceiver loading scheduled notifications");
 
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            Intent serviceIntent = new Intent(context, RNPushNotificationListenerService.class);
-            context.startService(serviceIntent);
-
             SharedPreferences sharedPreferences = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
             Set<String> ids = sharedPreferences.getAll().keySet();
 
