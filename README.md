@@ -51,6 +51,15 @@ ext {
 }
 ```
 
+In your `android/build.gradle`
+```gradle
+dependencies {
+    ...
+    implementation project(':react-native-push-notification')  // <-- This dependency
+    ...
+}
+```
+
 In your `AndroidManifest.xml`
 ```xml
     .....
