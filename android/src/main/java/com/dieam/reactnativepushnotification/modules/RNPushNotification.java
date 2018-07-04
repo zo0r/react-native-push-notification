@@ -195,6 +195,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+        /**
+         * Clear notification from the notification centre.
+         */
+        public void clearLocalNotification(int notificationID) {
+            mRNPushNotificationHelper.clearNotification(notificationID);
+        }
+
+    @ReactMethod
     public void registerNotificationActions(ReadableArray actions) {
         registerNotificationsReceiveNotificationActions(actions);
     }
