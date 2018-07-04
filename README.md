@@ -246,15 +246,31 @@ In the location notification json specify the full file name:
 
 ### 1) cancelLocalNotifications
 
-`PushNotification.cancelLocalNotifications(details);`
-
-The the `details` parameter allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
-matched notification is cancelled and its alerts removed from the notification centre.  The RN docs suggest this is an optional parameter, but
-it is not.
+#### Android
+The `id` parameter for `PushNotification.localNotification` is required for this operation. The id supplied will then be used for the cancel operation.
 
 ```javascript
+// Android 
+PushNotification.localNotification({
+    ...
+    id: '123'
+    ...
+});
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
+
+#### IOS
+The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
+```javascript
+// IOS 
+PushNotification.localNotification({
+    ...
+    userInfo: { id: '123' }
+    ...
+});
+PushNotification.cancelLocalNotifications({id: '123'});
+```
+
 
 ### 2) cancelAllLocalNotifications
 
