@@ -35,7 +35,7 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final String NOTIFICATION_CHANNEL_ID = "fender_notifications";
+    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
     private final SharedPreferences scheduledNotificationsPersistence;
@@ -484,7 +484,7 @@ public class RNPushNotificationHelper {
         if (manager == null)
             return;
 
-        final CharSequence name = "rn-push-notification-channel";
+        final CharSequence name = "fender-notifications";
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
         channel.enableLights(true);
