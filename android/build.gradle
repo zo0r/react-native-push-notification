@@ -1,9 +1,10 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
@@ -16,12 +17,12 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.3"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -39,8 +40,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.gms:play-services-gcm:11.6.0'
+    compile 'com.android.support:appcompat-v7:26.0.3'
+    compile 'com.facebook.react:react-native:0.56.0'
+    compile 'com.google.android.gms:play-services-gcm:15.0.1'
     compile 'me.leolin:ShortcutBadger:1.1.8@aar'
 }
