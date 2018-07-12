@@ -36,17 +36,18 @@ The component uses PushNotificationIOS for the iOS part.
 
 ## Android manual Installation
 
-**NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `8.1.0` for your version):**
+**NOTE: To use a specific `play-service-gcm` version:**
+
+In your `android/build.gradle`
 ```gradle
-...
+ext {
+    googlePlayServicesVersion = "<Your play services version>" // default: "+"
 
-dependencies {
-    ...
-
-    compile project(':react-native-push-notification')
-    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
-        force = true;
-    }
+    // Other settings
+    compileSdkVersion = <Your compile SDK version> // default: 23
+    buildToolsVersion = "<Your build tools version>" // default: "23.0.1"
+    targetSdkVersion = <Your target SDK version> // default: 23
+    supportLibVersion = "<Your support lib version>" // default: 23.1.1
 }
 ```
 
@@ -141,7 +142,7 @@ PushNotification.configure({
         console.log( 'NOTIFICATION:', notification );
 
         // process the notification
-        
+
         // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
         notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
@@ -215,7 +216,7 @@ PushNotification.localNotification({
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-    repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
+    repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
 ```
@@ -226,6 +227,7 @@ PushNotification.localNotification({
 EXAMPLE:
 ```javascript
 PushNotification.localNotificationSchedule({
+  //... You can use all the options from localNotifications
   message: "My Notification Message", // (required)
   date: new Date(Date.now() + (60 * 1000)) // in 60 secs
 });
@@ -245,15 +247,31 @@ In the location notification json specify the full file name:
 
 ### 1) cancelLocalNotifications
 
-`PushNotification.cancelLocalNotifications(details);`
-
-The the `details` parameter allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
-matched notification is cancelled and its alerts removed from the notification centre.  The RN docs suggest this is an optional parameter, but
-it is not.
+#### Android
+The `id` parameter for `PushNotification.localNotification` is required for this operation. The id supplied will then be used for the cancel operation.
 
 ```javascript
+// Android 
+PushNotification.localNotification({
+    ...
+    id: '123'
+    ...
+});
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
+
+#### IOS
+The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
+```javascript
+// IOS 
+PushNotification.localNotification({
+    ...
+    userInfo: { id: '123' }
+    ...
+});
+PushNotification.cancelLocalNotifications({id: '123'});
+```
+
 
 ### 2) cancelAllLocalNotifications
 
@@ -265,9 +283,9 @@ Cancels all scheduled notifications AND clears the notifications alerts that are
 
 ## Repeating Notifications ##
 
-(Android only) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
+(optional) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
 
-For iOS, the repeating notification should land soon. It has already been merged to the [master](https://github.com/facebook/react-native/pull/10337)
+Property `repeatType` could be one of `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
 
 ## Notification Actions ##
 
@@ -317,9 +335,16 @@ Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on And
 ## Sending Notification Data From Server
 Same parameters as `PushNotification.localNotification()`
 
-## iOS Only Methods
+## Checking Notification Permissions
 `PushNotification.checkPermissions(callback: Function)` Check permissions
 
-`PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
+`callback` will be invoked with a `permissions` object:
+- `alert`: boolean
+- `badge`: boolean
+- `sound`: boolean
+
+## iOS Only Methods
+
+`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
 
 `PushNotification.abandonPermissions()` Abandon permissions
