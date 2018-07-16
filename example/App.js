@@ -27,22 +27,31 @@ export default class App extends Component<Props> {
 
         <Text style={styles.title}>Example app react-native-push-notification</Text>
         <View style={styles.spacer}></View>
-        <TextInput style={styles.textField} value={this.state.registerToken} placeholder="Register token" />
+        <TextInput style={styles.textField} editable={false} value={this.state.registerToken} placeholder="Register token" />
         <View style={styles.spacer}></View>
 
-        <TouchableOpacity style={styles.button} onPress={() => {this.notif.localNotif()} }><Text>Local Notification (now)</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {this.notif.scheduleNotif()} }><Text>Schedule Notification in 30s</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {this.notif.cancelNotif()} }><Text>Cancel last notification (if any)</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {this.notif.cancelAll()} }><Text>Cancel all notifications</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.localNotif() }}><Text>Local Notification (now)</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.scheduleNotif() }}><Text>Schedule Notification in 30s</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.cancelNotif() }}><Text>Cancel last notification (if any)</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.cancelAll() }}><Text>Cancel all notifications</Text></TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => {this.notif.checkPermission(this.handlePerm.bind(this))}}><Text>Check Permission</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.checkPermission(this.handlePerm.bind(this)) }}><Text>Check Permission</Text></TouchableOpacity>
+
+        <View style={styles.spacer}></View>
+        <TextInput style={styles.textField} value={this.state.senderId} onChangeText={(e) => {this.setState({ senderId: e })}} placeholder="GCM ID" />
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.configure(this.onRegister.bind(this), this.onNotif.bind(this), this.state.gcmId) }}><Text>Configure Sender ID</Text></TouchableOpacity>
+        {this.state.gcmRegistered && <Text>GCM Configured !</Text>}
+
+        <View style={styles.spacer}></View>
+
+
       </View>
     );
   }
 
   onRegister(token) {
     console.log(token);
-    this.setState({ registerToken: token });
+    this.setState({ registerToken: token, gcmRegistered: true });
   }
 
   onNotif(notif) {
