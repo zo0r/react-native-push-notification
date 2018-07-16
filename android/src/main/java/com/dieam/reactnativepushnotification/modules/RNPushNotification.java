@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
@@ -116,6 +117,13 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+    public void checkPermissions(Promise promise) {
+        ReactContext reactContext = getReactApplicationContext();
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(reactContext);
+        promise.resolve(managerCompat.areNotificationsEnabled());
+    }
+
+    @ReactMethod
     public void requestPermissions(String senderID) {
         ReactContext reactContext = getReactApplicationContext();
 
@@ -214,6 +222,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      */
     public void cancelLocalNotifications(ReadableMap userInfo) {
         mRNPushNotificationHelper.cancelScheduledNotification(userInfo);
+    }
+
+    @ReactMethod
+    /**
+     * Clear notification from the notification centre.
+     */
+    public void clearLocalNotification(int notificationID) {
+        mRNPushNotificationHelper.clearNotification(notificationID);
     }
 
     @ReactMethod
