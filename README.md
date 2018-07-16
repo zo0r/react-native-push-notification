@@ -51,6 +51,8 @@ ext {
 }
 ```
 
+**NOTE: localNotification() works without changes in the application part, while localNotificationSchedule() only works with these changes:**
+
 In your `AndroidManifest.xml`
 ```xml
     .....
