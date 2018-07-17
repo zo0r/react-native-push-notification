@@ -275,6 +275,10 @@ Notifications.requestPermissions = function() {
 };
 
 /* Fallback functions */
+Notifications.subscribeToTopic = function() {
+	return this.callNative('subscribeToTopic', arguments);
+};
+
 Notifications.presentLocalNotification = function() {
 	return this.callNative('presentLocalNotification', arguments);
 };
