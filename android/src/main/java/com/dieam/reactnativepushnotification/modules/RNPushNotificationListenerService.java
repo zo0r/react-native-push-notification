@@ -1,5 +1,9 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import java.util.Map;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
@@ -13,7 +17,6 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONObject;
 
@@ -22,11 +25,22 @@ import java.util.Random;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
-public class RNPushNotificationListenerService extends GcmListenerService {
+public class RNPushNotificationListenerService extends FirebaseMessagingService {
 
     @Override
-    public void onMessageReceived(String from, final Bundle bundle) {
+    public void onMessageReceived(RemoteMessage message) {
+        String from = message.getFrom();
+
+        final Bundle bundle = new Bundle();
+        for(Map.Entry<String, String> entry : message.getData().entrySet()) {
+            bundle.putString(entry.getKey(), entry.getValue());
+        }
         JSONObject data = getPushData(bundle.getString("data"));
+        // Copy `twi_body` to `message` to support Twilio
+        if (bundle.containsKey("twi_body")) {
+            bundle.putString("message", bundle.getString("twi_body"));
+        }
+
         if (data != null) {
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", null));
@@ -107,11 +121,9 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-        if (!isForeground) {
-            Application applicationContext = (Application) context.getApplicationContext();
-            RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
-            pushNotificationHelper.sendToNotificationCentre(bundle);
-        }
+        Application applicationContext = (Application) context.getApplicationContext();
+        RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+        pushNotificationHelper.sendToNotificationCentre(bundle);
     }
 
     private boolean isApplicationInForeground() {
