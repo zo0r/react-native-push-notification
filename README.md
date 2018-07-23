@@ -184,6 +184,12 @@ PushNotification.configure({
 });
 ```
 
+## Example app
+Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`. For Remote notifications, configure your SenderId in `app.json`. You can also edit it directly in the app.
+To send Push notifications, you can use the online tool [PushWatch](https://www.pushwatch.com/gcm/).
+
+Please test your PRs with this example app before submitting them. It'll help maintaining this repo.
+
 ## Handling Notifications
 When any notification is opened or received the callback `onNotification` is called passing an object with the notification data.
 
