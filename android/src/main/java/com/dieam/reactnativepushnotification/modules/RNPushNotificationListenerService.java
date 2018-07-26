@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
+import com.reactnativenavigation.NavigationApplication;
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -70,8 +70,10 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         handler.post(new Runnable() {
             public void run() {
                 // Construct and load our normal React JS code bundle
-                ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplication()).getReactNativeHost().getReactInstanceManager();
-                ReactContext context = mReactInstanceManager.getCurrentReactContext();
+                ReactInstanceManager mReactInstanceManager = ((NavigationApplication) getApplication())
+                .getReactGateway().getReactInstanceManager();
+                ReactContext context = ((NavigationApplication) getApplication()).getReactGateway()
+                .getReactContext();
                 // If it's constructed, send a notification
                 if (context != null) {
                     handleRemotePushNotification((ReactApplicationContext) context, bundle);
