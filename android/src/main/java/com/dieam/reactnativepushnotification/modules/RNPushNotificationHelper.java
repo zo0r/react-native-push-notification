@@ -35,13 +35,13 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
+    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -104,7 +104,7 @@ public class RNPushNotificationHelper {
 
         SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
         editor.putString(id, notificationAttributes.toJson().toString());
-        commit(editor);
+        editor.commit();
 
         boolean isSaved = scheduledNotificationsPersistence.contains(id);
         if (!isSaved) {
@@ -165,6 +165,10 @@ public class RNPushNotificationHelper {
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notification.setChannelId(NOTIFICATION_CHANNEL_ID);
+            }
 
             String group = bundle.getString("group");
             if (group != null) {
@@ -274,7 +278,6 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
 
             notification.setContentIntent(pendingIntent);
 
@@ -409,13 +412,6 @@ public class RNPushNotificationHelper {
         notificationManager.cancelAll();
     }
 
-    public void clearNotification(int notificationID) {
-        Log.i(LOG_TAG, "Clearing notification: " + notificationID);
-
-        NotificationManager notificationManager = notificationManager();
-        notificationManager.cancel(notificationID);
-    }
-
     public void cancelAllScheduledNotifications() {
         Log.i(LOG_TAG, "Cancelling all notifications");
 
@@ -464,7 +460,9 @@ public class RNPushNotificationHelper {
     }
 
     private NotificationManager notificationManager() {
-        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        checkOrCreateChannel(manager);
+        return manager;
     }
 
     private static void commit(SharedPreferences.Editor editor) {
@@ -476,6 +474,7 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
+
     private static void checkOrCreateChannel(NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
