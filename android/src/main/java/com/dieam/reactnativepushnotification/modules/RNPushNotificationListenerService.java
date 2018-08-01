@@ -30,8 +30,17 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
     @Override
     public void onMessageReceived(RemoteMessage message) {
         String from = message.getFrom();
+        RemoteMessage.Notification remoteNotification = message.getNotification();
 
         final Bundle bundle = new Bundle();
+        // Putting it from remoteNotification first so it can be overriden if message
+        // data has it
+        if (remoteNotification != null) {
+            // ^ It's null when message is from GCM
+            bundle.putString("title", remoteNotification.getTitle());
+            bundle.putString("message", remoteNotification.getBody());
+        }
+
         for(Map.Entry<String, String> entry : message.getData().entrySet()) {
             bundle.putString(entry.getKey(), entry.getValue());
         }
