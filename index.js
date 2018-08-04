@@ -26,7 +26,9 @@ var Notifications = {
 		alert: true,
 		badge: true,
 		sound: true
-	}
+	},
+
+	notificationChannel: false,
 };
 
 Notifications.callNative = function(name: String, params: Array) {
@@ -100,6 +102,24 @@ Notifications.configure = function(options: Object) {
 
 	if ( options.requestPermissions !== false ) {
 		this._requestPermissions();
+	}
+
+	if ( options.notificationChannel !== false ) {
+		if (Platform.OS === 'android') {
+			const { name, description } = options.notificationChannel
+
+			// This is required
+			if ( typeof name !== 'string' || !name ) {
+				throw new Error('options.notificationChannel.name must be a valid string');
+			}
+
+			// This is optional
+			if ( description && typeof description !== 'string' ) {
+				throw new Error('options.notificationChannel.description must be a valid string');
+			}
+
+			this.callNative('setNotificationChannelInfo', [ name, description || null ]);
+		}
 	}
 
 };
