@@ -183,6 +183,19 @@ PushNotification.configure({
       * - if not, you must call PushNotificationsHandler.requestPermissions() later
       */
     requestPermissions: true,
+
+    /**
+     * ANDROID ONLY
+     * (optional) default: false
+     * Sets the name and description of the notifications channel, used by all notifications created by this package
+     */
+
+    notificationChannel: {
+        // Required - string
+        name: 'YOUR NOTIFICATION CHANNEL NAME',
+        // Optional - string
+        description: 'YOUR NOTIFICATION CHANNEL DESCRIPTION',
+    },
 });
 ```
 
@@ -272,7 +285,7 @@ In the location notification json specify the full file name:
 The `id` parameter for `PushNotification.localNotification` is required for this operation. The id supplied will then be used for the cancel operation.
 
 ```javascript
-// Android 
+// Android
 PushNotification.localNotification({
     ...
     id: '123'
@@ -284,7 +297,7 @@ PushNotification.cancelLocalNotifications({id: '123'});
 #### IOS
 The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
 ```javascript
-// IOS 
+// IOS
 PushNotification.localNotification({
     ...
     userInfo: { id: '123' }
