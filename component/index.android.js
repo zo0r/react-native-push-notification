@@ -116,6 +116,10 @@ NotificationsComponent.prototype.clearAllNotifications = function() {
 	RNPushNotification.clearAllNotifications()
 }
 
+NotificationsComponent.prototype.setNotificationChannelInfo = function(name: string, description: ?string) {
+	RNPushNotification.setNotificationChannelInfo(name, description);
+}
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()

@@ -106,7 +106,7 @@ Notifications.configure = function(options: Object) {
 
 	if ( options.notificationChannel !== false ) {
 		if (Platform.OS === 'android') {
-			const { name, description } = options.notificationChannel
+			const { name, description } = options.notificationChannel;
 
 			// This is required
 			if ( typeof name !== 'string' || !name ) {
