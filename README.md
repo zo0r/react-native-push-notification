@@ -59,19 +59,19 @@ ext {
 In your `AndroidManifest.xml`
 ```xml
     .....
-    <!-- <Only if you're using GCM> -->
+    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
-    <!-- </Only if you're using GCM> -->
+    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
-        <!-- <Only if you're using GCM> -->
+        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -81,7 +81,7 @@ In your `AndroidManifest.xml`
                 <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
-        <!-- </Only if you're using GCM> -->
+        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
@@ -94,9 +94,9 @@ In your `AndroidManifest.xml`
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
             android:exported="false" >
             <intent-filter>
-                <!-- <Only if you're using GCM> -->
+                <!-- < Only if you're using GCM or localNotificationSchedule() > -->
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- </Only if you're using GCM> -->
+                <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
                 <!-- <Else> -->
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
