@@ -9,6 +9,7 @@ import android.util.Log;
 class RNPushNotificationConfig {
     private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
     private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
+    private static final String KEY_NOTIFICATION_ICON = "com.dieam.reactnativepushnotification.notification_color";
 
     private static Bundle metadata;
 
@@ -42,5 +43,14 @@ class RNPushNotificationConfig {
         }
         // Default
         return "";
+    }
+    public int getNotificationColor() {
+        try {
+            return metadata.getInt(KEY_NOTIFICATION_ICON);
+        } catch (Exception e) {
+            Log.e(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_ICON + " in manifest. Falling back to default");
+        }
+        // Default
+        return -1;
     }
 }
