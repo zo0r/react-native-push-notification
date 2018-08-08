@@ -38,13 +38,15 @@ public class RNPushNotificationHelper {
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
+    private RNPushNotificationConfig config;
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
 
-    public RNPushNotificationHelper(Application context) {
+    public RNPushNotificationHelper(Application context, RNPushNotificationConfig config) {
         this.context = context;
+        this.config = config;
         this.scheduledNotificationsPersistence = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
 
@@ -476,7 +478,7 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
-    private static void checkOrCreateChannel(NotificationManager manager) {
+    private void checkOrCreateChannel(NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
@@ -484,9 +486,9 @@ public class RNPushNotificationHelper {
         if (manager == null)
             return;
 
-        final CharSequence name = "rn-push-notification-channel";
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName(), importance);
+        channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
         channel.enableVibration(true);
 
