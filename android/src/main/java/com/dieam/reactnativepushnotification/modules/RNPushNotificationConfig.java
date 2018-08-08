@@ -3,6 +3,7 @@ package com.dieam.reactnativepushnotification.modules;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,8 +13,10 @@ class RNPushNotificationConfig {
     private static final String KEY_NOTIFICATION_ICON = "com.dieam.reactnativepushnotification.notification_color";
 
     private static Bundle metadata;
+    private Context context;
 
     public RNPushNotificationConfig(Context context) {
+        this.context = context;
         if (metadata == null) {
             try {
                 ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
@@ -46,7 +49,8 @@ class RNPushNotificationConfig {
     }
     public int getNotificationColor() {
         try {
-            return metadata.getInt(KEY_NOTIFICATION_ICON);
+            int resourceId = metadata.getInt(KEY_NOTIFICATION_ICON);
+            return ResourcesCompat.getColor(context.getResources(), resourceId, null);
         } catch (Exception e) {
             Log.e(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_ICON + " in manifest. Falling back to default");
         }
