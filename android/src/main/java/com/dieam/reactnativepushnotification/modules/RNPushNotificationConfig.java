@@ -10,16 +10,18 @@ class RNPushNotificationConfig {
     private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
     private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
 
-    private Bundle metadata;
+    private static Bundle metadata;
 
     public RNPushNotificationConfig(Context context) {
-        try {
-            ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            metadata = applicationInfo.metaData;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            Log.e(RNPushNotification.LOG_TAG, "Error reading application meta, falling back to defaults");
-            metadata = new Bundle();
+        if (metadata == null) {
+            try {
+                ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+                metadata = applicationInfo.metaData;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                Log.e(RNPushNotification.LOG_TAG, "Error reading application meta, falling back to defaults");
+                metadata = new Bundle();
+            }
         }
     }
 
