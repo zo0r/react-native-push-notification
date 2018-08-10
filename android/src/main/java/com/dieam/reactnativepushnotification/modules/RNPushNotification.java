@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
@@ -130,8 +132,12 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
         Intent GCMService = new Intent(reactContext, RNPushNotificationRegistrationService.class);
 
-        GCMService.putExtra("senderID", senderID);
-        reactContext.startService(GCMService);
+        try {
+            GCMService.putExtra("senderID", senderID);
+            reactContext.startService(GCMService);
+        } catch (Exception e) {
+            Log.d("EXCEPTION SERVICE::::::", "requestPermissions: " + e);
+        }
     }
 
     @ReactMethod
