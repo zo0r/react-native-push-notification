@@ -29,7 +29,14 @@
   "rnpm": {
     "android": {
       "packageInstance": "new ReactNativePushNotificationPackage()"
-    }
+    },
+    "commands": {
+      "prelink": "node node_modules/react-native-push-notification/prelink.js"
+    },
+    "plugin": "plugin.js"
+  },
+  "bin": {
+    "rnpn-prelink": "./prelink.js"
   },
   "author": "zo0r <http://zo0r.me>",
   "license": "MIT"
