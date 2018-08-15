@@ -24,7 +24,8 @@
     "url": "git+ssh://git@github.com:zo0r/react-native-push-notification.git"
   },
   "peerDependencies": {
-    "react-native": ">=0.33"
+    "react-native": ">=0.33",
+    "react-native-update-gradle": "^1.0.1"
   },
   "rnpm": {
     "android": {
