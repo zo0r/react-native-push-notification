@@ -70,6 +70,14 @@ In your `AndroidManifest.xml`
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
+    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
+                android:value="YOUR NOTIFICATION CHANNEL NAME"/>
+    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
+                android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
+    <!-- Change the resource name to your App's accent color - or any other color you want -->
+    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
+                android:resource="@android:color/white"/>
+
     <application ....>
         <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
@@ -272,7 +280,7 @@ In the location notification json specify the full file name:
 The `id` parameter for `PushNotification.localNotification` is required for this operation. The id supplied will then be used for the cancel operation.
 
 ```javascript
-// Android 
+// Android
 PushNotification.localNotification({
     ...
     id: '123'
@@ -284,7 +292,7 @@ PushNotification.cancelLocalNotifications({id: '123'});
 #### IOS
 The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
 ```javascript
-// IOS 
+// IOS
 PushNotification.localNotification({
     ...
     userInfo: { id: '123' }
