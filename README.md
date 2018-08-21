@@ -70,15 +70,15 @@ In your `AndroidManifest.xml`
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
-                android:value="YOUR NOTIFICATION CHANNEL NAME"/>
-    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
-                android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
-    <!-- Change the resource name to your App's accent color - or any other color you want -->
-    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                android:resource="@android:color/white"/>
-
     <application ....>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
+                android:value="YOUR NOTIFICATION CHANNEL NAME"/>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
+                    android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
+        <!-- Change the resource name to your App's accent color - or any other color you want -->
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
+                    android:resource="@android:color/white"/>
+
         <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -118,9 +118,15 @@ In your `AndroidManifest.xml`
 In `android/settings.gradle`
 ```gradle
 ...
-
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
+```
+
+In `android/app/src/res/values/colors.xml` (Create the file if it doesn't exist).
+```xml
+<resources>
+    <color name="white">#FFF</color>
+</resources>
 ```
 
 Manually register module in `MainApplication.java` (if you did not use `react-native link`):
