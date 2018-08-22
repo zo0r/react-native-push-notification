@@ -19,7 +19,7 @@ Changelog is available from version 3.1.1 here: [Changelog](https://github.com/z
 ## Installation
 `npm install --save react-native-push-notification` or `yarn add react-native-push-notification`
 
-`react-native link`
+`react-native link react-native-push-notification`
 
 **NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
