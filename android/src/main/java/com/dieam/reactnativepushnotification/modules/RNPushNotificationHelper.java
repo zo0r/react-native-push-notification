@@ -155,7 +155,7 @@ public class RNPushNotificationHelper {
             Resources res = context.getResources();
             String packageName = context.getPackageName();
 
-            String title = bundle.getString("title");
+            String title = bundle.getString("app_name");
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
