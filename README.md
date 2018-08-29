@@ -239,6 +239,9 @@ PushNotification.localNotification({
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
     ongoing: false, // (optional) set whether this is an "ongoing" notification
+    priority: "high", // (optional) set notification priority, default: high
+    visibility: "private", // (optional) set notification visibility, default: private
+    importance: "high", // (optional) set notification importance, default: high
 
     /* iOS only properties */
     alertAction: // (optional) default: view
@@ -294,6 +297,49 @@ PushNotification.localNotification({
 });
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
+
+
+## Notifications priority ##
+
+(optional) Specify `priority` to set priority of notification. Default value: "high"
+
+Avaiable options:
+
+"max" = NotficationCompat.PRIORITY_MAX
+"high" = NotficationCompat.PRIORITY_HIGH
+"low" = NotficationCompat.PRIORITY_LOW
+"min" = NotficationCompat.PRIORITY_MIN
+"default" = NotficationCompat.PRIORITY_DEFAULT
+
+More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
+
+## Notifications visibility ##
+
+(optional) Specify `visibility` to set visibility of notification. Default value: "private"
+
+Avaiable options:
+
+"private" = NotficationCompat.VISIBILITY_PRIVATE
+"public" = NotficationCompat.VISIBILITY_PUBLIC
+"secret" = NotficationCompat.VISIBILITY_SECRET
+
+More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
+
+## Notifications importance ##
+
+(optional) Specify `importance` to set importance of notification. Default value: "high"
+
+Avaiable options:
+
+"default" = NotificationManager.IMPORTANCE_DEFAULT
+"max" = NotificationManager.IMPORTANCE_MAX
+"high" = NotificationManager.IMPORTANCE_HIGH
+"low" = NotificationManager.IMPORTANCE_LOW
+"min" = NotificationManager.IMPORTANCE_MIN
+"none" = NotificationManager.IMPORTANCE_NONE
+"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
+
+More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
 #### IOS
 The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
