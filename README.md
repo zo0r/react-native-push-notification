@@ -303,7 +303,7 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 (optional) Specify `priority` to set priority of notification. Default value: "high"
 
-Avaiable options:
+Available options:
 
 "max" = NotficationCompat.PRIORITY_MAX  
 "high" = NotficationCompat.PRIORITY_HIGH  
@@ -317,7 +317,7 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 (optional) Specify `visibility` to set visibility of notification. Default value: "private"
 
-Avaiable options:
+Available options:
 
 "private" = NotficationCompat.VISIBILITY_PRIVATE  
 "public" = NotficationCompat.VISIBILITY_PUBLIC  
@@ -329,7 +329,7 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 (optional) Specify `importance` to set importance of notification. Default value: "high"
 
-Avaiable options:
+Available options:
 
 "default" = NotificationManager.IMPORTANCE_DEFAULT  
 "max" = NotificationManager.IMPORTANCE_MAX  
