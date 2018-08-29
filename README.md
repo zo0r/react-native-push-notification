@@ -299,45 +299,45 @@ PushNotification.cancelLocalNotifications({id: '123'});
 ```
 
 
-## Notifications priority ##
+## Notification priority ##
 
 (optional) Specify `priority` to set priority of notification. Default value: "high"
 
 Avaiable options:
 
-"max" = NotficationCompat.PRIORITY_MAX
-"high" = NotficationCompat.PRIORITY_HIGH
-"low" = NotficationCompat.PRIORITY_LOW
-"min" = NotficationCompat.PRIORITY_MIN
-"default" = NotficationCompat.PRIORITY_DEFAULT
+"max" = NotficationCompat.PRIORITY_MAX  
+"high" = NotficationCompat.PRIORITY_HIGH  
+"low" = NotficationCompat.PRIORITY_LOW  
+"min" = NotficationCompat.PRIORITY_MIN  
+"default" = NotficationCompat.PRIORITY_DEFAULT  
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
 
-## Notifications visibility ##
+## Notification visibility ##
 
 (optional) Specify `visibility` to set visibility of notification. Default value: "private"
 
 Avaiable options:
 
-"private" = NotficationCompat.VISIBILITY_PRIVATE
-"public" = NotficationCompat.VISIBILITY_PUBLIC
-"secret" = NotficationCompat.VISIBILITY_SECRET
+"private" = NotficationCompat.VISIBILITY_PRIVATE  
+"public" = NotficationCompat.VISIBILITY_PUBLIC  
+"secret" = NotficationCompat.VISIBILITY_SECRET  
 
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
 
-## Notifications importance ##
+## Notification importance ##
 
 (optional) Specify `importance` to set importance of notification. Default value: "high"
 
 Avaiable options:
 
-"default" = NotificationManager.IMPORTANCE_DEFAULT
-"max" = NotificationManager.IMPORTANCE_MAX
-"high" = NotificationManager.IMPORTANCE_HIGH
-"low" = NotificationManager.IMPORTANCE_LOW
-"min" = NotificationManager.IMPORTANCE_MIN
-"none" = NotificationManager.IMPORTANCE_NONE
-"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
+"default" = NotificationManager.IMPORTANCE_DEFAULT  
+"max" = NotificationManager.IMPORTANCE_MAX  
+"high" = NotificationManager.IMPORTANCE_HIGH  
+"low" = NotificationManager.IMPORTANCE_LOW  
+"min" = NotificationManager.IMPORTANCE_MIN  
+"none" = NotificationManager.IMPORTANCE_NONE  
+"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED  
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
