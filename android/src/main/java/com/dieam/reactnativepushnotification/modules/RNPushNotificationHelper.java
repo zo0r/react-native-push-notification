@@ -185,10 +185,30 @@ public class RNPushNotificationHelper {
                         priority = NotificationCompat.PRIORITY_HIGH;
                 }
             }
+
+            NotificationCompat visibility = NotificationCompat.VISIBILITY_PRIVATE;
+            final String visibilityString = bundle.getString("visibility");
+
+            if (visibilityString != null) {
+                switch(visibilityString.toLowerCase()) {
+                    case "private":
+                        visibility = NotficationCompat.VISIBILITY_PRIVATE;
+                        break;
+                    case "public":
+                        visibility = NotficationCompat.VISIBILITY_PUBLIC;
+                        break;
+                    case "secret":
+                        visibility = NotficationCompat.VISIBILITY_SECRET;
+                        break;
+                    default:
+                        visibility = NotificationCompat.VISIBILITY_PRIVATE;
+                }
+            }
+
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
-                    .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                    .setVisibility(visibility)
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
