@@ -161,44 +161,44 @@ public class RNPushNotificationHelper {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            NotificationCompat priority = NotificationCompat.PRIORITY_HIGH;
+            int priority = NotificationCompat.PRIORITY_HIGH;
             final String priorityString = bundle.getString("priority");
 
             if (priorityString != null) {
                 switch(priorityString.toLowerCase()) {
                     case "max":
-                        priority = NotficationCompat.PRIORITY_MAX;
+                        priority = NotificationCompat.PRIORITY_MAX;
                         break;
                     case "high":
-                        priority = NotficationCompat.PRIORITY_HIGH;
+                        priority = NotificationCompat.PRIORITY_HIGH;
                         break;
                     case "low":
-                        priority = NotficationCompat.PRIORITY_LOW;
+                        priority = NotificationCompat.PRIORITY_LOW;
                         break;
                     case "min":
-                        priority = NotficationCompat.PRIORITY_MIN;
+                        priority = NotificationCompat.PRIORITY_MIN;
                         break;
                     case "default":
-                        priority = NotficationCompat.PRIORITY_DEFAULT;
+                        priority = NotificationCompat.PRIORITY_DEFAULT;
                         break;
                     default:
                         priority = NotificationCompat.PRIORITY_HIGH;
                 }
             }
 
-            NotificationCompat visibility = NotificationCompat.VISIBILITY_PRIVATE;
+            int visibility = NotificationCompat.VISIBILITY_PRIVATE;
             final String visibilityString = bundle.getString("visibility");
 
             if (visibilityString != null) {
                 switch(visibilityString.toLowerCase()) {
                     case "private":
-                        visibility = NotficationCompat.VISIBILITY_PRIVATE;
+                        visibility = NotificationCompat.VISIBILITY_PRIVATE;
                         break;
                     case "public":
-                        visibility = NotficationCompat.VISIBILITY_PUBLIC;
+                        visibility = NotificationCompat.VISIBILITY_PUBLIC;
                         break;
                     case "secret":
-                        visibility = NotficationCompat.VISIBILITY_SECRET;
+                        visibility = NotificationCompat.VISIBILITY_SECRET;
                         break;
                     default:
                         visibility = NotificationCompat.VISIBILITY_PRIVATE;
@@ -536,9 +536,11 @@ public class RNPushNotificationHelper {
         if (manager == null)
             return;
 
+        Bundle bundle = new Bundle();
+
         int importance = NotificationManager.IMPORTANCE_HIGH;
         final String importanceString = bundle.getString("importance");
-        
+
         if (importanceString != null) {
             switch(importanceString.toLowerCase()) {
                 case "default":
