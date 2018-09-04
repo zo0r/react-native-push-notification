@@ -47,10 +47,10 @@ ext {
     firebaseVersion = "<Your Firebase version>" // default: "+"
 
     // Other settings
-    compileSdkVersion = <Your compile SDK version> // default: 23
-    buildToolsVersion = "<Your build tools version>" // default: "23.0.1"
-    targetSdkVersion = <Your target SDK version> // default: 23
-    supportLibVersion = "<Your support lib version>" // default: 23.1.1
+    compileSdkVersion = <Your compile SDK version> // default: 27
+    buildToolsVersion = "<Your build tools version>" // default: "27.0.3"
+    targetSdkVersion = <Your target SDK version> // default: 27
+    supportLibVersion = "<Your support lib version>" // default: 27.1.1
 }
 ```
 
@@ -120,6 +120,21 @@ In `android/settings.gradle`
 ...
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
+```
+
+In `android/build.gradle`
+```gradle
+buildscript {
+    dependencies {
+        classpath 'com.google.gms:google-services:+' // <---- Add the Classpath
+    }
+}
+```
+
+In `app/build.gradle`
+```gradle
+// EOF
+apply plugin: 'com.google.gms.google-services'
 ```
 
 In `android/app/src/res/values/colors.xml` (Create the file if it doesn't exist).
