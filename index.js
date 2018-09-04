@@ -322,6 +322,15 @@ Notifications.checkPermissions = function() {
 	return this.callNative('checkPermissions', arguments);
 };
 
+Notifications.navigateToAndroidSettings = function() {
+	if ( Platform.OS === 'android' ) {
+		return this.callNative( 'navigateToAndroidSettings', arguments);
+	} else {
+		console.warn('Attempting to call android only function ' +
+            '`navigateToAndroidSettings` on platform other than android.');
+	}
+};
+
 Notifications.registerNotificationActions = function() {
 	return this.callNative('registerNotificationActions', arguments)
 }

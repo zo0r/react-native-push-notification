@@ -69,6 +69,10 @@ NotificationsComponent.prototype.checkPermissions = function(callback: Function)
 	RNPushNotification.checkPermissions().then(alert => callback({ alert }));
 };
 
+NotificationsComponent.prototype.navigateToAndroidSettings = function() {
+	RNPushNotification.navigateToAndroidSettings();
+};
+
 NotificationsComponent.prototype.addEventListener = function(type: string, handler: Function) {
 	var listener;
 	if (type === 'notification') {
