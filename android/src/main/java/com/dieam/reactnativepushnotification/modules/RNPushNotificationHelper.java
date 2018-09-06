@@ -161,11 +161,55 @@ public class RNPushNotificationHelper {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
+            int priority = NotificationCompat.PRIORITY_HIGH;
+            final String priorityString = bundle.getString("priority");
+
+            if (priorityString != null) {
+                switch(priorityString.toLowerCase()) {
+                    case "max":
+                        priority = NotificationCompat.PRIORITY_MAX;
+                        break;
+                    case "high":
+                        priority = NotificationCompat.PRIORITY_HIGH;
+                        break;
+                    case "low":
+                        priority = NotificationCompat.PRIORITY_LOW;
+                        break;
+                    case "min":
+                        priority = NotificationCompat.PRIORITY_MIN;
+                        break;
+                    case "default":
+                        priority = NotificationCompat.PRIORITY_DEFAULT;
+                        break;
+                    default:
+                        priority = NotificationCompat.PRIORITY_HIGH;
+                }
+            }
+
+            int visibility = NotificationCompat.VISIBILITY_PRIVATE;
+            final String visibilityString = bundle.getString("visibility");
+
+            if (visibilityString != null) {
+                switch(visibilityString.toLowerCase()) {
+                    case "private":
+                        visibility = NotificationCompat.VISIBILITY_PRIVATE;
+                        break;
+                    case "public":
+                        visibility = NotificationCompat.VISIBILITY_PUBLIC;
+                        break;
+                    case "secret":
+                        visibility = NotificationCompat.VISIBILITY_SECRET;
+                        break;
+                    default:
+                        visibility = NotificationCompat.VISIBILITY_PRIVATE;
+                }
+            }
+
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
-                    .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setVisibility(visibility)
+                    .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
@@ -492,7 +536,39 @@ public class RNPushNotificationHelper {
         if (manager == null)
             return;
 
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        Bundle bundle = new Bundle();
+
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        final String importanceString = bundle.getString("importance");
+
+        if (importanceString != null) {
+            switch(importanceString.toLowerCase()) {
+                case "default":
+                    importance = NotificationManager.IMPORTANCE_DEFAULT;
+                    break;
+                case "max":
+                    importance = NotificationManager.IMPORTANCE_MAX;
+                    break;
+                case "high":
+                    importance = NotificationManager.IMPORTANCE_HIGH;
+                    break;
+                case "low":
+                    importance = NotificationManager.IMPORTANCE_LOW;
+                    break;
+                case "min":
+                    importance = NotificationManager.IMPORTANCE_MIN;
+                    break;
+                case "none":
+                    importance = NotificationManager.IMPORTANCE_NONE;
+                    break;
+                case "unspecified":
+                    importance = NotificationManager.IMPORTANCE_UNSPECIFIED;
+                    break;
+                default:
+                    importance = NotificationManager.IMPORTANCE_HIGH;
+            }
+        }
+
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName(), importance);
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
