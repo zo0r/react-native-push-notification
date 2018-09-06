@@ -98,19 +98,26 @@ In your `AndroidManifest.xml`
             </intent-filter>
         </receiver>
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
+
+        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+        <service
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
+
+        <!-- < Else > -->
         <service
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
             android:exported="false" >
             <intent-filter>
-                <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-
-                <!-- <Else> -->
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-                <!-- </Else> -->
             </intent-filter>
         </service>
+        <!-- </Else> -->
      .....
 
 ```
