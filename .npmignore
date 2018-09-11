@@ -57,3 +57,6 @@ react-native-notifications.iml
 .idea
 .gradle
 local.properties
+
+# Example app
+example
