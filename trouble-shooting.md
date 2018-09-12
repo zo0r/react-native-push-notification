@@ -11,11 +11,11 @@ Known bugs and issues:
 # Android tips
 
  * Use a physical device for remote push notifications. They will not work on an emulator.
- * Try _"grepping"_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto what's happening.
+ * Try _"grepping"_ logcat for `ReactNativeJS|RNPushNotification` at **debug** level - it will likely shed some light onto whats happening.
  * Your GCM `senderID` can be obtained by obtaining a file from your google console called `google-services.json`.  From this file use the `project_number` as your ID.
  * `Native module cannot be null` error happens when your project isn't _linked_ correctly.  Please re-read the installation instructions, specifically the bit about `react-native link` and `MainApplication.java`.
  * Take a look at the [google docs](https://developers.google.com/cloud-messaging/http-server-ref#notification-payload-support) for more about remote push notifications.
- * Badges do not work on all devices. You should see an error being logged once when the app starts if setting a badge isn't supported.
+ * Bages do not work on all devices, you should see an error being logged once when the app starts if the setting a badge isn't supported.
 
 # iOS tips
 
@@ -25,7 +25,7 @@ Known bugs and issues:
   
 # About notifications...
 
-There are a number of different types of notifications, and they have subtly different behaviours.  There are essentially 4 types, let's call them _local notifications_ (1), _noisy remote push notifications_ (2), _silent remote push notifications_ (3) and _mixed remote push notifications_ (4).
+There are a number of different types of notification, and they have subtly different behaviours.  There are essentially 4 types, let's call them _local notifications_ (1), _noisy remote push notifications_ (2), _silent remote push notifications_ (3) and _mixed remote push notifications_ (4).
 
 ## 1. local notifications
 
@@ -35,7 +35,7 @@ If a user taps an alert, your app will be started or brought to the foreground a
 
 #### Android local notifications
 
-These are highly customisable (more so than _noisy_ remote push notifications) **but** this library doesn't yet support all features, for example you cannot stack notifications using the "grouping" feature.
+These are highly customisable (more so than _noisy_ remote push notifications) **but** this library doesn't yet support all features, for example you cannot stack notification using the "grouping" feature.
 
 ## 2. _noisy_ remote push notifications
 
@@ -220,7 +220,7 @@ Just combine the above _silent_ and _noisy_ notifications and send to APNS:
 }
 ```
 
-It will be delivered to both the notification centre **and** your app if the app is running in the background, but only to your app if it's running in the foreground.
+It will be delivered to both the notification centre **and** your app if the app is running in the background, but only to your app if its running in the foreground.
 
 #### Some useful links
 
