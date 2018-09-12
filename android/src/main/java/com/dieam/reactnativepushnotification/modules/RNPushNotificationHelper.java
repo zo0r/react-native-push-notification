@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -217,7 +218,9 @@ public class RNPushNotificationHelper {
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
-            if (group != null) {
+            // In Android Oreo (and beyond?) the notification channel contains the group,
+            // so don't set it here. If we did, the notifications will not stack/group together
+            if (group != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 notification.setGroup(group);
             }
 
@@ -326,7 +329,7 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
+            checkOrCreateChannel(notificationManager, group);
 
             notification.setContentIntent(pendingIntent);
 
@@ -409,7 +412,7 @@ public class RNPushNotificationHelper {
     public void sendStackNotificationIfNeeded(Bundle bundle, Intent intent) {
         Resources res = context.getResources();
         String packageName = context.getPackageName();
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT > 23) {
             ArrayList<StatusBarNotification> groupedNotifications = new ArrayList<>();
 
             for (StatusBarNotification sbn : notificationManager().getActiveNotifications()) {
@@ -430,7 +433,8 @@ public class RNPushNotificationHelper {
                 // use convenience methods on our RemoteNotification wrapper to create a title
                 builder.setContentTitle(String.format("%s: %s", bundle.getString("app_name"), bundle.getString("error_name")))
                         .setContentText(String.format("%d new activities", groupedNotifications.size()));
-
+                String app_name = bundle.getString("app_name");
+                String error_name = bundle.getString("error_name");
                 // for every previously sent notification that met our above requirements,
                 // add a new line containing its title to the inbox style notification extender
                 NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
@@ -665,7 +669,7 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager) {
+    private void checkOrCreateChannel(NotificationManager manager, String groupId) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
@@ -710,6 +714,12 @@ public class RNPushNotificationHelper {
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
         channel.enableVibration(true);
+
+        // Heron Systems code to stack/group/bundle notifications.
+        // @groupId is the "group" set in the React Native code when building the notification
+        CharSequence groupName = "Lassie";
+        manager.createNotificationChannelGroup(new NotificationChannelGroup(groupId, groupName));
+        channel.setGroup(groupId);
 
         manager.createNotificationChannel(channel);
         channelCreated = true;
