@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
-import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -39,8 +38,10 @@ public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
     private int NOTIFICATION_ID = 0;
+    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
+    private RNPushNotificationConfig config;
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
@@ -48,6 +49,7 @@ public class RNPushNotificationHelper {
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
+        this.config = new RNPushNotificationConfig(context);
         this.scheduledNotificationsPersistence = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
 
@@ -163,17 +165,59 @@ public class RNPushNotificationHelper {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
+            int priority = NotificationCompat.PRIORITY_HIGH;
+            final String priorityString = bundle.getString("priority");
+
+            if (priorityString != null) {
+                switch(priorityString.toLowerCase()) {
+                    case "max":
+                        priority = NotificationCompat.PRIORITY_MAX;
+                        break;
+                    case "high":
+                        priority = NotificationCompat.PRIORITY_HIGH;
+                        break;
+                    case "low":
+                        priority = NotificationCompat.PRIORITY_LOW;
+                        break;
+                    case "min":
+                        priority = NotificationCompat.PRIORITY_MIN;
+                        break;
+                    case "default":
+                        priority = NotificationCompat.PRIORITY_DEFAULT;
+                        break;
+                    default:
+                        priority = NotificationCompat.PRIORITY_HIGH;
+                }
+            }
+
+            int visibility = NotificationCompat.VISIBILITY_PRIVATE;
+            final String visibilityString = bundle.getString("visibility");
+
+            if (visibilityString != null) {
+                switch(visibilityString.toLowerCase()) {
+                    case "private":
+                        visibility = NotificationCompat.VISIBILITY_PRIVATE;
+                        break;
+                    case "public":
+                        visibility = NotificationCompat.VISIBILITY_PUBLIC;
+                        break;
+                    case "secret":
+                        visibility = NotificationCompat.VISIBILITY_SECRET;
+                        break;
+                    default:
+                        visibility = NotificationCompat.VISIBILITY_PRIVATE;
+                }
+            }
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
-                    .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setVisibility(visibility)
+                    .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
-            // In Android Oreo (and beyond?) the notification channel contains the group,
-            // so don't set it here. If we did, the notifications will not stack/group together
-            if (group != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (group != null) {
                 notification.setGroup(group);
             }
 
@@ -268,8 +312,11 @@ public class RNPushNotificationHelper {
                 notification.setCategory(NotificationCompat.CATEGORY_CALL);
 
                 String color = bundle.getString("color");
+                int defaultColor = this.config.getNotificationColor();
                 if (color != null) {
                     notification.setColor(Color.parseColor(color));
+                } else if (defaultColor != -1) {
+                    notification.setColor(defaultColor);
                 }
             }
 
@@ -279,7 +326,7 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager, group);
+            checkOrCreateChannel(notificationManager);
 
             notification.setContentIntent(pendingIntent);
 
@@ -311,12 +358,15 @@ public class RNPushNotificationHelper {
                         continue;
                     }
 
-                    Intent actionIntent = new Intent();
+                    Intent actionIntent = new Intent(context, intentClass);
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     actionIntent.setAction(context.getPackageName() + "." + action);
+
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
-                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
+
+                    PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     notification.addAction(icon, action, pendingActionIntent);
                 }
@@ -359,7 +409,7 @@ public class RNPushNotificationHelper {
     public void sendStackNotificationIfNeeded(Bundle bundle, Intent intent) {
         Resources res = context.getResources();
         String packageName = context.getPackageName();
-        if (Build.VERSION.SDK_INT > 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             ArrayList<StatusBarNotification> groupedNotifications = new ArrayList<>();
 
             for (StatusBarNotification sbn : notificationManager().getActiveNotifications()) {
@@ -380,8 +430,7 @@ public class RNPushNotificationHelper {
                 // use convenience methods on our RemoteNotification wrapper to create a title
                 builder.setContentTitle(String.format("%s: %s", bundle.getString("app_name"), bundle.getString("error_name")))
                         .setContentText(String.format("%d new activities", groupedNotifications.size()));
-                String app_name = bundle.getString("app_name");
-                String error_name = bundle.getString("error_name");
+
                 // for every previously sent notification that met our above requirements,
                 // add a new line containing its title to the inbox style notification extender
                 NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
@@ -549,6 +598,13 @@ public class RNPushNotificationHelper {
         notificationManager.cancelAll();
     }
 
+    public void clearNotification(int notificationID) {
+        Log.i(LOG_TAG, "Clearing notification: " + notificationID);
+
+        NotificationManager notificationManager = notificationManager();
+        notificationManager.cancel(notificationID);
+    }
+
     public void cancelAllScheduledNotifications() {
         Log.i(LOG_TAG, "Cancelling all notifications");
 
@@ -609,7 +665,7 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager, String groupId) {
+    private void checkOrCreateChannel(NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
@@ -654,12 +710,6 @@ public class RNPushNotificationHelper {
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
         channel.enableVibration(true);
-
-        // Heron Systems code to stack/group/bundle notifications.
-        // @groupId is the "group" set in the React Native code when building the notification
-        CharSequence groupName = "Lassie";
-        manager.createNotificationChannelGroup(new NotificationChannelGroup(groupId, groupName));
-        channel.setGroup(groupId);
 
         manager.createNotificationChannel(channel);
         channelCreated = true;
