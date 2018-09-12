@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
@@ -26,10 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import android.util.Log;
-
-import com.google.firebase.messaging.FirebaseMessaging;
-
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
 
@@ -43,7 +38,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         reactContext.addActivityEventListener(this);
 
         Application applicationContext = (Application) reactContext.getApplicationContext();
-
         // The @ReactNative methods use this
         mRNPushNotificationHelper = new RNPushNotificationHelper(applicationContext);
         // This is used to delivery callbacks to JS
@@ -64,18 +58,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         return constants;
     }
 
-    private Bundle getBundleFromIntent(Intent intent) {
-        Bundle bundle = null;
-        if (intent.hasExtra("notification")) {
-            bundle = intent.getBundleExtra("notification");
-        } else if (intent.hasExtra("google.message_id")) {
-            bundle = intent.getExtras();
-        }
-        return bundle;
-    }
     public void onNewIntent(Intent intent) {
-        Bundle bundle = this.getBundleFromIntent(intent);
-        if (bundle != null) {
+        if (intent.hasExtra("notification")) {
+            Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
             intent.putExtra("notification", bundle);
             mJsDelivery.notifyNotification(bundle);
@@ -121,29 +106,13 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void checkPermissions(Promise promise) {
-        ReactContext reactContext = getReactApplicationContext();
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(reactContext);
-        promise.resolve(managerCompat.areNotificationsEnabled());
-    }
-
-    @ReactMethod
     public void requestPermissions(String senderID) {
         ReactContext reactContext = getReactApplicationContext();
 
         Intent GCMService = new Intent(reactContext, RNPushNotificationRegistrationService.class);
 
-        try {
-            GCMService.putExtra("senderID", senderID);
-            reactContext.startService(GCMService);
-        } catch (Exception e) {
-            Log.d("EXCEPTION SERVICE::::::", "requestPermissions: " + e);
-        }
-    }
-
-    @ReactMethod
-    public void subscribeToTopic(String topic) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic);
+        GCMService.putExtra("senderID", senderID);
+        reactContext.startService(GCMService);
     }
 
     @ReactMethod
@@ -171,7 +140,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         WritableMap params = Arguments.createMap();
         Activity activity = getCurrentActivity();
         if (activity != null) {
-            Bundle bundle = this.getBundleFromIntent(activity.getIntent());
+            Intent intent = activity.getIntent();
+            Bundle bundle = intent.getBundleExtra("notification");
             if (bundle != null) {
                 bundle.putBoolean("foreground", false);
                 String bundleString = mJsDelivery.convertJSON(bundle);
@@ -222,14 +192,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      */
     public void cancelLocalNotifications(ReadableMap userInfo) {
         mRNPushNotificationHelper.cancelScheduledNotification(userInfo);
-    }
-
-    @ReactMethod
-    /**
-     * Clear notification from the notification centre.
-     */
-    public void clearLocalNotification(int notificationID) {
-        mRNPushNotificationHelper.clearNotification(notificationID);
     }
 
     @ReactMethod

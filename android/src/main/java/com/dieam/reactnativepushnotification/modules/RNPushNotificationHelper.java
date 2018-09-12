@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -27,6 +29,7 @@ import com.facebook.react.bridge.ReadableMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
@@ -35,6 +38,7 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
+    private int NOTIFICATION_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
@@ -133,6 +137,7 @@ public class RNPushNotificationHelper {
     }
 
     public void sendToNotificationCentre(Bundle bundle) {
+
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -213,7 +218,9 @@ public class RNPushNotificationHelper {
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
-            if (group != null) {
+            // In Android Oreo (and beyond?) the notification channel contains the group,
+            // so don't set it here. If we did, the notifications will not stack/group together
+            if (group != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 notification.setGroup(group);
             }
 
@@ -304,7 +311,6 @@ public class RNPushNotificationHelper {
             if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
                 notification.setOngoing(bundle.getBoolean("ongoing"));
             }
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 notification.setCategory(NotificationCompat.CATEGORY_CALL);
 
@@ -323,7 +329,7 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
+            checkOrCreateChannel(notificationManager, group);
 
             notification.setContentIntent(pendingIntent);
 
@@ -386,13 +392,13 @@ public class RNPushNotificationHelper {
             Notification info = notification.build();
             info.defaults |= Notification.DEFAULT_LIGHTS;
 
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
-            } else {
-                notificationManager.notify(notificationID, info);
-            }
 
+
+
+            // deliver the standard notification
+            notificationManager().notify(bundle.getString("group"), NOTIFICATION_ID, info);
+            NOTIFICATION_ID++;
+            this.sendStackNotificationIfNeeded(bundle, intent);
             // Can't use setRepeating for recurring notifications because setRepeating
             // is inexact by default starting API 19 and the notifications are not fired
             // at the exact time. During testing, it was found that notifications could
@@ -400,6 +406,141 @@ public class RNPushNotificationHelper {
             this.scheduleNextNotificationIfRepeating(bundle);
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
+        }
+    }
+
+    public void sendStackNotificationIfNeeded(Bundle bundle, Intent intent) {
+        Resources res = context.getResources();
+        String packageName = context.getPackageName();
+        if (Build.VERSION.SDK_INT > 23) {
+            ArrayList<StatusBarNotification> groupedNotifications = new ArrayList<>();
+
+            for (StatusBarNotification sbn : notificationManager().getActiveNotifications()) {
+                // add any previously sent notifications with a group that matches our RemoteNotification
+                // and exclude any previously sent stack notifications
+                if (bundle.getString("group") != null &&
+                        bundle.getString("group").equals(sbn.getNotification().getGroup()) &&
+                        sbn.getId() != -1000) {
+                    groupedNotifications.add(sbn);
+                }
+            }
+
+            // since we assume the most recent notification was delivered just prior to calling this method,
+            // we check that previous notifications in the group include at least 2 notifications
+            if (groupedNotifications.size() > 1) {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
+                // use convenience methods on our RemoteNotification wrapper to create a title
+                builder.setContentTitle(String.format("%s: %s", bundle.getString("app_name"), bundle.getString("error_name")))
+                        .setContentText(String.format("%d new activities", groupedNotifications.size()));
+                String app_name = bundle.getString("app_name");
+                String error_name = bundle.getString("error_name");
+                // for every previously sent notification that met our above requirements,
+                // add a new line containing its title to the inbox style notification extender
+                NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
+                {
+                    for (StatusBarNotification activeSbn : groupedNotifications) {
+                        String stackNotificationLine = (String)activeSbn.getNotification().extras.get(NotificationCompat.EXTRA_TITLE);
+                        if (stackNotificationLine != null) {
+                            inbox.addLine(stackNotificationLine);
+                        }
+                    }
+
+                    // the summary text will appear at the bottom of the expanded stack notification
+                    // we just display the same thing from above (don't forget to use string
+                    // resource formats!)
+                    inbox.setSummaryText(String.format("%d new activities", groupedNotifications.size()));
+                }
+                builder.setStyle(inbox);
+
+                // make sure that our group is set the same as our most recent RemoteNotification
+                // and choose to make it the group summary.
+                // when this option is set to true, all previously sent/active notifications
+                // in the same group will be hidden in favor of the notifcation we are creating
+                builder.setGroup(bundle.getString("group"))
+                        .setGroupSummary(true);
+
+                // if the user taps the notification, it should disappear after firing its content intent
+                // and we set the priority to high to avoid Doze from delaying our notifications
+                builder.setAutoCancel(true)
+                        .setTicker(bundle.getString("ticker"))
+                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+                builder.setContentText(bundle.getString("message"));
+
+                String largeIcon = bundle.getString("largeIcon");
+
+                String subText = bundle.getString("subText");
+
+                if (subText != null) {
+                    builder.setSubText(subText);
+                }
+
+                String numberString = bundle.getString("number");
+                if (numberString != null) {
+                    builder.setNumber(Integer.parseInt(numberString));
+                }
+
+                int smallIconResId;
+                int largeIconResId;
+
+                String smallIcon = bundle.getString("smallIcon");
+
+                if (smallIcon != null) {
+                    smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
+                } else {
+                    smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
+                }
+
+                if (smallIconResId == 0) {
+                    smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+
+                    if (smallIconResId == 0) {
+                        smallIconResId = android.R.drawable.ic_dialog_info;
+                    }
+                }
+
+                if (largeIcon != null) {
+                    largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                } else {
+                    largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                }
+
+                Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    builder.setLargeIcon(largeIconBitmap);
+                }
+
+                builder.setSmallIcon(smallIconResId);
+                String bigText= bundle.getString("bigText");
+
+                if (bigText == null) {
+                    bigText = bundle.getString("message");
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder.setCategory(NotificationCompat.CATEGORY_CALL);
+
+                    String color = bundle.getString("color");
+                    if (color != null) {
+                        builder.setColor(Color.parseColor(color));
+                    }
+                }
+
+                builder.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+
+
+                Notification stackNotification = builder.build();
+//                stackNotification.defaults = Notification.DEFAULT_ALL;
+
+                // finally, deliver the notification using the group identifier as the Tag
+                // and the TYPE_STACK which will cause any previously sent stack notifications
+                // for this group to be updated with the contents of this built summary notification
+                notificationManager().notify(bundle.getString("group"), -1000, stackNotification);
+            }
         }
     }
 
@@ -528,7 +669,7 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager) {
+    private void checkOrCreateChannel(NotificationManager manager, String groupId) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
@@ -573,6 +714,12 @@ public class RNPushNotificationHelper {
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
         channel.enableVibration(true);
+
+        // Heron Systems code to stack/group/bundle notifications.
+        // @groupId is the "group" set in the React Native code when building the notification
+        CharSequence groupName = "Lassie";
+        manager.createNotificationChannelGroup(new NotificationChannelGroup(groupId, groupName));
+        channel.setGroup(groupId);
 
         manager.createNotificationChannel(channel);
         channelCreated = true;
