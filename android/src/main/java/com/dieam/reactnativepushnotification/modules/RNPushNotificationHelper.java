@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -295,7 +296,7 @@ public class RNPushNotificationHelper {
                             resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
                         }
 
-                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+                        soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + resId);
                     }
                 }
                 notification.setSound(soundUri);
