@@ -542,9 +542,14 @@ public class RNPushNotificationHelper {
         if (manager == null)
             return;
 
+        String channelId = this.getChannelId(soundName, soundUri);
+
+        if (manager.getNotificationChannel(channelId) != null) {
+            return;
+        }
+
         Bundle bundle = new Bundle();
 
-        String channelId = this.getChannelId(soundName, soundUri);
         String channelName = this.config.getChannelNameForId(soundName);
         String channelDescription = this.config.getChannelDescriptionForId(soundName);
 
