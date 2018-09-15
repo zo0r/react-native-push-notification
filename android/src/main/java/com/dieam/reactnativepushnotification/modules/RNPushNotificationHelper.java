@@ -229,7 +229,6 @@ public class RNPushNotificationHelper {
                             resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
                         }
 
-                        Log.d(LOG_TAG, "Got soundName in notification: " + soundName);
                         soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + resId);
                     }
                 }
@@ -241,8 +240,6 @@ public class RNPushNotificationHelper {
                     .setVisibility(visibility)
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
-
-            Log.d(LOG_TAG, "Adding notification to channel: " + this.getChannelId(soundName, soundUri));
 
             String group = bundle.getString("group");
             if (group != null) {
@@ -551,11 +548,6 @@ public class RNPushNotificationHelper {
         String channelName = this.config.getChannelNameForId(soundName);
         String channelDescription = this.config.getChannelDescriptionForId(soundName);
 
-        Log.d(LOG_TAG, "Building channel with id: " + channelId);
-        Log.d(LOG_TAG, "Building channel with name: " + channelName);
-        Log.d(LOG_TAG, "Building channel with description: " + channelDescription);
-        Log.d(LOG_TAG, "Uri exists: " + soundUri.getLastPathSegment());
-
         int importance = NotificationManager.IMPORTANCE_HIGH;
         final String importanceString = bundle.getString("importance");
 
@@ -599,11 +591,9 @@ public class RNPushNotificationHelper {
                     .build();
 
             channel.setSound(soundUri, audioAttributes);
-            Log.d(LOG_TAG, "Sound added");
         }
 
         manager.createNotificationChannel(channel);
-        Log.d(LOG_TAG, "Channel created");
     }
 
     private String getChannelId(String soundName, Uri soundUri) {
