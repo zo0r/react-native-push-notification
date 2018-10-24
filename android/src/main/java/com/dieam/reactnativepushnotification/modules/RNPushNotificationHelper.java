@@ -323,7 +323,7 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
+            checkOrCreateChannel(bundle, notificationManager);
 
             notification.setContentIntent(pendingIntent);
 
@@ -528,15 +528,13 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager) {
+    private void checkOrCreateChannel(Bundle bundle, NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
             return;
         if (manager == null)
             return;
-
-        Bundle bundle = new Bundle();
 
         int importance = NotificationManager.IMPORTANCE_HIGH;
         final String importanceString = bundle.getString("importance");
