@@ -280,6 +280,10 @@ Notifications.subscribeToTopic = function() {
 	return this.callNative('subscribeToTopic', arguments);
 };
 
+Notifications.unsubscribeFromTopic = function () {
+	return this.callNative('unsubscribeFromTopic', arguments);
+};
+
 Notifications.presentLocalNotification = function() {
 	return this.callNative('presentLocalNotification', arguments);
 };
