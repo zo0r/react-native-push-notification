@@ -569,8 +569,6 @@ public class RNPushNotificationHelper {
             }
         }
 
-        // This line was changed in order to make it work on Android > 8.0.
-        // It's not fully tested but it's working
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
 
         channel.setDescription(this.config.getChannelDescription());
