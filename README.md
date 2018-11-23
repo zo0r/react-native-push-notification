@@ -77,7 +77,7 @@ In your `AndroidManifest.xml`
                     android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
         <!-- Change the resource name to your App's accent color - or any other color you want -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                    android:resource="@android:color/white"/>
+                    android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
 
         <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
@@ -122,18 +122,19 @@ In your `AndroidManifest.xml`
 
 ```
 
-In `android/settings.gradle`
-```gradle
-...
-include ':react-native-push-notification'
-project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
-```
-
+If not using a built in Android color (`@android:color/{name}`) for the `notification_color` `meta-data` item.
 In `android/app/src/res/values/colors.xml` (Create the file if it doesn't exist).
 ```xml
 <resources>
     <color name="white">#FFF</color>
 </resources>
+```
+
+In `android/settings.gradle`
+```gradle
+...
+include ':react-native-push-notification'
+project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 ```
 
 Manually register module in `MainApplication.java` (if you did not use `react-native link`):
