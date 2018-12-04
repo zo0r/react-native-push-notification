@@ -30,23 +30,27 @@ class RNPushNotificationConfig {
     }
 
     public String getChannelName() {
-        try {
-            return metadata.getString(KEY_CHANNEL_NAME);
-        } catch (Exception e) {
+        String channelName = metadata.getString(KEY_CHANNEL_NAME);
+
+        if (channelName == null) {
             Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_NAME + " in manifest. Falling back to default");
+            return "rn-push-notification-channel";
         }
-        // Default
-        return "rn-push-notification-channel";
+
+        return channelName;
     }
+
     public String getChannelDescription() {
-        try {
-            return metadata.getString(KEY_CHANNEL_DESCRIPTION);
-        } catch (Exception e) {
+        String channelDesc = metadata.getString(KEY_CHANNEL_DESCRIPTION);
+
+        if (channelDesc == null) {
             Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_DESCRIPTION + " in manifest. Falling back to default");
+            return "";
         }
-        // Default
-        return "";
+
+        return channelDesc;
     }
+
     public int getNotificationColor() {
         try {
             int resourceId = metadata.getInt(KEY_NOTIFICATION_COLOR);
