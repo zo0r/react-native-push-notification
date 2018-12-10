@@ -32,6 +32,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     private final Random mRandomNumberGenerator = new Random(System.currentTimeMillis());
     private RNPushNotificationJsDelivery mJsDelivery;
 
+    private Bundle savedBundle = null; // custom
+
     public RNPushNotification(ReactApplicationContext reactContext) {
         super(reactContext);
 
@@ -59,6 +61,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     public void onNewIntent(Intent intent) {
+        if(intent.hasExtra("google.message_id")){
+            Bundle bundle = intent.getExtras();
+            bundle.putBoolean("foreground", false);
+            intent.putExtra("notification", bundle);
+            this.savedBundle =  bundle;
+            mJsDelivery.notifyNotification(bundle);
+        } // custom
+
         if (intent.hasExtra("notification")) {
             Bundle bundle = intent.getBundleExtra("notification");
             bundle.putBoolean("foreground", false);
@@ -141,7 +151,20 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         Activity activity = getCurrentActivity();
         if (activity != null) {
             Intent intent = activity.getIntent();
-            Bundle bundle = intent.getBundleExtra("notification");
+            Bundle bundle = null; // custom
+            // Bundle bundle = intent.getBundleExtra("notification"); // custom remove comment
+
+            if (intent.hasExtra("notification")) {
+                bundle = intent.getBundleExtra("notification");
+            } else if (intent.hasExtra("google.message_id")) {
+                bundle = intent.getExtras();
+            } // custom
+
+            if (this.savedBundle != null){
+                bundle = savedBundle;
+                this.savedBundle = null;
+            } // custom
+
             if (bundle != null) {
                 bundle.putBoolean("foreground", false);
                 String bundleString = mJsDelivery.convertJSON(bundle);
