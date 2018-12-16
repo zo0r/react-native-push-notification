@@ -28,7 +28,7 @@ if (!fs.existsSync(projectGradlePath)) {
   process.exit(1);
 }
 const ptext = fs.readFileSync(projectGradlePath, { encoding: "UTF8" });
-const newClassPathText = "classpath 'com.google.gms:google-services:4.0.1'";
+const newClassPathText = "classpath 'com.google.gms:google-services:4.0.2'";
 if (ptext.indexOf(newClassPathText) === -1) {
   var plines = ptext.split("\n");
 
