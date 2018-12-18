@@ -123,7 +123,7 @@ In your `AndroidManifest.xml`
 ```
 
 If not using a built in Android color (`@android:color/{name}`) for the `notification_color` `meta-data` item.
-In `android/app/src/res/values/colors.xml` (Create the file if it doesn't exist).
+In `android/app/src/res/main/values/colors.xml` (Create the file if it doesn't exist).
 ```xml
 <resources>
     <color name="white">#FFF</color>
