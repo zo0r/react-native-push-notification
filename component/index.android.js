@@ -116,6 +116,8 @@ NotificationsComponent.prototype.clearAllNotifications = function() {
 	RNPushNotification.clearAllNotifications()
 }
 
+NotificationsComponent.prototype.isFireOSDevice = RNPushNotification.isFireOSDevice;
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()
