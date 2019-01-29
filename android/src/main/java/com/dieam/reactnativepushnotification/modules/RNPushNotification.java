@@ -29,6 +29,7 @@ import java.util.Random;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.amazon.device.messaging.ADM;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
@@ -129,8 +130,15 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void requestPermissions(String senderID) {
-        ReactContext reactContext = getReactApplicationContext();
+        if(isADMAvailable()) {
+            startADMRegistration();
+        } else {
+            startGCMRegistration(senderID);
+        }
+    }
 
+    private void startGCMRegistration(String senderID){
+        ReactContext reactContext = getReactApplicationContext();
         Intent GCMService = new Intent(reactContext, RNPushNotificationRegistrationService.class);
 
         try {
@@ -138,6 +146,17 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             reactContext.startService(GCMService);
         } catch (Exception e) {
             Log.d("EXCEPTION SERVICE::::::", "requestPermissions: " + e);
+        }
+    }
+
+    private void startADMRegistration(){
+        ReactContext reactContext = getReactApplicationContext();
+
+        try {
+            final ADM adm = new ADM(reactContext);
+            adm.startRegister();
+        } catch(Exception e){
+            Log.d("EXCEPTION ADM REGISTRATION::::::", " " + e);
         }
     }
 
@@ -235,5 +254,22 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void registerNotificationActions(ReadableArray actions) {
         registerNotificationsReceiveNotificationActions(actions);
+    }
+
+    @ReactMethod
+    public void isFireOSDevice(Promise promise) {
+        promise.resolve(isADMAvailable());
+    }
+
+    public boolean isADMAvailable() {
+        try {
+            Class.forName("com.amazon.device.messaging.ADM");
+            Log.v(LOG_TAG, "Amazon ADM is available");
+            return true;
+        } catch (ClassNotFoundException e) {
+            // Handle the exception.
+            Log.v(LOG_TAG, "Amazon ADM is NOT available");
+            return false;
+        }
     }
 }

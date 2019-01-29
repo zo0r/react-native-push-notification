@@ -192,11 +192,16 @@ Notifications.localNotificationSchedule = function(details: Object) {
 };
 
 /* Internal Functions */
-Notifications._onRegister = function(token: String) {
+Notifications._onRegister = async function(token: String) {
 	if ( this.onRegister !== false ) {
+    let os = Platform.OS;
+
+    if(os === 'android' && (await this.callNative( 'isFireOSDevice' )))
+      os = 'fireos';
+
 		this.onRegister({
-			token: token,
-			os: Platform.OS
+			token,
+			os
 		});
 	}
 };
