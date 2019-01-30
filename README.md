@@ -59,65 +59,81 @@ ext {
 In your `AndroidManifest.xml`
 ```xml
     .....
-    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <permission
-        android:name="${applicationId}.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
-    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+    <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:amazon="http://schemas.amazon.com/apk/res/android"
+        package="[YOUR PACKAGE NAME]">
 
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+      <!-- < Only if you're using ADM > -->
+      <permission
+           android:name="[YOUR PACKAGE NAME].permission.RECEIVE_ADM_MESSAGE"
+           android:protectionLevel="signature" />
+      <uses-permission android:name="[YOUR PACKAGE NAME].permission.RECEIVE_ADM_MESSAGE" />
+      <uses-permission android:name="com.amazon.device.messaging.permission.RECEIVE" />
 
-    <application ....>
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
-                android:value="YOUR NOTIFICATION CHANNEL NAME"/>
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
-                    android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
-        <!-- Change the resource name to your App's accent color - or any other color you want -->
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                    android:resource="@android:color/white"/>
 
-        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="${applicationId}" />
-            </intent-filter>
-        </receiver>
-        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+      <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+      <permission
+          android:name="${applicationId}.permission.C2D_MESSAGE"
+          android:protectionLevel="signature" />
+      <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
+      <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
-        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
-        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
+      <uses-permission android:name="android.permission.VIBRATE" />
+      <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+      <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-        <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-        <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
+      <application ....>
+          <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
+                  android:value="YOUR NOTIFICATION CHANNEL NAME"/>
+          <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
+                      android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
+          <!-- Change the resource name to your App's accent color - or any other color you want -->
+          <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
+                      android:resource="@android:color/white"/>
 
-        <!-- < Else > -->
-        <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <!-- </Else> -->
+           <amazon:enable-feature
+	            android:name="com.amazon.device.messaging"
+              android:required="false"/>
+
+          <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+          <receiver
+              android:name="com.google.android.gms.gcm.GcmReceiver"
+              android:exported="true"
+              android:permission="com.google.android.c2dm.permission.SEND" >
+              <intent-filter>
+                  <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                  <category android:name="${applicationId}" />
+              </intent-filter>
+          </receiver>
+          <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+
+          <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
+          <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+              <intent-filter>
+                  <action android:name="android.intent.action.BOOT_COMPLETED" />
+              </intent-filter>
+          </receiver>
+          <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
+
+          <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+          <service
+              android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm"
+              android:exported="false" >
+              <intent-filter>
+                  <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+              </intent-filter>
+          </service>
+          <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
+
+          <!-- < Else > -->
+          <service
+              android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+              android:exported="false" >
+              <intent-filter>
+                  <action android:name="com.google.firebase.MESSAGING_EVENT" />
+              </intent-filter>
+          </service>
+          <!-- </Else> -->
      .....
 
 ```
@@ -162,6 +178,13 @@ public class MainApplication extends Application implements ReactApplication {
   ....
 }
 ```
+
+## Amazon ADM Setup
+
+Amazon ADM support will only work on supported Amazon devices and takes precedence over GCM/FCM.
+
+Object your ADM API key by following the guide at https://developer.amazon.com/docs/adm/obtain-credentials.html
+Paste your API key into `android/app/src/main/assets/api-key.txt`
 
 ## Usage
 ```javascript
