@@ -29,6 +29,9 @@ import java.util.Random;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.ConnectionResult;
+
 import com.amazon.device.messaging.ADM;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
@@ -132,8 +135,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     public void requestPermissions(String senderID) {
         if(isADMAvailable()) {
             startADMRegistration();
-        } else {
+        } else if(isGooglePlayServicesAvailable()){
             startGCMRegistration(senderID);
+        } else {
+            Log.d(LOG_TAG, "No supported backends found");
         }
     }
 
@@ -261,15 +266,30 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         promise.resolve(isADMAvailable());
     }
 
+    @ReactMethod
+    public void areNotificationsSupported(Promise promise) {
+        promise.resolve(isADMAvailable() || isGooglePlayServicesAvailable());
+    }
+
     public boolean isADMAvailable() {
         try {
             Class.forName("com.amazon.device.messaging.ADM");
-            Log.v(LOG_TAG, "Amazon ADM is available");
+            Log.d(LOG_TAG, "Amazon ADM is available");
             return true;
         } catch (ClassNotFoundException e) {
             // Handle the exception.
-            Log.v(LOG_TAG, "Amazon ADM is NOT available");
+            Log.d(LOG_TAG, "Amazon ADM is NOT available");
             return false;
         }
+    }
+
+    public boolean isGooglePlayServicesAvailable() {
+        Activity activity = getCurrentActivity();
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(activity);
+        if(status != ConnectionResult.SUCCESS) {
+            return false;
+        }
+        return true;
     }
 }
