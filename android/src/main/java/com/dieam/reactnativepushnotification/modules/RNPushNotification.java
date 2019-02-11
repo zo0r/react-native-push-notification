@@ -266,6 +266,11 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         promise.resolve(isADMAvailable());
     }
 
+    @ReactMethod
+    public void areNotificationsSupported(Promise promise) {
+        promise.resolve(isADMAvailable() || isGooglePlayServicesAvailable());
+    }
+
     public boolean isADMAvailable() {
         try {
             Class.forName("com.amazon.device.messaging.ADM");

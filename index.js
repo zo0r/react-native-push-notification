@@ -336,4 +336,9 @@ Notifications.clearAllNotifications = function() {
 	return this.callNative('clearAllNotifications', arguments)
 }
 
+Notifications.areNotificationsSupported = function() {
+	// Only available for Android
+	return this.callNative('areNotificationsSupported', arguments)
+}
+
 module.exports = Notifications;
