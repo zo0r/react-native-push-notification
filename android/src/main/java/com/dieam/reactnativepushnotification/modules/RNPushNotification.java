@@ -161,7 +161,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             final ADM adm = new ADM(reactContext);
             adm.startRegister();
         } catch(Exception e){
-            Log.d("EXCEPTION ADM REGISTRATION::::::", " " + e);
+            Log.d("EXCEPTION ADM::::::", " " + e);
         }
     }
 
