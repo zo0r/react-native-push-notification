@@ -49,11 +49,10 @@ dependencies {
     def firebaseVersion = project.hasProperty('firebaseVersion') ? project.firebaseVersion : DEFAULT_FIREBASE_MESSAGING_VERSION
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation 'com.facebook.react:react-native:+'
     implementation "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
     implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
     implementation "com.google.firebase:firebase-messaging:$firebaseVersion"
-
 }
