@@ -249,6 +249,7 @@ PushNotification.localNotification({
     priority: "high", // (optional) set notification priority, default: high
     visibility: "private", // (optional) set notification visibility, default: private
     importance: "high", // (optional) set notification importance, default: high
+    allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
 
     /* iOS only properties */
     alertAction: // (optional) default: view
@@ -347,6 +348,17 @@ Available options:
 "unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED  
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
+
+## Notification while idle  ##
+
+(optional) Specify `allowWhileIdle` to set if the notification should be allowed to execute even when the system is on low-power idle modes.
+
+On Android 6.0 (API level 23) and forward, the Doze was introduced  to reduce battery consumption when the device is unused for long periods of time. But while on Doze the AlarmManager alarms (used to show scheduled notifications) are deferred to the next maintenance window. This may cause the notification to be delayed while on Doze.
+
+This can significantly impact the power use of the device when idle. So it must only be used when the notification is required to go off on a exact time, for example on a calendar notification.
+
+More information:
+https://developer.android.com/training/monitoring-device-state/doze-standby
 
 #### IOS
 The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
