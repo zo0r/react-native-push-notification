@@ -165,6 +165,7 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			fireDate: details.date.toISOString(),
 			alertTitle: details.title,
 			alertBody: details.message,
+			category: details.category,
 			soundName: soundName,
 			userInfo: details.userInfo,
 			repeatInterval: details.repeatType
