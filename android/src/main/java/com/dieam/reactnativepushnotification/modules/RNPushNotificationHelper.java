@@ -569,12 +569,13 @@ public class RNPushNotificationHelper {
             }
         }
 
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName(), importance);
-        channel.setDescription(this.config.getChannelDescription());
-        channel.enableLights(true);
-        channel.enableVibration(true);
-
-        manager.createNotificationChannel(channel);
+        NotificationChannel mChannel = manager.getNotificationChannel(NOTIFICATION_CHANNEL_ID);
+        if (mChannel == null) {
+        mChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Channel name", NotificationManager.IMPORTANCE_MAX);
+        mChannel.enableVibration(true);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        manager.createNotificationChannel(mChannel);
+        }
         channelCreated = true;
     }
 }
