@@ -59,8 +59,8 @@ export default class NotifService {
 
       /* iOS only properties */
       alertAction: 'view', // (optional) default: view
-      category: null, // (optional) default: null
-      userInfo: null, // (optional) default: null (object containing additional notification data)
+      category: '', // (optional) default: empty string
+      userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
 
       /* iOS and Android properties */
       title: "Local Notification", // (optional)
