@@ -331,4 +331,15 @@ Notifications.clearAllNotifications = function() {
 	return this.callNative('clearAllNotifications', arguments)
 }
 
+
+Notifications.cancelAllScheduledNotifications = function() {
+  // Only available for Android
+  return this.callNative("cancelAllScheduledNotifications", arguments);
+};
+
+Notifications.clearAllVisibleNotifications = function() {
+  // Only available for Android
+  return this.callNative("clearAllVisibleNotifications", arguments);
+};
+
 module.exports = Notifications;
