@@ -427,6 +427,10 @@ Same parameters as `PushNotification.localNotification()`
 
 `PushNotification.subscribeToTopic(topic: string)` Subscribe to a topic (works only with Firebase)
 
+`PushNotification.cancelAllScheduledNotifications()` Cancel all upcoming notifications, but don't clear the already fired ones.
+
+`PushNotification.clearAllVisibleNotifications()` Clear visible notifications.
+
 ## Checking Notification Permissions
 `PushNotification.checkPermissions(callback: Function)` Check permissions
 
