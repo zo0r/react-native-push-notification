@@ -168,7 +168,8 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			category: details.category,
 			soundName: soundName,
 			userInfo: details.userInfo,
-			repeatInterval: details.repeatType
+			repeatInterval: details.repeatType,
+			category: details.category,
 		};
 
 		if(details.number) {
