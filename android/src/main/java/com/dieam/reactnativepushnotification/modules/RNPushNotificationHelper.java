@@ -67,7 +67,7 @@ public class RNPushNotificationHelper {
     }
 
     private PendingIntent toScheduleNotificationIntent(Bundle bundle) {
-        int notificationID = Integer.parseInt(bundle.getString("id"));
+        int notificationID = (int) Long.parseLong(bundle.getString("id"));
 
         Intent notificationIntent = new Intent(context, RNPushNotificationPublisher.class);
         notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
@@ -229,7 +229,7 @@ public class RNPushNotificationHelper {
 
             String numberString = bundle.getString("number");
             if (numberString != null) {
-                notification.setNumber(Integer.parseInt(numberString));
+                notification.setNumber((int) Long.parseLong(numberString));
             }
 
             int smallIconResId;
@@ -317,7 +317,7 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            int notificationID = Integer.parseInt(notificationIdString);
+            int notificationID = (int) Long.parseLong(notificationIdString);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
@@ -515,7 +515,7 @@ public class RNPushNotificationHelper {
         // removed it from the notification center
         NotificationManager notificationManager = notificationManager();
 
-        notificationManager.cancel(Integer.parseInt(notificationIDString));
+        notificationManager.cancel((int) Long.parseLong(notificationIDString));
     }
 
     private NotificationManager notificationManager() {
