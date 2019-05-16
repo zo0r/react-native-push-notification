@@ -23,7 +23,7 @@ If you are testing someones PR, please provide the following feedback:
  * are you happy that the change in behaviour works as described, and you have tested the change on all affected operating systems?
  * in your opinion, is the code written _sensibly_? 
    * is it clean and tidy? 
-   * there are and unnecessary changes?
+   * there are any unnecessary changes?
    * is it documented appropriately?
    
    
