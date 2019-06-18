@@ -47,5 +47,5 @@ dependencies {
     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
     implementation "com.google.android.gms:play-services-gcm:${safeExtGet('googlePlayServicesVersion', '16.1.0')}"
     implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
-    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseVersion', '+')}"
+    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseVersion', '17.6.0')}"
 }
