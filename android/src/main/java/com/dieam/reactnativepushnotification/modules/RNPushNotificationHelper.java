@@ -35,7 +35,6 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
     private RNPushNotificationConfig config;
@@ -205,7 +204,7 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, this.config.getChannelId())
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
@@ -219,8 +218,6 @@ public class RNPushNotificationHelper {
 
             notification.setContentText(bundle.getString("message"));
 
-            String largeIcon = bundle.getString("largeIcon");
-
             String subText = bundle.getString("subText");
 
             if (subText != null) {
@@ -233,37 +230,32 @@ public class RNPushNotificationHelper {
             }
 
             int smallIconResId;
-            int largeIconResId;
-
             String smallIcon = bundle.getString("smallIcon");
 
             if (smallIcon != null) {
                 smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
             } else {
-                smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
+                smallIconResId = this.config.getNotificationIcon();
             }
 
-            if (smallIconResId == 0) {
-                smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+            if (smallIconResId > 0)
+                notification.setSmallIcon(smallIconResId);
 
-                if (smallIconResId == 0) {
-                    smallIconResId = android.R.drawable.ic_dialog_info;
-                }
-            }
+            int largeIconResId;
+            String largeIcon = bundle.getString("largeIcon");
 
             if (largeIcon != null) {
                 largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
             } else {
-                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                largeIconResId = this.config.getNotificationIcon();
             }
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
 
-            if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+            if (largeIconResId > 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
                 notification.setLargeIcon(largeIconBitmap);
             }
 
-            notification.setSmallIcon(smallIconResId);
             String bigText = bundle.getString("bigText");
 
             if (bigText == null) {
@@ -569,7 +561,7 @@ public class RNPushNotificationHelper {
             }
         }
 
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName(), importance);
+        NotificationChannel channel = new NotificationChannel(this.config.getChannelId(), this.config.getChannelName(), importance);
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
         channel.enableVibration(true);
