@@ -71,6 +71,8 @@ In your `AndroidManifest.xml`
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_id"
+                android:value="YOUR-NOTIFICATIONS-CHANNEL-ID-WITHOUT-SPACES"/>
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
                 android:value="YOUR NOTIFICATION CHANNEL NAME"/>
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
@@ -78,6 +80,9 @@ In your `AndroidManifest.xml`
         <!-- Change the resource name to your App's accent color - or any other color you want -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                     android:resource="@android:color/white"/>
+        <!-- Change the resource name to your App's icon - or any other icon you want -->
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_icon"
+                    android:resource="@drawable/ic_notification"/>
 
         <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
@@ -312,11 +317,11 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 Available options:
 
-"max" = NotficationCompat.PRIORITY_MAX  
-"high" = NotficationCompat.PRIORITY_HIGH  
-"low" = NotficationCompat.PRIORITY_LOW  
-"min" = NotficationCompat.PRIORITY_MIN  
-"default" = NotficationCompat.PRIORITY_DEFAULT  
+"max" = NotficationCompat.PRIORITY_MAX
+"high" = NotficationCompat.PRIORITY_HIGH
+"low" = NotficationCompat.PRIORITY_LOW
+"min" = NotficationCompat.PRIORITY_MIN
+"default" = NotficationCompat.PRIORITY_DEFAULT
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
 
@@ -326,9 +331,9 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"private" = NotficationCompat.VISIBILITY_PRIVATE  
-"public" = NotficationCompat.VISIBILITY_PUBLIC  
-"secret" = NotficationCompat.VISIBILITY_SECRET  
+"private" = NotficationCompat.VISIBILITY_PRIVATE
+"public" = NotficationCompat.VISIBILITY_PUBLIC
+"secret" = NotficationCompat.VISIBILITY_SECRET
 
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
 
@@ -338,13 +343,13 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"default" = NotificationManager.IMPORTANCE_DEFAULT  
-"max" = NotificationManager.IMPORTANCE_MAX  
-"high" = NotificationManager.IMPORTANCE_HIGH  
-"low" = NotificationManager.IMPORTANCE_LOW  
-"min" = NotificationManager.IMPORTANCE_MIN  
-"none" = NotificationManager.IMPORTANCE_NONE  
-"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED  
+"default" = NotificationManager.IMPORTANCE_DEFAULT
+"max" = NotificationManager.IMPORTANCE_MAX
+"high" = NotificationManager.IMPORTANCE_HIGH
+"low" = NotificationManager.IMPORTANCE_LOW
+"min" = NotificationManager.IMPORTANCE_MIN
+"none" = NotificationManager.IMPORTANCE_NONE
+"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
