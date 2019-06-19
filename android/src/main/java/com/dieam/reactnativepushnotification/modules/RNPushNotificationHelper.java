@@ -39,6 +39,8 @@ public class RNPushNotificationHelper {
     private Context context;
     private RNPushNotificationConfig config;
     private final SharedPreferences scheduledNotificationsPersistence;
+    private static NotificationManager _notificationManager;
+    private static boolean channelCreated = false;
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
@@ -47,6 +49,9 @@ public class RNPushNotificationHelper {
         this.context = context;
         this.config = new RNPushNotificationConfig(context);
         this.scheduledNotificationsPersistence = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        this._notificationManager = this.getNotificationManager();
+
+        checkOrCreateChannel(_notificationManager);
     }
 
     public Class getMainActivityClass() {
@@ -134,6 +139,7 @@ public class RNPushNotificationHelper {
     public void sendToNotificationCentre(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
+
             if (intentClass == null) {
                 Log.e(LOG_TAG, "No activity class found for the notification");
                 return;
@@ -314,9 +320,6 @@ public class RNPushNotificationHelper {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
-
             notification.setContentIntent(pendingIntent);
 
             if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
@@ -380,9 +383,9 @@ public class RNPushNotificationHelper {
 
             if (bundle.containsKey("tag")) {
                 String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
+                _notificationManager.notify(tag, notificationID, info);
             } else {
-                notificationManager.notify(notificationID, info);
+                _notificationManager.notify(notificationID, info);
             }
 
             // Can't use setRepeating for recurring notifications because setRepeating
@@ -449,15 +452,13 @@ public class RNPushNotificationHelper {
     public void clearNotifications() {
         Log.i(LOG_TAG, "Clearing alerts from the notification centre");
 
-        NotificationManager notificationManager = notificationManager();
-        notificationManager.cancelAll();
+        _notificationManager.cancelAll();
     }
 
     public void clearNotification(int notificationID) {
         Log.i(LOG_TAG, "Clearing notification: " + notificationID);
 
-        NotificationManager notificationManager = notificationManager();
-        notificationManager.cancel(notificationID);
+        _notificationManager.cancel(notificationID);
     }
 
     public void cancelAllScheduledNotifications() {
@@ -502,12 +503,10 @@ public class RNPushNotificationHelper {
         }
 
         // removed it from the notification center
-        NotificationManager notificationManager = notificationManager();
-
-        notificationManager.cancel(Integer.parseInt(notificationIDString));
+        _notificationManager.cancel(Integer.parseInt(notificationIDString));
     }
 
-    private NotificationManager notificationManager() {
+    private NotificationManager getNotificationManager() {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
@@ -519,7 +518,6 @@ public class RNPushNotificationHelper {
         }
     }
 
-    private static boolean channelCreated = false;
     private void checkOrCreateChannel(NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
