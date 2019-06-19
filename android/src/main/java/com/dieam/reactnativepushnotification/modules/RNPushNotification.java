@@ -95,6 +95,25 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                 mJsDelivery.sendEvent("remoteNotificationsRegistered", params);
             }
         }, intentFilter);
+
+        IntentFilter errorIntentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationError");
+
+        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String exception = intent.getStringExtra("exception");
+                String tag = intent.getStringExtra("tag");
+                sendError(tag, exception);
+            }
+        }, errorIntentFilter);
+    }
+
+    private void sendError(String tag, String error) {
+        WritableMap params = Arguments.createMap();
+        params.putString("error", error);
+        params.putString("tag", tag);
+
+        mJsDelivery.sendEvent("remoteNotificationsError", params);
     }
 
     private void registerNotificationsReceiveNotificationActions(ReadableArray actions) {
@@ -137,7 +156,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             GCMService.putExtra("senderID", senderID);
             reactContext.startService(GCMService);
         } catch (Exception e) {
-            Log.d("EXCEPTION SERVICE::::::", "requestPermissions: " + e);
+            sendError("RequestPermissions", e.toString());
         }
     }
 
