@@ -71,6 +71,17 @@ In your `AndroidManifest.xml`
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
+        <!-- < Only if you're using Firebase > -->
+        <meta-data  android:name="com.google.firebase.messaging.default_notification_channel_id"
+                    android:value="YOUR-NOTIFICATIONS-CHANNEL-ID-WITHOUT-SPACES"/>
+        <!-- Change the resource name to your App's accent color - or any other color you want -->
+        <meta-data  android:name="com.google.firebase.messaging.default_notification_color"
+                    android:resource="@android:color/white"/>
+        <!-- Change the resource name to your App's icon - or any other icon you want -->
+        <meta-data  android:name="com.google.firebase.messaging.default_notification_icon"
+                    android:resource="@drawable/ic_notification"/>
+        <!-- < Only if you're using Firebase > -->
+
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_id"
                 android:value="YOUR-NOTIFICATIONS-CHANNEL-ID-WITHOUT-SPACES"/>
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
