@@ -211,11 +211,14 @@ public class RNPushNotificationHelper {
             }
 
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, this.config.getChannelId())
-                    .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
+
+            if (!title.isEmpty()) {
+                notification.setContentTitle(title);
+            }
 
             String group = bundle.getString("group");
             if (group != null) {
