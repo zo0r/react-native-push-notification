@@ -65,7 +65,7 @@ public class RNPushNotificationJsDelivery {
             return null;
         }
     }
-    
+
     // a Bundle is not a map, so we have to convert it explicitly
     JSONObject convertJSONObject(Bundle bundle) throws JSONException {
         JSONObject json = new JSONObject();
