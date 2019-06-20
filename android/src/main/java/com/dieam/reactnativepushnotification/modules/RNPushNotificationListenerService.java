@@ -70,7 +70,9 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             }
         }
 
-        Log.v(LOG_TAG, "onMessageReceived: " + bundle);
+        if (!bundle.containsKey("message") && bundle.containsKey("body")) {
+            bundle.putString("message", bundle.getString("body"));
+        }
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -111,9 +113,9 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
     private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
-        if (bundle.getString("id") == null) {
+        if (bundle.getString("notificationId") == null) {
             Random randomNumberGenerator = new Random(System.currentTimeMillis());
-            bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
+            bundle.putString("notificationId", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
         Boolean isForeground = isApplicationInForeground();

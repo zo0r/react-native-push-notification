@@ -151,7 +151,7 @@ public class RNPushNotificationHelper {
                 return;
             }
 
-            String notificationIdString = bundle.getString("id");
+            String notificationIdString = bundle.getString("notificationId");
             if (notificationIdString == null) {
                 Log.e(LOG_TAG, "No notification ID specified for the notification");
                 return;
