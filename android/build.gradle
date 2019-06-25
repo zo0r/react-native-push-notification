@@ -48,11 +48,11 @@ dependencies {
     def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion : DEFAULT_GOOGLE_PLAY_SERVICES_VERSION
     def firebaseVersion = project.hasProperty('firebaseVersion') ? project.firebaseVersion : DEFAULT_FIREBASE_MESSAGING_VERSION
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile 'com.facebook.react:react-native:+'
-    compile "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
-    compile 'me.leolin:ShortcutBadger:1.1.8@aar'
-    compile "com.google.firebase:firebase-messaging:$firebaseVersion"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation 'com.facebook.react:react-native:+'
+    implementation "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
+    implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
+    implementation "com.google.firebase:firebase-messaging:$firebaseVersion"
 }
