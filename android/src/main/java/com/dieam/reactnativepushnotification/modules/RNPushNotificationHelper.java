@@ -380,7 +380,8 @@ public class RNPushNotificationHelper {
             .setSmallIcon(smallIconResId)
             .setStyle(new NotificationCompat.InboxStyle()
               .setBigContentTitle(hashMapDialogsToMessages.getCountOfMessage() + " new messages")
-              .setSummaryText(hashMapDialogsToMessages.getCountOfMessage() + " new messages from " + hashMapDialogsToMessages.getCountOfDialogs() + " chats"))
+              .setSummaryText(hashMapDialogsToMessages.getCountOfMessage() + " new messages from " +
+                  (hashMapDialogsToMessages.getCountOfDialogs() == 1 ?  "1 chat" : hashMapDialogsToMessages.getCountOfDialogs() + " chats")))
             .setGroup(NOTIFICATION_GROUP_ID)
             .setGroupSummary(true)
             .setContentIntent(pendingIntentContent)

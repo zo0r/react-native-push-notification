@@ -154,6 +154,10 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         int indexOfSep = message.indexOf(":");
         HashMap<String, String> messageMap = new HashMap<String, String>();
 
+        String senderName = message.substring(0, indexOfSep);
+        senderName = senderName.replace(" in Private dialog", "");
+        senderName = senderName + ":";
+
         messageMap.put("sender_name", message.substring(0, indexOfSep));
         messageMap.put("message", message.substring(indexOfSep + 1));
 
