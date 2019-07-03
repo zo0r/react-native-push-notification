@@ -191,8 +191,7 @@ public class RNPushNotificationHelper {
         }
 
         String sender = bundle.getString("sender");
-        Double sender_id_double = bundle.getDouble("sender_id");
-        String sender_id = sender_id_double.toString();
+        String sender_id = bundle.getString("sender_id");
 
         if (sender_id == null) {
           // this happens when a 'data' notification is received - we do not synthesize a local notification in this case

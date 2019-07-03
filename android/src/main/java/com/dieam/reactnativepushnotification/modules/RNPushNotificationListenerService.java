@@ -55,6 +55,8 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         }
 
         if (data != null) {
+            Log.v(LOG_TAG, "[onMessageReceived] data: " + data);
+
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", null));
             }
@@ -80,7 +82,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         bundle.putString("message", messageMap.get("message"));
         bundle.putString("sender_id", bundle.getString("user_id"));
 
-        Log.v(LOG_TAG, "onMessageReceived[FirebaseMessagingService]: " + bundle);
+        Log.v(LOG_TAG, "[onMessageReceived] bundle: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -139,7 +141,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        Log.v(LOG_TAG, "sendNotification[FirebaseMessagingService]: " + bundle);
+        Log.v(LOG_TAG, "handleRemotePushNotification bundle: " + bundle);
         putPushMessageToRNSharedPreferences(context, bundle);
 
         Application applicationContext = (Application) context.getApplicationContext();
