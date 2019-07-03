@@ -152,7 +152,7 @@ Notifications.localNotification = function(details: Object) {
 
 Notifications.createGroupNotification = function(details: Object) {
 	if (Platform.OS === 'android') {
-		console.log('[RNLocalNotifications][params][index]', details)
+		//console.log('[RNLocalNotifications][params][index]', details)
 		this.handler.createGroupNotification(details)
 	} else {
 		Notifications.localNotification(details)
