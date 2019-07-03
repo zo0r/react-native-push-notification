@@ -19,9 +19,13 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 
 import org.json.JSONObject;
+import org.json.JSONException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import in.sriraman.sharedpreferences.RNSharedPreferencesModule;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
@@ -70,7 +74,11 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             }
         }
 
-        Log.v(LOG_TAG, "onMessageReceived: " + bundle);
+        HashMap<String, String> messageMap = parseSenderName(bundle.getString("message"));
+        bundle.putString("title", messageMap.get("sender_name"));
+        bundle.putString("message", messageMap.get("message"));
+
+        Log.v(LOG_TAG, "onMessageReceived[FirebaseMessagingService]: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -100,6 +108,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         });
     }
 
+
     private JSONObject getPushData(String dataString) {
         try {
             return new JSONObject(dataString);
@@ -128,11 +137,50 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        Log.v(LOG_TAG, "sendNotification: " + bundle);
+        Log.v(LOG_TAG, "sendNotification[FirebaseMessagingService]: " + bundle);
+        putPushMessageToRNSharedPreferences(context, bundle);
 
         Application applicationContext = (Application) context.getApplicationContext();
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
         pushNotificationHelper.sendToNotificationCentre(bundle);
+    }
+
+    private HashMap<String, String> parseSenderName(String message)
+    {
+        int indexOfSep = message.indexOf(":");
+        HashMap<String, String> messageMap = new HashMap<String, String>();
+
+        messageMap.put("sender_name", message.substring(0, indexOfSep));
+        messageMap.put("message", message.substring(indexOfSep + 1));
+
+        return messageMap;
+    }
+
+    private static void putPushMessageToRNSharedPreferences(ReactApplicationContext context, Bundle pushMessageBundle)
+    {
+        Log.v(LOG_TAG, "[putPushMessageToRNSharedPreferences]: " + pushMessageBundle);
+
+        RNSharedPreferencesModule sharedPreferences = new RNSharedPreferencesModule(context);
+
+        JSONObject jsonMessage = new JSONObject();
+        String message_id = null;
+
+        try {
+            message_id = pushMessageBundle.getString("message_id");
+
+            jsonMessage.put("id", message_id);
+            jsonMessage.put("dialog_id", pushMessageBundle.getString("dialog_id"));
+            jsonMessage.put("sender_id", pushMessageBundle.getString("user_id"));
+            jsonMessage.put("body", pushMessageBundle.getString("message"));
+            jsonMessage.put("date_sent", Math.floor(System.currentTimeMillis() / 1000));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (message_id != null)
+        {
+            sharedPreferences.setItem(message_id, jsonMessage.toString());
+        }
     }
 
     private boolean isApplicationInForeground() {
