@@ -184,18 +184,19 @@ public class RNPushNotificationHelper {
         String dialog = bundle.getString("dialog");
         String dialog_id = bundle.getString("dialog_id");
 
-        if (dialog == null && dialog_id == null) {
+        if (dialog_id == null) {
           // this happens when a 'data' notification is received - we do not synthesize a local notification in this case
-          Log.d(LOG_TAG, "Cannot send to notification centre because there is no 'dialog' and 'dialog_id' field in: " + bundle);
+          Log.d(LOG_TAG, "Cannot send to notification centre because there is no 'dialog_id' field in: " + bundle);
           return;
         }
 
         String sender = bundle.getString("sender");
-        String sender_id = bundle.getString("sender_id");
+        Double sender_id_double = bundle.getDouble("sender_id");
+        String sender_id = sender_id_double.toString();
 
-        if (sender == null && sender_id == null) {
+        if (sender_id == null) {
           // this happens when a 'data' notification is received - we do not synthesize a local notification in this case
-          Log.d(LOG_TAG, "Cannot send to notification centre because there is no 'sender' and 'sender_id' field in: " + bundle);
+          Log.d(LOG_TAG, "Cannot send to notification centre because there is no and 'sender_id' field in: " + bundle);
           return;
         }
 

@@ -76,7 +76,9 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
 
         HashMap<String, String> messageMap = parseSenderName(bundle.getString("message"));
         bundle.putString("title", messageMap.get("sender_name"));
+        bundle.putString("sender", messageMap.get("sender_name"));
         bundle.putString("message", messageMap.get("message"));
+        bundle.putString("sender_id", bundle.getString("user_id"));
 
         Log.v(LOG_TAG, "onMessageReceived[FirebaseMessagingService]: " + bundle);
 
@@ -142,7 +144,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
 
         Application applicationContext = (Application) context.getApplicationContext();
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
-        pushNotificationHelper.sendToNotificationCentre(bundle);
+        pushNotificationHelper.sendToGroupNotifications(bundle);
     }
 
     private HashMap<String, String> parseSenderName(String message)
