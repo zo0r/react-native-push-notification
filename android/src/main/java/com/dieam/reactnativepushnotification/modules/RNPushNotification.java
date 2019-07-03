@@ -146,6 +146,22 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         FirebaseMessaging.getInstance().subscribeToTopic(topic);
     }
 
+    /** ConnectyCube Group Notifications **/
+
+    @ReactMethod
+    public void createGroupNotification(ReadableMap details) {
+      Bundle bundle = Arguments.toBundle(details);
+      // If notification ID is not provided by the user, generate one at random
+      if (bundle.getString("id") == null) {
+        bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
+      }
+
+      mRNPushNotificationHelper.sendToGroupNotifications(bundle);
+
+      System.out.println("[createGroupNotification][arguments]");
+      System.out.println(bundle);
+    }
+
     @ReactMethod
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
