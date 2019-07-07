@@ -1,0 +1,5 @@
+{
+  "name": "example",
+  "displayName": "React Native Push Notification Example",
+  "senderID": "YOUR-GCM-ID"
+}
