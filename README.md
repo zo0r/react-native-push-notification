@@ -389,7 +389,7 @@ _NOTE: there is currently no api for removing specific notification alerts from 
 
 (optional) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
 
-Property `repeatType` could be one of `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
+Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
 
 ## Notification Actions
 
