@@ -48,4 +48,5 @@ dependencies {
     implementation "com.google.android.gms:play-services-gcm:${safeExtGet('googlePlayServicesVersion', '+')}"
     implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
     implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseVersion', '+')}"
+    implementation project(':react-native-shared-preferences')
 }
