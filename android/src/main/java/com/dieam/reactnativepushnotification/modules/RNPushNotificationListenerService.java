@@ -19,13 +19,9 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 
 import org.json.JSONObject;
-import org.json.JSONException;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
-import in.sriraman.sharedpreferences.RNSharedPreferencesModule;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
@@ -55,8 +51,6 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         }
 
         if (data != null) {
-            Log.v(LOG_TAG, "[onMessageReceived] data: " + data);
-
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", null));
             }
@@ -76,13 +70,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             }
         }
 
-        HashMap<String, String> messageMap = parseSenderName(bundle.getString("message"));
-        bundle.putString("title", messageMap.get("sender_name"));
-        bundle.putString("sender", messageMap.get("sender_name"));
-        bundle.putString("message", messageMap.get("message"));
-        bundle.putString("sender_id", bundle.getString("user_id"));
-
-        Log.v(LOG_TAG, "[onMessageReceived] bundle: " + bundle);
+        Log.v(LOG_TAG, "onMessageReceived: " + bundle);
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
@@ -112,7 +100,6 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         });
     }
 
-
     private JSONObject getPushData(String dataString) {
         try {
             return new JSONObject(dataString);
@@ -141,54 +128,11 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        Log.v(LOG_TAG, "handleRemotePushNotification bundle: " + bundle);
-        putPushMessageToRNSharedPreferences(context, bundle);
+        Log.v(LOG_TAG, "sendNotification: " + bundle);
 
         Application applicationContext = (Application) context.getApplicationContext();
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
-        pushNotificationHelper.sendToGroupNotifications(bundle);
-    }
-
-    private HashMap<String, String> parseSenderName(String message)
-    {
-        int indexOfSep = message.indexOf(":");
-        HashMap<String, String> messageMap = new HashMap<String, String>();
-
-        String senderName = message.substring(0, indexOfSep);
-        senderName = senderName.replace(" in Private dialog", "");
-        senderName = senderName + ":";
-
-        messageMap.put("sender_name", message.substring(0, indexOfSep));
-        messageMap.put("message", message.substring(indexOfSep + 1));
-
-        return messageMap;
-    }
-
-    private static void putPushMessageToRNSharedPreferences(ReactApplicationContext context, Bundle pushMessageBundle)
-    {
-        Log.v(LOG_TAG, "[putPushMessageToRNSharedPreferences]: " + pushMessageBundle);
-
-        RNSharedPreferencesModule sharedPreferences = new RNSharedPreferencesModule(context);
-
-        JSONObject jsonMessage = new JSONObject();
-        String message_id = null;
-
-        try {
-            message_id = pushMessageBundle.getString("message_id");
-
-            jsonMessage.put("id", message_id);
-            jsonMessage.put("dialog_id", pushMessageBundle.getString("dialog_id"));
-            jsonMessage.put("sender_id", pushMessageBundle.getString("user_id"));
-            jsonMessage.put("body", pushMessageBundle.getString("message"));
-            jsonMessage.put("date_sent", Math.floor(System.currentTimeMillis() / 1000));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (message_id != null)
-        {
-            sharedPreferences.setItem(message_id, jsonMessage.toString());
-        }
+        pushNotificationHelper.sendToNotificationCentre(bundle);
     }
 
     private boolean isApplicationInForeground() {
