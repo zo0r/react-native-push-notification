@@ -4,4 +4,4 @@ module.exports = {
         "packageInstance": "new ReactNativePushNotificationPackage()"
       } 
     }
-  };
+};
