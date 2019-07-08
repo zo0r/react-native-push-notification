@@ -26,11 +26,6 @@
   "peerDependencies": {
     "react-native": ">=0.33"
   },
-  "rnpm": {
-    "android": {
-      "packageInstance": "new ReactNativePushNotificationPackage()"
-    }
-  },
   "author": "zo0r <http://zo0r.me>",
   "license": "MIT"
 }
