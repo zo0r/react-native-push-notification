@@ -39,7 +39,7 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 The component uses PushNotificationIOS for the iOS part.
 
-[Please see: PushNotificationIOS](https://github.com/react-native-community/react-native-push-notification-ios) for iOS installation and linking instructions.
+[Please see: PushNotificationIOS](https://github.com/react-native-community/react-native-push-notification-ios)
 
 ## Android manual Installation
 
