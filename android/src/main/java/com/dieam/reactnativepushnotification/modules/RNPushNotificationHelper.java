@@ -208,7 +208,12 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            String channelId = bundle.getString("channelId");
+            if (channelId == null) {
+                channelId = NOTIFICATION_CHANNEL_ID;
+            }
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channelId)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
