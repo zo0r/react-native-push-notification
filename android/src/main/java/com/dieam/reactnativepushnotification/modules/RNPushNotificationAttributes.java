@@ -1,7 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
