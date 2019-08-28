@@ -262,6 +262,7 @@ PushNotification.localNotification({
     priority: "high", // (optional) set notification priority, default: high
     visibility: "private", // (optional) set notification visibility, default: private
     importance: "high", // (optional) set notification importance, default: high
+    ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
 
     /* iOS only properties */
     alertAction: // (optional) default: view
