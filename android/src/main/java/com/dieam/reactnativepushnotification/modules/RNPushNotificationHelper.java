@@ -386,7 +386,7 @@ public class RNPushNotificationHelper {
                 commit(editor);
             }
 
-            if (!(bundle.getBoolean("foreground", false) && bundle.getBoolean("ignoreInForeground", false))) {
+            if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
                 Notification info = notification.build();
                 info.defaults |= Notification.DEFAULT_LIGHTS;
                 
@@ -603,4 +603,22 @@ public class RNPushNotificationHelper {
         manager.createNotificationChannel(channel);
         channelCreated = true;
     }
+    
+    private boolean isApplicationInForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
+        if (processInfos != null) {
+            for (RunningAppProcessInfo processInfo : processInfos) {
+                if (processInfo.processName.equals(context.getPackageName())) {
+                    if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                        for (String d : processInfo.pkgList) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }
