@@ -16,7 +16,7 @@ var Notifications = {
 	onRegister: false,
 	onError: false,
 	onNotification: false,
-  onRemoteFetch: false,
+  	onRemoteFetch: false,
 	isLoaded: false,
 	hasPoppedInitialNotification: false,
 
