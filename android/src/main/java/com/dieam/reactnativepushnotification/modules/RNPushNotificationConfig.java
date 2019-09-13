@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 class RNPushNotificationConfig {
+    private static final String KEY_CHANNEL_PREFIX = "com.dieam.reactnativepushnotification.channel_prefix";
     private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
     private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
     private static final String KEY_NOTIFICATION_COLOR = "com.dieam.reactnativepushnotification.notification_color";
@@ -56,5 +57,37 @@ class RNPushNotificationConfig {
         }
         // Default
         return -1;
+    }
+
+    public String getChannelPrefix() {
+        try {
+            return metadata.getString(KEY_CHANNEL_PREFIX);
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_PREFIX + " in manifest. Falling back to default");
+        }
+        // Default
+        return "rn-push-notification-channel";
+    }
+    public String getChannelNameForId(String channelId) {
+        if (channelId != null) {
+            try {
+                return metadata.getString(KEY_CHANNEL_NAME + "." + channelId);
+            } catch (Exception e) {
+                Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_NAME + "." + channelId + " in manifest. Falling back to default");
+            }
+        }
+        // Default
+        return "rn-push-notification-channel";
+    }
+    public String getChannelDescriptionForId(String channelId) {
+        if (channelId != null) {
+            try {
+                return metadata.getString(KEY_CHANNEL_DESCRIPTION + "." + channelId);
+            } catch (Exception e) {
+                Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_DESCRIPTION + "." + channelId + " in manifest. Falling back to default");
+            }
+        }
+        // Default
+        return "";
     }
 }
