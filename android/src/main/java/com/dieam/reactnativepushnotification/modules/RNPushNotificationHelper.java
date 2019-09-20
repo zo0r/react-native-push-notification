@@ -361,19 +361,19 @@ public class RNPushNotificationHelper {
                         continue;
                     }
 
-                    Intent actionIntent = new Intent();
-                    // Intent actionIntent = new Intent(context, intentClass);
-                    // actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    // Intent actionIntent = new Intent();
+                    Intent actionIntent = new Intent(context, intentClass);
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     actionIntent.setAction(context.getPackageName() + "." + action);
 
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
 
-                    // PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
-                    //         PendingIntent.FLAG_UPDATE_CURRENT);
-                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
+                    PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
+                    // PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
+                    //         PendingIntent.FLAG_UPDATE_CURRENT);
                     notification.addAction(icon, action, pendingActionIntent);
                 }
             }
