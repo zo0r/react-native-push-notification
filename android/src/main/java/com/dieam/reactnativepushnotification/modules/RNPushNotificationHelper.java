@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -280,9 +281,11 @@ public class RNPushNotificationHelper {
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
 
+            Uri soundUri = null;
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
-                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 String soundName = bundle.getString("soundName");
+
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
 
@@ -326,7 +329,7 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
+            checkOrCreateChannel(notificationManager, soundUri);
 
             notification.setContentIntent(pendingIntent);
 
@@ -551,7 +554,7 @@ public class RNPushNotificationHelper {
     }
 
     private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager) {
+    private void checkOrCreateChannel(NotificationManager manager, Uri soundUri) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
@@ -597,6 +600,16 @@ public class RNPushNotificationHelper {
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
         channel.enableVibration(true);
+
+        if (soundUri != null) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build();
+            channel.setSound(soundUri, audioAttributes);
+        } else {
+            channel.setSound(null, null);
+        }
 
         manager.createNotificationChannel(channel);
         channelCreated = true;
