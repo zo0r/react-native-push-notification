@@ -331,4 +331,8 @@ Notifications.clearAllNotifications = function() {
 	return this.callNative('clearAllNotifications', arguments)
 }
 
+Notifications.isChannelBlocked = function() {
+	return this.callNative('isChannelBlocked', arguments);
+};
+
 module.exports = Notifications;

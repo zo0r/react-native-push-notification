@@ -116,6 +116,14 @@ NotificationsComponent.prototype.clearAllNotifications = function() {
 	RNPushNotification.clearAllNotifications()
 }
 
+NotificationsComponent.prototype.isChannelBlocked = function(channelId: string, handler: Function) {
+	RNPushNotification.isChannelBlocked(channelId).then(isBlocked => {
+    callback(isBlocked)
+  }).catch(error => {
+    handler(null, error)
+  });
+};
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()

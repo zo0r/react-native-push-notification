@@ -9,6 +9,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import androidx.core.app.NotificationManagerCompat;
+import android.support.annotation.RequiresApi;
+import android.annotation.TargetApi;
+import android.app.NotificationChannel;
+import android.os.Build;
+
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
@@ -25,6 +30,7 @@ import com.facebook.react.bridge.WritableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.List;
 
 import android.util.Log;
 
@@ -227,5 +233,19 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void registerNotificationActions(ReadableArray actions) {
         registerNotificationsReceiveNotificationActions(actions);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @ReactMethod
+    public void isChannelBlocked(String senderID, Promise promise) {
+        ReactContext reactContext = getReactApplicationContext();
+
+        NotificationManager notificationManager =
+                (NotificationManager) reactContext.getSystemService(reactContext.NOTIFICATION_SERVICE);
+        NotificationChannel notificationChannel = notificationManager.getNotificationChannel(senderID);
+        Boolean isBlocked = (notificationChannel.getImportance() == NotificationManager.IMPORTANCE_NONE);
+
+        promise.resolve(isBlocked);
     }
 }
