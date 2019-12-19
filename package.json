@@ -25,7 +25,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@react-native-community/push-notification-ios": "^1.0.3",
+    "@react-native-community/push-notification-ios": "Taylor123/react-native-push-notification-ios#custom-release",
     "react-native": ">=0.33"
   },
   "author": "zo0r <http://zo0r.me>",

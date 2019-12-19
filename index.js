@@ -4,6 +4,8 @@
 
 'use strict';
 
+// TODO add ios directory and set up podspec so mobile does not have to download push note ios separately
+
 var RNNotificationsComponent = require( './component' );
 
 var AppState = RNNotificationsComponent.state;
@@ -322,22 +324,17 @@ Notifications.checkPermissions = function() {
 	return this.callNative('checkPermissions', arguments);
 };
 
-Notifications.navigateToAndroidSettings = function() {
-	if ( Platform.OS === 'android' ) {
-		return this.callNative( 'navigateToAndroidSettings', arguments);
-	} else {
-		console.warn('Attempting to call android only function ' +
-            '`navigateToAndroidSettings` on platform other than android.');
-	}
+Notifications.navigateToSettings = function() {
+	return this.callNative('navigateToSettings', arguments);
 };
 
 Notifications.registerNotificationActions = function() {
 	return this.callNative('registerNotificationActions', arguments)
-}
+};
 
 Notifications.clearAllNotifications = function() {
 	// Only available for Android
 	return this.callNative('clearAllNotifications', arguments)
-}
+};
 
 module.exports = Notifications;
