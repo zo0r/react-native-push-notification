@@ -49,7 +49,11 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         if (bundle.containsKey("twi_body")) {
             bundle.putString("message", bundle.getString("twi_body"));
         }
-
+        // Copy `body` to `message` to support Iterable
+        if (bundle.containsKey("itbl")) {
+            bundle.putString("message", bundle.getString("body"));
+        }
+        
         if (data != null) {
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", null));
