@@ -409,12 +409,14 @@ public class RNPushNotificationHelper {
             Notification info = notification.build();
             info.defaults |= Notification.DEFAULT_LIGHTS;
 
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
-            } else {
-                notificationManager.notify(notificationID, info);
-            }
+            // if (bundle.containsKey("tag")) {
+            //     String tag = bundle.getString("tag");
+            //     notificationManager.notify(tag, notificationID, info);
+            // } else {
+            //     notificationManager.notify(notificationID, info);
+            // }
+
+            notificationManager.notify(GROUP_KEY_RIVALBET, info);
 
             // Can't use setRepeating for recurring notifications because setRepeating
             // is inexact by default starting API 19 and the notifications are not fired
