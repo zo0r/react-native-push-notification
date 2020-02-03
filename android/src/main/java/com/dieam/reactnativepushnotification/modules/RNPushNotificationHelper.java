@@ -164,25 +164,6 @@ public class RNPushNotificationHelper {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            String messageType = bundle.getString("notification_type");
-
-            String groupKey = "";
-
-            switch(messageType){
-                case "2": //LP: NOTIFICATION_WAGER_GROUP
-                    groupKey = bundle.getString("wager_id");
-                    break;
-                case "3": //LP: NOTIFICATION_GROUP_MESSAGE
-                    groupKey = bundle.getString("group_id");
-                    break;
-                case "4": //LP: NOTIFICATION_FRIEND_REQUEST
-                    groupKey = bundle.getString("user_id");
-                    break;
-
-            }
-
-            String GROUP_KEY_RIVALBET = messageType+"_"+groupKey;
-
             int priority = NotificationCompat.PRIORITY_HIGH;
             final String priorityString = bundle.getString("priority");
 
@@ -232,7 +213,6 @@ public class RNPushNotificationHelper {
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
                     .setPriority(priority)
-                    .setGroup(GROUP_KEY_RIVALBET)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
