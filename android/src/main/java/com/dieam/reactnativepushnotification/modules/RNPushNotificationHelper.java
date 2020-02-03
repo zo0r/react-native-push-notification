@@ -208,17 +208,22 @@ public class RNPushNotificationHelper {
                 }
             }
 
+            String group = bundle.getString("group");
+            NotificationCompat.Builder groupBuilder = null;
+
+            if(group != null){
+                groupBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                                .setContentTitle(title)
+                                .setGroupSummary(true)
+                                .setGroup(group);
+            }
+
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
-
-            String group = bundle.getString("group");
-            if (group != null) {
-                notification.setGroup(group);
-            }
 
             notification.setContentText(bundle.getString("message"));
 
@@ -329,6 +334,9 @@ public class RNPushNotificationHelper {
             checkOrCreateChannel(notificationManager);
 
             notification.setContentIntent(pendingIntent);
+            if(groupBuilder != null){
+                groupBuilder.setContentIntent((pendingIntent));
+            }
 
             if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
                 long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
@@ -386,21 +394,38 @@ public class RNPushNotificationHelper {
                 commit(editor);
             }
 
-            Notification info = notification.build();
-            info.defaults |= Notification.DEFAULT_LIGHTS;
+            if (group != null) {
+                notification.setGroup(group);
+                Notification info = notification.build();
+                info.defaults |= Notification.DEFAULT_LIGHTS;
 
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
-            } else {
-                notificationManager.notify(notificationID, info);
+                notificationManager.notify(32135, groupBuilder.build());
+
+                if (bundle.containsKey("tag")) {
+                    String tag = bundle.getString("tag");
+                    notificationManager.notify(tag, notificationID, info);
+                } else {
+                    notificationManager.notify(notificationID, info);
+                }
+
+                this.scheduleNextNotificationIfRepeating(bundle);
+            }else {
+                Notification info = notification.build();
+                info.defaults |= Notification.DEFAULT_LIGHTS;
+
+                if (bundle.containsKey("tag")) {
+                    String tag = bundle.getString("tag");
+                    notificationManager.notify(tag, notificationID, info);
+                } else {
+                    notificationManager.notify(notificationID, info);
+                }
+
+                // Can't use setRepeating for recurring notifications because setRepeating
+                // is inexact by default starting API 19 and the notifications are not fired
+                // at the exact time. During testing, it was found that notifications could
+                // late by many minutes.
+                this.scheduleNextNotificationIfRepeating(bundle);
             }
-
-            // Can't use setRepeating for recurring notifications because setRepeating
-            // is inexact by default starting API 19 and the notifications are not fired
-            // at the exact time. During testing, it was found that notifications could
-            // late by many minutes.
-            this.scheduleNextNotificationIfRepeating(bundle);
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
