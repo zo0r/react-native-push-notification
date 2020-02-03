@@ -167,8 +167,8 @@ public class RNPushNotificationHelper {
 
             String title = bundle.getString("title");
             String message = bundle.getString("message");
-            String group_title = bundle.getString("group_title");
-            String group_id = bundle.getString("group_id");
+            String bundle_title = bundle.getString("bundle_title");
+            String bundle_id = bundle.getString("bundle_id");
             int group_id_int = Integer.parseInt(group_id);
 
             Notification newMessageNotification1 =
@@ -176,15 +176,15 @@ public class RNPushNotificationHelper {
                             .setSmallIcon(smallIconResId)
                             .setContentTitle(title)
                             .setContentText(message)
-                            .setGroup(group_id)
+                            .setGroup(bundle_id)
                             .build();
 
             Notification summaryNotification =
                     new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                             .setSmallIcon(smallIconResId)
                             .setStyle(new NotificationCompat.InboxStyle()
-                                    .setSummaryText(group_title))
-                            .setGroup(group_id)
+                                    .setSummaryText(bundle_title))
+                            .setGroup(bundle_id)
                             .setGroupSummary(true)
                             .build();
 
