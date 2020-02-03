@@ -38,7 +38,7 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final long GROUP_MESSAGE_ID = 0;
+    private static final int GROUP_MESSAGE_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
