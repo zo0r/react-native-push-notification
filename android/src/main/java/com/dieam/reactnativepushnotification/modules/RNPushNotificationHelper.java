@@ -86,10 +86,10 @@ public class RNPushNotificationHelper {
             return;
         }
 
-        if (bundle.getString("message") == null) {
-            Log.e(LOG_TAG, "No message specified for the scheduled notification");
-            return;
-        }
+        // if (bundle.getString("message") == null) {
+        //     Log.e(LOG_TAG, "No message specified for the scheduled notification");
+        //     return;
+        // }
 
         if (bundle.getString("id") == null) {
             Log.e(LOG_TAG, "No notification ID specified for the scheduled notification");
@@ -143,11 +143,11 @@ public class RNPushNotificationHelper {
                 return;
             }
 
-            if (bundle.getString("message") == null) {
-                // this happens when a 'data' notification is received - we do not synthesize a local notification in this case
-                Log.d(LOG_TAG, "Cannot send to notification centre because there is no 'message' field in: " + bundle);
-                return;
-            }
+            // if (bundle.getString("message") == null) {
+            //     // this happens when a 'data' notification is received - we do not synthesize a local notification in this case
+            //     Log.d(LOG_TAG, "Cannot send to notification centre because there is no 'message' field in: " + bundle);
+            //     return;
+            // }
 
             String notificationIdString = bundle.getString("id");
             if (notificationIdString == null) {
