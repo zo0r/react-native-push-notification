@@ -214,9 +214,10 @@ public class RNPushNotificationHelper {
 
             if(group != null){
                 groupBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                                .setContentTitle(title)
-                                .setGroupSummary(true)
-                                .setGroup(group);
+                        .setContentTitle(title)
+                        .setContentText(bundle.getString("message"))
+                        .setGroup(group)
+                        .setGroupSummary(true);
             }
 
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
@@ -280,6 +281,11 @@ public class RNPushNotificationHelper {
             }
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+
+            if(group!=null){
+                groupBuilder.setSmallIcon(smallIconResId);
+                groupBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            }
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
