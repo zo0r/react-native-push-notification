@@ -38,6 +38,7 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
+    private static final long GROUP_MESSAGE_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
@@ -399,14 +400,14 @@ public class RNPushNotificationHelper {
                 Notification info = notification.build();
                 info.defaults |= Notification.DEFAULT_LIGHTS;
 
-                notificationManager.notify(32135, groupBuilder.build());
-
                 if (bundle.containsKey("tag")) {
                     String tag = bundle.getString("tag");
                     notificationManager.notify(tag, notificationID, info);
                 } else {
                     notificationManager.notify(notificationID, info);
                 }
+
+                notificationManager.notify(GROUP_MESSAGE_ID, groupBuilder.build());
 
                 this.scheduleNextNotificationIfRepeating(bundle);
             }else {
