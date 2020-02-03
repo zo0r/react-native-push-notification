@@ -169,7 +169,7 @@ public class RNPushNotificationHelper {
             String message = bundle.getString("message");
             String bundle_title = bundle.getString("bundle_title");
             String bundle_id = bundle.getString("bundle_id");
-            int group_id_int = Integer.parseInt(group_id);
+            int bundle_id_int = Integer.parseInt(bundle_id);
 
             Notification newMessageNotification1 =
                     new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
@@ -193,7 +193,7 @@ public class RNPushNotificationHelper {
             checkOrCreateChannel(notificationManager);
 
             notificationManager.notify(new Random().nextInt(), newMessageNotification1);
-            notificationManager.notify(group_id_int, summaryNotification);
+            notificationManager.notify(bundle_id_int, summaryNotification);
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
