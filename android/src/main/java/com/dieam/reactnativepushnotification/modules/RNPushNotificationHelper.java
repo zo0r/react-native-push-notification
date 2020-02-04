@@ -163,6 +163,8 @@ public class RNPushNotificationHelper {
 
     public void sendToNotificationCentre(Bundle bundle) {
         try {
+            Class intentClass = getMainActivityClass();
+
             int smallIconResId = this.getIconResourceId(bundle);
             String notificationIdString = bundle.getString("id");
             int notificationID = Integer.parseInt(notificationIdString);
@@ -172,33 +174,37 @@ public class RNPushNotificationHelper {
             String bundle_title = bundle.getString("bundle_title");
             String bundle_id = bundle.getString("bundle_id");
 
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                            .setSmallIcon(smallIconResId)
-                            .setContentTitle(title)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
+                    NOTIFICATION_CHANNEL_ID).setSmallIcon(smallIconResId).setContentTitle(title)
                             .setContentText(message);
-
 
             NotificationManager notificationManager = notificationManager();
             checkOrCreateChannel(notificationManager);
 
-            if(bundle_title != null && bundle_id != null) {
-                //LP: is supposed to be grouped message
+            Intent intent = new Intent(context, intentClass);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            bundle.putBoolean("userInteraction", true);
+            intent.putExtra("notification", bundle);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            notificationBuilder.setContentIntent(pendingIntent);
+
+            if (bundle_title != null && bundle_id != null) {
+                // LP: is supposed to be grouped message
                 int bundle_id_int = Integer.parseInt(bundle_id);
 
                 notificationBuilder.setGroup(bundle_id);
 
-                NotificationCompat.Builder summaryBuilder =
-                        new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                                .setSmallIcon(smallIconResId)
-                                .setStyle(new NotificationCompat.InboxStyle()
-                                        .setSummaryText(bundle_title))
-                                .setGroup(bundle_id)
-                                .setGroupSummary(true);
+                NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(context,
+                        NOTIFICATION_CHANNEL_ID).setSmallIcon(smallIconResId)
+                                .setStyle(new NotificationCompat.InboxStyle().setSummaryText(bundle_title))
+                                .setGroup(bundle_id).setGroupSummary(true);
                 notificationManager.notify(notificationID, notificationBuilder.build());
                 notificationManager.notify(bundle_id_int, summaryBuilder.build());
             } else {
-                //LP: is a single message
+                // LP: is a single message
                 notificationManager.notify(notificationID, notificationBuilder.build());
             }
 
