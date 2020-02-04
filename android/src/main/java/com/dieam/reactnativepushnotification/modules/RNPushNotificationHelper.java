@@ -33,6 +33,9 @@ public class RNPushNotificationHelper {
     private static final int RB_GROUP_MSG_TYPE = 3;
     private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
     private static final String APP_ROOT_NAME = "RivalBet";
+    private static final String EXTRAS_KEY_USERNAMES = "existingUsernames";
+    private static final String EXTRAS_KEY_TIMESTAMP = "existingTimestamps";
+    private static final String EXTRAS_KEY_MESSAGES = "existingMessages";
 
 
     private Context context;
@@ -211,26 +214,9 @@ public class RNPushNotificationHelper {
                     }
                 }
 
-                ArrayList<String> existingUsernames = extras.getStringArrayList("existingUsernames");
-                if (existingUsernames == null) {
-                    existingUsernames = new ArrayList<>();
-                }
-                existingUsernames.add(sender);
-                extras.putStringArrayList("existingUsernames", existingUsernames);
-
-                ArrayList<String> existingTimestamps = extras.getStringArrayList("existingTimestamps");
-                if (existingTimestamps == null) {
-                    existingTimestamps = new ArrayList<>();
-                }
-                existingTimestamps.add(chatTimestamp);
-                extras.putStringArrayList("existingTimestamps", existingTimestamps);
-
-                ArrayList<String> existingMessages = extras.getStringArrayList("existingMessages");
-                if (existingMessages == null) {
-                    existingMessages = new ArrayList<>();
-                }
-                existingMessages.add(chatMessage);
-                extras.putStringArrayList("existingMessages", existingMessages);
+                getArrayFromExtras(extras, EXTRAS_KEY_USERNAMES).add(sender);
+                getArrayFromExtras(extras, EXTRAS_KEY_TIMESTAMP).add(chatTimestamp);
+                getArrayFromExtras(extras, EXTRAS_KEY_MESSAGES).add(chatMessage);
 
                 NotificationCompat.MessagingStyle notifStyle = new NotificationCompat.MessagingStyle("Me")
                         .setConversationTitle(bundleTitle);
@@ -270,6 +256,15 @@ public class RNPushNotificationHelper {
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
+    }
+
+    private ArrayList<String> getArrayFromExtras(Bundle extras, String key) {
+        ArrayList<String> existingUsernames = extras.getStringArrayList(key);
+        if (existingUsernames == null) {
+            existingUsernames = new ArrayList<>();
+            extras.putStringArrayList(key, existingUsernames);
+        }
+        return existingUsernames;
     }
 
     private void scheduleNextNotificationIfRepeating(Bundle bundle) {
