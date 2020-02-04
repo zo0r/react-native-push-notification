@@ -214,9 +214,12 @@ public class RNPushNotificationHelper {
                     }
                 }
 
-                getArrayFromExtras(extras, EXTRAS_KEY_USERNAMES).add(sender);
-                getArrayFromExtras(extras, EXTRAS_KEY_TIMESTAMP).add(chatTimestamp);
-                getArrayFromExtras(extras, EXTRAS_KEY_MESSAGES).add(chatMessage);
+                ArrayList<String> existingMessages = getArrayFromExtras(extras, EXTRAS_KEY_MESSAGES);
+                existingMessages.add(chatMessage);
+                ArrayList<String> existingUsernames = getArrayFromExtras(extras, EXTRAS_KEY_USERNAMES);
+                existingUsernames.add(sender);
+                ArrayList<String> existingTimestamps = getArrayFromExtras(extras, EXTRAS_KEY_TIMESTAMP);
+                existingTimestamps.add(chatTimestamp);
 
                 NotificationCompat.MessagingStyle notifStyle = new NotificationCompat.MessagingStyle("Me")
                         .setConversationTitle(bundleTitle);
