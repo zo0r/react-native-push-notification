@@ -187,6 +187,7 @@ public class RNPushNotificationHelper {
                     .setSmallIcon(smallIconResId)
                     .setStyle(new NotificationCompat.InboxStyle().setSummaryText(APP_ROOT_NAME))
                     .setGroup(APP_BUNDLE_ID).setGroupSummary(true)
+                    .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String sender = bundle.getString("sender");
@@ -235,6 +236,7 @@ public class RNPushNotificationHelper {
                         .setGroup(APP_BUNDLE_ID)
                         .setAutoCancel(bundle.getBoolean("autoCancel", true))
                         .setExtras(extras)
+                        .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                         .setStyle(notifStyle);
                 notificationBuilder.setContentIntent(pendingIntent);
 
@@ -247,6 +249,7 @@ public class RNPushNotificationHelper {
                     .setSmallIcon(smallIconResId)
                     .setContentTitle(title)
                     .setContentText(message)
+                    .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
                 notificationBuilder.setContentIntent(pendingIntent);
 
