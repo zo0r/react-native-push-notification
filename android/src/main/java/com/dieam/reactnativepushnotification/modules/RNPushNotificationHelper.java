@@ -170,36 +170,35 @@ public class RNPushNotificationHelper {
             String bundle_title = bundle.getString("bundle_title");
             String bundle_id = bundle.getString("bundle_id");
 
-            Notification newMessageNotification1 =
+            NotificationCompat.Builder newMessageNotification1 =
                     new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                             .setSmallIcon(smallIconResId)
                             .setContentTitle(title)
-                            .setContentText(message)
-                            .setGroup(bundle_id)
-                            .build();
+                            .setContentText(message);
 
             if(bundle_title != null && bundle_id != null){
                 //LP: is supposed to be grouped message
                 int bundle_id_int = Integer.parseInt(bundle_id);
 
-                Notification summaryNotification =
+                newMessageNotification1.setGroup(bundle_id);
+
+                NotificationCompat.Builder summaryNotification =
                         new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                                 .setSmallIcon(smallIconResId)
                                 .setStyle(new NotificationCompat.InboxStyle()
                                         .setSummaryText(bundle_title))
                                 .setGroup(bundle_id)
-                                .setGroupSummary(true)
-                                .build();
+                                .setGroupSummary(true);
 
                 NotificationManager notificationManager = notificationManager();
                 checkOrCreateChannel(notificationManager);
-                notificationManager.notify(new Random().nextInt(), newMessageNotification1);
-                notificationManager.notify(bundle_id_int, summaryNotification);
+                notificationManager.notify(new Random().nextInt(), newMessageNotification1.build());
+                notificationManager.notify(bundle_id_int, summaryNotification.build());
             }else{
                 //LP: is a single message
                 NotificationManager notificationManager = notificationManager();
                 checkOrCreateChannel(notificationManager);
-                notificationManager.notify(new Random().nextInt(), newMessageNotification1);
+                notificationManager.notify(new Random().nextInt(), newMessageNotification1.build());
             }
 
         } catch (Exception e) {
