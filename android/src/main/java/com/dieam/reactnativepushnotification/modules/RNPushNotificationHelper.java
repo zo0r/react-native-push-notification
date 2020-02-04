@@ -164,41 +164,42 @@ public class RNPushNotificationHelper {
     public void sendToNotificationCentre(Bundle bundle) {
         try {
             int smallIconResId = this.getIconResourceId(bundle);
+            String notificationIdString = bundle.getString("id");
+            int notificationID = Integer.parseInt(notificationIdString);
 
             String title = bundle.getString("title");
             String message = bundle.getString("message");
             String bundle_title = bundle.getString("bundle_title");
             String bundle_id = bundle.getString("bundle_id");
 
-            NotificationCompat.Builder newMessageNotification1 =
+            NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                             .setSmallIcon(smallIconResId)
                             .setContentTitle(title)
                             .setContentText(message);
 
-            if(bundle_title != null && bundle_id != null){
+
+            NotificationManager notificationManager = notificationManager();
+            checkOrCreateChannel(notificationManager);
+
+            if(bundle_title != null && bundle_id != null) {
                 //LP: is supposed to be grouped message
                 int bundle_id_int = Integer.parseInt(bundle_id);
 
-                newMessageNotification1.setGroup(bundle_id);
+                notificationBuilder.setGroup(bundle_id);
 
-                NotificationCompat.Builder summaryNotification =
+                NotificationCompat.Builder summaryBuilder =
                         new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                                 .setSmallIcon(smallIconResId)
                                 .setStyle(new NotificationCompat.InboxStyle()
                                         .setSummaryText(bundle_title))
                                 .setGroup(bundle_id)
                                 .setGroupSummary(true);
-
-                NotificationManager notificationManager = notificationManager();
-                checkOrCreateChannel(notificationManager);
-                notificationManager.notify(new Random().nextInt(), newMessageNotification1.build());
-                notificationManager.notify(bundle_id_int, summaryNotification.build());
-            }else{
+                notificationManager.notify(notificationID, notificationBuilder.build());
+                notificationManager.notify(bundle_id_int, summaryBuilder.build());
+            } else {
                 //LP: is a single message
-                NotificationManager notificationManager = notificationManager();
-                checkOrCreateChannel(notificationManager);
-                notificationManager.notify(new Random().nextInt(), newMessageNotification1.build());
+                notificationManager.notify(notificationID, notificationBuilder.build());
             }
 
         } catch (Exception e) {
