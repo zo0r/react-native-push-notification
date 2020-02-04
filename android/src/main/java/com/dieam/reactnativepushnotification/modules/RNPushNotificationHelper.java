@@ -33,9 +33,9 @@ public class RNPushNotificationHelper {
     private static final int RB_GROUP_MSG_TYPE = 3;
     private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
     private static final String APP_ROOT_NAME = "RivalBet";
-    private static final String EXTRAS_KEY_USERNAMES = "existingUsernames";
-    private static final String EXTRAS_KEY_TIMESTAMP = "existingTimestamps";
-    private static final String EXTRAS_KEY_MESSAGES = "existingMessages";
+    private static final String EXTRAS_KEY_USERNAMES = "chatSenders";
+    private static final String EXTRAS_KEY_TIMESTAMP = "chatTimestamps";
+    private static final String EXTRAS_KEY_MESSAGES = "chatMessages";
 
 
     private Context context;
