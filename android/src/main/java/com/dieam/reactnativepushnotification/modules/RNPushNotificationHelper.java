@@ -196,11 +196,19 @@ public class RNPushNotificationHelper {
                     .setGroup("com.apthletic.rivalbet").setGroupSummary(true)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
+            String sender = bundle.getString("sender");
+            String chatMessage = bundle.getString("chat_message");
+            String chatTimestamp = bundle.getString("chat_timestamp");
 
-            if (bundleTitle != null && bundleId != null && notificationTypeInt == RB_GROUP_MSG_TYPE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                String sender = bundle.getString("sender");
-                String chatMessage = bundle.getString("chat_message");
-                String chatTimestamp = bundle.getString("chat_timestamp");
+            if (
+                    bundleTitle != null &&
+                    bundleId != null &&
+                    notificationTypeInt == RB_GROUP_MSG_TYPE &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    sender != null &&
+                    chatMessage != null &&
+                    chatTimestamp != null
+            ) {
 
                 // LP: is supposed to be grouped message
                 int bundleIdInt = Integer.parseInt(bundleId);
