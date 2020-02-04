@@ -164,36 +164,43 @@ public class RNPushNotificationHelper {
     public void sendToNotificationCentre(Bundle bundle) {
         try {
             int smallIconResId = this.getIconResourceId(bundle);
+            String notificationIdString = bundle.getString("id");
+            int notificationID = Integer.parseInt(notificationIdString);
 
             String title = bundle.getString("title");
             String message = bundle.getString("message");
             String bundle_title = bundle.getString("bundle_title");
             String bundle_id = bundle.getString("bundle_id");
-            int bundle_id_int = Integer.parseInt(bundle_id);
 
-            Notification newMessageNotification1 =
+            NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                             .setSmallIcon(smallIconResId)
                             .setContentTitle(title)
-                            .setContentText(message)
-                            .setGroup(bundle_id)
-                            .build();
+                            .setContentText(message);
 
-            Notification summaryNotification =
-                    new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                            .setSmallIcon(smallIconResId)
-                            .setStyle(new NotificationCompat.InboxStyle()
-                                    .setSummaryText(bundle_title))
-                            .setGroup(bundle_id)
-                            .setGroupSummary(true)
-                            .build();
 
             NotificationManager notificationManager = notificationManager();
-
             checkOrCreateChannel(notificationManager);
 
-            notificationManager.notify(new Random().nextInt(), newMessageNotification1);
-            notificationManager.notify(bundle_id_int, summaryNotification);
+            if(bundle_title != null && bundle_id != null) {
+                //LP: is supposed to be grouped message
+                int bundle_id_int = Integer.parseInt(bundle_id);
+
+                notificationBuilder.setGroup(bundle_id);
+
+                NotificationCompat.Builder summaryBuilder =
+                        new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                                .setSmallIcon(smallIconResId)
+                                .setStyle(new NotificationCompat.InboxStyle()
+                                        .setSummaryText(bundle_title))
+                                .setGroup(bundle_id)
+                                .setGroupSummary(true);
+                notificationManager.notify(notificationID, notificationBuilder.build());
+                notificationManager.notify(bundle_id_int, summaryBuilder.build());
+            } else {
+                //LP: is a single message
+                notificationManager.notify(notificationID, notificationBuilder.build());
+            }
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
