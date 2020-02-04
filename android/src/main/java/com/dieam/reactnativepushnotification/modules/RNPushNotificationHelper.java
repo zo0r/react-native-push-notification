@@ -44,6 +44,9 @@ public class RNPushNotificationHelper {
     private static final int GROUP_MESSAGE_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final int RB_GROUP_MSG_TYPE = 3;
+    private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
+    private static final String APP_ROOT_NAME = "RivalBet";
+
 
     private Context context;
     private RNPushNotificationConfig config;
@@ -192,8 +195,8 @@ public class RNPushNotificationHelper {
             NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(context,
                     NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(smallIconResId)
-                    .setStyle(new NotificationCompat.InboxStyle().setSummaryText("RivalBet"))
-                    .setGroup("com.apthletic.rivalbet").setGroupSummary(true)
+                    .setStyle(new NotificationCompat.InboxStyle().setSummaryText(APP_ROOT_NAME))
+                    .setGroup(APP_BUNDLE_ID).setGroupSummary(true)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String sender = bundle.getString("sender");
@@ -253,7 +256,7 @@ public class RNPushNotificationHelper {
                 }
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(smallIconResId)
-                        .setGroup("com.apthletic.rivalbet")
+                        .setGroup(APP_BUNDLE_ID)
                         .setAutoCancel(bundle.getBoolean("autoCancel", true))
                         .setExtras(extras)
                         .setStyle(notifStyle);
@@ -264,7 +267,7 @@ public class RNPushNotificationHelper {
 
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
                     NOTIFICATION_CHANNEL_ID)
-                    .setGroup("com.apthletic.rivalbet")
+                    .setGroup(APP_BUNDLE_ID)
                     .setSmallIcon(smallIconResId)
                     .setContentTitle(title)
                     .setContentText(message)
