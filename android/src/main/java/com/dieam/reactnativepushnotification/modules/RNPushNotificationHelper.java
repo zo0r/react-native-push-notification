@@ -175,8 +175,11 @@ public class RNPushNotificationHelper {
             String bundle_id = bundle.getString("bundle_id");
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
-                    NOTIFICATION_CHANNEL_ID).setSmallIcon(smallIconResId).setContentTitle(title)
-                            .setContentText(message);
+                    NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(smallIconResId)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             NotificationManager notificationManager = notificationManager();
             checkOrCreateChannel(notificationManager);
@@ -198,9 +201,12 @@ public class RNPushNotificationHelper {
                 notificationBuilder.setGroup(bundle_id);
 
                 NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(context,
-                        NOTIFICATION_CHANNEL_ID).setSmallIcon(smallIconResId)
-                                .setStyle(new NotificationCompat.InboxStyle().setSummaryText(bundle_title))
-                                .setGroup(bundle_id).setGroupSummary(true);
+                        NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(smallIconResId)
+                        .setStyle(new NotificationCompat.InboxStyle().setSummaryText(bundle_title))
+                        .setGroup(bundle_id).setGroupSummary(true)
+                        .setAutoCancel(bundle.getBoolean("autoCancel", true));
+
                 notificationManager.notify(notificationID, notificationBuilder.build());
                 notificationManager.notify(bundle_id_int, summaryBuilder.build());
             } else {
