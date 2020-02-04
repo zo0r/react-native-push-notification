@@ -169,7 +169,6 @@ public class RNPushNotificationHelper {
             String message = bundle.getString("message");
             String bundle_title = bundle.getString("bundle_title");
             String bundle_id = bundle.getString("bundle_id");
-            int bundle_id_int = Integer.parseInt(bundle_id);
 
             Notification newMessageNotification1 =
                     new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
@@ -179,21 +178,29 @@ public class RNPushNotificationHelper {
                             .setGroup(bundle_id)
                             .build();
 
-            Notification summaryNotification =
-                    new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                            .setSmallIcon(smallIconResId)
-                            .setStyle(new NotificationCompat.InboxStyle()
-                                    .setSummaryText(bundle_title))
-                            .setGroup(bundle_id)
-                            .setGroupSummary(true)
-                            .build();
+            if(bundle_title != null && bundle_id != null){
+                //LP: is supposed to be grouped message
+                int bundle_id_int = Integer.parseInt(bundle_id);
 
-            NotificationManager notificationManager = notificationManager();
+                Notification summaryNotification =
+                        new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                                .setSmallIcon(smallIconResId)
+                                .setStyle(new NotificationCompat.InboxStyle()
+                                        .setSummaryText(bundle_title))
+                                .setGroup(bundle_id)
+                                .setGroupSummary(true)
+                                .build();
 
-            checkOrCreateChannel(notificationManager);
-
-            notificationManager.notify(new Random().nextInt(), newMessageNotification1);
-            notificationManager.notify(bundle_id_int, summaryNotification);
+                NotificationManager notificationManager = notificationManager();
+                checkOrCreateChannel(notificationManager);
+                notificationManager.notify(new Random().nextInt(), newMessageNotification1);
+                notificationManager.notify(bundle_id_int, summaryNotification);
+            }else{
+                //LP: is a single message
+                NotificationManager notificationManager = notificationManager();
+                checkOrCreateChannel(notificationManager);
+                notificationManager.notify(new Random().nextInt(), newMessageNotification1);
+            }
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
