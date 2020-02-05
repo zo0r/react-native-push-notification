@@ -28,7 +28,6 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final int GROUP_MESSAGE_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final int RB_GROUP_MSG_TYPE = 3;
     private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
