@@ -28,11 +28,13 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final int GROUP_MESSAGE_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final int RB_GROUP_MSG_TYPE = 3;
     private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
     private static final String APP_ROOT_NAME = "RivalBet";
+    private static final String EXTRAS_KEY_USERNAMES = "chatSenders";
+    private static final String EXTRAS_KEY_TIMESTAMP = "chatTimestamps";
+    private static final String EXTRAS_KEY_MESSAGES = "chatMessages";
 
 
     private Context context;
@@ -184,6 +186,7 @@ public class RNPushNotificationHelper {
                     .setSmallIcon(smallIconResId)
                     .setStyle(new NotificationCompat.InboxStyle().setSummaryText(APP_ROOT_NAME))
                     .setGroup(APP_BUNDLE_ID).setGroupSummary(true)
+                    .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String sender = bundle.getString("sender");
@@ -211,26 +214,12 @@ public class RNPushNotificationHelper {
                     }
                 }
 
-                ArrayList<String> existingUsernames = extras.getStringArrayList("existingUsernames");
-                if (existingUsernames == null) {
-                    existingUsernames = new ArrayList<>();
-                }
-                existingUsernames.add(sender);
-                extras.putStringArrayList("existingUsernames", existingUsernames);
-
-                ArrayList<String> existingTimestamps = extras.getStringArrayList("existingTimestamps");
-                if (existingTimestamps == null) {
-                    existingTimestamps = new ArrayList<>();
-                }
-                existingTimestamps.add(chatTimestamp);
-                extras.putStringArrayList("existingTimestamps", existingTimestamps);
-
-                ArrayList<String> existingMessages = extras.getStringArrayList("existingMessages");
-                if (existingMessages == null) {
-                    existingMessages = new ArrayList<>();
-                }
+                ArrayList<String> existingMessages = getArrayFromExtras(extras, EXTRAS_KEY_MESSAGES);
                 existingMessages.add(chatMessage);
-                extras.putStringArrayList("existingMessages", existingMessages);
+                ArrayList<String> existingUsernames = getArrayFromExtras(extras, EXTRAS_KEY_USERNAMES);
+                existingUsernames.add(sender);
+                ArrayList<String> existingTimestamps = getArrayFromExtras(extras, EXTRAS_KEY_TIMESTAMP);
+                existingTimestamps.add(chatTimestamp);
 
                 NotificationCompat.MessagingStyle notifStyle = new NotificationCompat.MessagingStyle("Me")
                         .setConversationTitle(bundleTitle);
@@ -246,6 +235,7 @@ public class RNPushNotificationHelper {
                         .setGroup(APP_BUNDLE_ID)
                         .setAutoCancel(bundle.getBoolean("autoCancel", true))
                         .setExtras(extras)
+                        .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                         .setStyle(notifStyle);
                 notificationBuilder.setContentIntent(pendingIntent);
 
@@ -258,6 +248,7 @@ public class RNPushNotificationHelper {
                     .setSmallIcon(smallIconResId)
                     .setContentTitle(title)
                     .setContentText(message)
+                    .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
                 notificationBuilder.setContentIntent(pendingIntent);
 
@@ -270,6 +261,15 @@ public class RNPushNotificationHelper {
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
+    }
+
+    private ArrayList<String> getArrayFromExtras(Bundle extras, String key) {
+        ArrayList<String> existingUsernames = extras.getStringArrayList(key);
+        if (existingUsernames == null) {
+            existingUsernames = new ArrayList<>();
+            extras.putStringArrayList(key, existingUsernames);
+        }
+        return existingUsernames;
     }
 
     private void scheduleNextNotificationIfRepeating(Bundle bundle) {
