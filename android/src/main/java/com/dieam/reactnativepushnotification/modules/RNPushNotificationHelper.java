@@ -1,39 +1,26 @@
 package com.dieam.reactnativepushnotification.modules;
 
-
 import android.app.AlarmManager;
 import android.app.Application;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
-
 import com.facebook.react.bridge.ReadableMap;
-
-import org.json.JSONArray;
 import org.json.JSONException;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -41,8 +28,14 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final int GROUP_MESSAGE_ID = 0;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+    private static final int RB_GROUP_MSG_TYPE = 3;
+    private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
+    private static final String APP_ROOT_NAME = "RivalBet";
+    private static final String EXTRAS_KEY_USERNAMES = "chatSenders";
+    private static final String EXTRAS_KEY_TIMESTAMP = "chatTimestamps";
+    private static final String EXTRAS_KEY_MESSAGES = "chatMessages";
+
 
     private Context context;
     private RNPushNotificationConfig config;
@@ -170,13 +163,12 @@ public class RNPushNotificationHelper {
             int notificationID = Integer.parseInt(notificationIdString);
 
             String title = bundle.getString("title");
+            String notificationType = bundle.getString("notification_type");
             String message = bundle.getString("message");
-            String bundle_title = bundle.getString("bundle_title");
-            String bundle_id = bundle.getString("bundle_id");
+            String bundleTitle = bundle.getString("bundle_title");
+            String bundleId = bundle.getString("bundle_id");
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
-                    NOTIFICATION_CHANNEL_ID).setSmallIcon(smallIconResId).setContentTitle(title)
-                            .setContentText(message);
+            int notificationTypeInt = Integer.parseInt(notificationType);
 
             NotificationManager notificationManager = notificationManager();
             checkOrCreateChannel(notificationManager);
@@ -189,28 +181,95 @@ public class RNPushNotificationHelper {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            notificationBuilder.setContentIntent(pendingIntent);
+            NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(context,
+                    NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(smallIconResId)
+                    .setStyle(new NotificationCompat.InboxStyle().setSummaryText(APP_ROOT_NAME))
+                    .setGroup(APP_BUNDLE_ID).setGroupSummary(true)
+                    .setVibrate(new long[]{0, DEFAULT_VIBRATION})
+                    .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
-            if (bundle_title != null && bundle_id != null) {
+            String sender = bundle.getString("sender");
+            String chatMessage = bundle.getString("chat_message");
+            String chatTimestamp = bundle.getString("chat_timestamp");
+
+            if (
+                    bundleTitle != null &&
+                    bundleId != null &&
+                    notificationTypeInt == RB_GROUP_MSG_TYPE &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    sender != null &&
+                    chatMessage != null &&
+                    chatTimestamp != null
+            ) {
+
                 // LP: is supposed to be grouped message
-                int bundle_id_int = Integer.parseInt(bundle_id);
+                int bundleIdInt = Integer.parseInt(bundleId);
 
-                notificationBuilder.setGroup(bundle_id);
+                Bundle extras = new Bundle();
 
-                NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(context,
-                        NOTIFICATION_CHANNEL_ID).setSmallIcon(smallIconResId)
-                                .setStyle(new NotificationCompat.InboxStyle().setSummaryText(bundle_title))
-                                .setGroup(bundle_id).setGroupSummary(true);
-                notificationManager.notify(notificationID, notificationBuilder.build());
-                notificationManager.notify(bundle_id_int, summaryBuilder.build());
+                for (StatusBarNotification notif : notificationManager.getActiveNotifications()) {
+                    if (notif.getId() == bundleIdInt ) {
+                        extras = notif.getNotification().extras;
+                    }
+                }
+
+                ArrayList<String> existingMessages = getArrayFromExtras(extras, EXTRAS_KEY_MESSAGES);
+                existingMessages.add(chatMessage);
+                ArrayList<String> existingUsernames = getArrayFromExtras(extras, EXTRAS_KEY_USERNAMES);
+                existingUsernames.add(sender);
+                ArrayList<String> existingTimestamps = getArrayFromExtras(extras, EXTRAS_KEY_TIMESTAMP);
+                existingTimestamps.add(chatTimestamp);
+
+                NotificationCompat.MessagingStyle notifStyle = new NotificationCompat.MessagingStyle("Me")
+                        .setConversationTitle(bundleTitle);
+                int index = 0;
+                for (String m : existingMessages) {
+                    String timestampString = existingTimestamps.get(index);
+                    long timestampLong = Long.parseLong(timestampString);
+                    notifStyle.addMessage(m, timestampLong, existingUsernames.get(index));
+                    index++;
+                }
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(smallIconResId)
+                        .setGroup(APP_BUNDLE_ID)
+                        .setAutoCancel(bundle.getBoolean("autoCancel", true))
+                        .setExtras(extras)
+                        .setVibrate(new long[]{0, DEFAULT_VIBRATION})
+                        .setStyle(notifStyle);
+                notificationBuilder.setContentIntent(pendingIntent);
+
+                notificationManager.notify(bundleIdInt, notificationBuilder.build());
             } else {
+
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
+                    NOTIFICATION_CHANNEL_ID)
+                    .setGroup(APP_BUNDLE_ID)
+                    .setSmallIcon(smallIconResId)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setVibrate(new long[]{0, DEFAULT_VIBRATION})
+                    .setAutoCancel(bundle.getBoolean("autoCancel", true));
+                notificationBuilder.setContentIntent(pendingIntent);
+
                 // LP: is a single message
                 notificationManager.notify(notificationID, notificationBuilder.build());
             }
 
+            notificationManager.notify(0, summaryBuilder.build());
+
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
+    }
+
+    private ArrayList<String> getArrayFromExtras(Bundle extras, String key) {
+        ArrayList<String> existingUsernames = extras.getStringArrayList(key);
+        if (existingUsernames == null) {
+            existingUsernames = new ArrayList<>();
+            extras.putStringArrayList(key, existingUsernames);
+        }
+        return existingUsernames;
     }
 
     private void scheduleNextNotificationIfRepeating(Bundle bundle) {
