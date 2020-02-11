@@ -30,11 +30,16 @@ public class RNPushNotificationHelper {
     private static final long DEFAULT_VIBRATION = 300L;
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final int RB_GROUP_MSG_TYPE = 3;
+    private static final int RB_WAGER_MSG_TYPE = 2;
+    private static final int RB_FRIENDREQ_MSG_TYPE = 4;
     private static final String APP_BUNDLE_ID = "com.apthletic.rivalbet";
     private static final String APP_ROOT_NAME = "RivalBet";
     private static final String EXTRAS_KEY_USERNAMES = "chatSenders";
     private static final String EXTRAS_KEY_TIMESTAMP = "chatTimestamps";
     private static final String EXTRAS_KEY_MESSAGES = "chatMessages";
+    private static final String EXTRAS_KEY_ENTITYID = "notifEntityId";
+    private static final String EXTRAS_KEY_NOTIFTYPE = "notifType";
+    private static final String EXTRAS_KEY_SUMMARY = "notifSummary";
 
 
     private Context context;
@@ -181,17 +186,37 @@ public class RNPushNotificationHelper {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
+            Bundle summaryExtras = new Bundle();
+            summaryExtras.putString(EXTRAS_KEY_SUMMARY,EXTRAS_KEY_SUMMARY);
+
             NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(context,
                     NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(smallIconResId)
                     .setStyle(new NotificationCompat.InboxStyle().setSummaryText(APP_ROOT_NAME))
                     .setGroup(APP_BUNDLE_ID).setGroupSummary(true)
+                    .setExtras(summaryExtras)
                     .setVibrate(new long[]{0, DEFAULT_VIBRATION})
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String sender = bundle.getString("sender");
             String chatMessage = bundle.getString("chat_message");
             String chatTimestamp = bundle.getString("chat_timestamp");
+            Integer notificationEntityId = 0;
+
+            switch (notificationTypeInt){
+                case RB_WAGER_MSG_TYPE:
+                    String wagerId = bundle.getString("wager_id");
+                    notificationEntityId = Integer.parseInt(wagerId);
+                    break;
+                case RB_GROUP_MSG_TYPE:
+                    String groupId = bundle.getString("group_id");
+                    notificationEntityId = Integer.parseInt(groupId);
+                    break;
+                case RB_FRIENDREQ_MSG_TYPE:
+                    String userId = bundle.getString("user_id");
+                    notificationEntityId = Integer.parseInt(userId);
+                    break;
+            }
 
             if (
                     bundleTitle != null &&
@@ -213,6 +238,9 @@ public class RNPushNotificationHelper {
                         extras = notif.getNotification().extras;
                     }
                 }
+
+                extras.putInt(EXTRAS_KEY_ENTITYID, notificationEntityId);
+                extras.putInt(EXTRAS_KEY_NOTIFTYPE, notificationTypeInt);
 
                 ArrayList<String> existingMessages = getArrayFromExtras(extras, EXTRAS_KEY_MESSAGES);
                 existingMessages.add(chatMessage);
