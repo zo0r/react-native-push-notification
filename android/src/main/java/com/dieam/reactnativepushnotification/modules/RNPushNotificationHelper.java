@@ -269,10 +269,15 @@ public class RNPushNotificationHelper {
 
                 notificationManager.notify(bundleIdInt, notificationBuilder.build());
             } else {
+                Bundle extras = new Bundle();
+
+                extras.putInt(EXTRAS_KEY_ENTITYID, notificationEntityId);
+                extras.putInt(EXTRAS_KEY_NOTIFTYPE, notificationTypeInt);
 
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
                     NOTIFICATION_CHANNEL_ID)
                     .setGroup(APP_BUNDLE_ID)
+                    .setExtras(extras)
                     .setSmallIcon(smallIconResId)
                     .setContentTitle(title)
                     .setContentText(message)
