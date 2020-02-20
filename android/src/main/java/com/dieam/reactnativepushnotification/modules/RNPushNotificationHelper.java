@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.NotificationChannel;
@@ -40,7 +41,8 @@ public class RNPushNotificationHelper {
     private static final String EXTRAS_KEY_ENTITYID = "notifEntityId";
     private static final String EXTRAS_KEY_NOTIFTYPE = "notifType";
     private static final String EXTRAS_KEY_SUMMARY = "notifSummary";
-
+    private static final String RB_PN_MANAGER_PREFERENCES_KEY = "rb_pn_manager";
+    private static final String GROUP_ID_IN_VIEW_KEY = "GROUP_ID_IN_VIEW";
 
     private Context context;
     private RNPushNotificationConfig config;
@@ -69,6 +71,18 @@ public class RNPushNotificationHelper {
 
     private AlarmManager getAlarmManager() {
         return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    private int getGroupIdInView() {
+        try{
+            if (this.context != null) {
+                SharedPreferences sharedPref = context.getSharedPreferences(RB_PN_MANAGER_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                return sharedPref.getInt(GROUP_ID_IN_VIEW_KEY,-1);
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "failed to get the Group in view", e);
+        }
+        return -1;
     }
 
     private PendingIntent toScheduleNotificationIntent(Bundle bundle) {
@@ -159,6 +173,30 @@ public class RNPushNotificationHelper {
         return smallIconResId;
     }
 
+    private boolean shouldIgnoreNotification(Bundle bundle){
+        boolean shouldIgnore = false;
+
+        try{
+            String notificationType = bundle.getString("notification_type");
+            int notificationTypeInt = Integer.parseInt(notificationType);
+
+            if(notificationTypeInt == RB_GROUP_MSG_TYPE) {
+                String groupId = bundle.getString("group_id");
+                int notificationEntityGroupId = Integer.parseInt(groupId);
+                SharedPreferences pref = this.context.getSharedPreferences(RB_PN_MANAGER_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                int groupIdInViewId = pref.getInt(GROUP_ID_IN_VIEW_KEY, -1);
+
+                if(groupIdInViewId != -1) {
+                    shouldIgnore = notificationEntityGroupId == groupIdInViewId;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "failed to send push notification", e);
+        }
+
+        return shouldIgnore;
+    }
+
     public void sendToNotificationCentre(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
@@ -169,6 +207,11 @@ public class RNPushNotificationHelper {
 
             String title = bundle.getString("title");
             String notificationType = bundle.getString("notification_type");
+
+            if(this.shouldIgnoreNotification(bundle)) {
+                return;
+            }
+
             String message = bundle.getString("message");
             String bundleTitle = bundle.getString("bundle_title");
             String bundleId = bundle.getString("bundle_id");
