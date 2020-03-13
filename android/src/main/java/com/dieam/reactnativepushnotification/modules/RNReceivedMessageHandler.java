@@ -57,8 +57,8 @@ public class RNReceivedMessageHandler {
         }
 
         // Copy `body` to `message` to support Iterable
-        if (bundle.containsKey("itbl")) {
-            bundle.putString("message", bundle.getString("body"));
+        if (bundle.containsKey("itbl") && bundle.containsKey("body")) {
+            bundle.putString("message", bundle.getString("body"));            
         }
 
         if (data != null) {
