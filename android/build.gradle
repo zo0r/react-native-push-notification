@@ -43,15 +43,11 @@ android {
 }
 
 dependencies {
-    def supportLibVersion = safeExtGet('supportLibVersion', '28.0.0')
-    def googlePlayServicesVersion = safeExtGet('googlePlayServicesVersion', '+')
-    def firebaseVersion = safeExtGet('firebaseVersion', '+')
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation 'com.facebook.react:react-native:+'
-    implementation "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
+    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
+    implementation "com.google.android.gms:play-services-gcm:${safeExtGet('googlePlayServicesVersion', '+')}"
     implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
-    implementation "com.google.firebase:firebase-messaging:$firebaseVersion"
+    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseVersion', '+')}"
 }
