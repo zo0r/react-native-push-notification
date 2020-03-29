@@ -52,8 +52,6 @@ public class RNPushNotificationListenerServiceGcm extends GcmListenerService {
             }
         }
 
-        Log.v(LOG_TAG, "onMessageReceived: " + bundle);
-
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
         // "Can't create handler inside thread that has not called Looper.prepare()"
@@ -112,11 +110,15 @@ public class RNPushNotificationListenerServiceGcm extends GcmListenerService {
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-        if (!isForeground) {
+        Application applicationContext = (Application) context.getApplicationContext();
+        RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+        pushNotificationHelper.sendToNotificationCentre(bundle);
+
+/*        if (!isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
-        }
+}*/
     }
 
     private boolean isApplicationInForeground() {
