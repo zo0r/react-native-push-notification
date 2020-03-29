@@ -1,6 +1,5 @@
 package com.dieam.reactnativepushnotification.modules;
 
-
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -23,6 +22,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
+
+import android.provider.Settings;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
@@ -30,10 +31,17 @@ import com.facebook.react.bridge.ReadableMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -45,6 +53,9 @@ public class RNPushNotificationHelper {
 
     private Context context;
     private RNPushNotificationConfig config;
+    private SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");;
+
+
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
@@ -139,6 +150,12 @@ public class RNPushNotificationHelper {
     }
 
     public void sendToNotificationCentre(Bundle bundle) {
+        try{
+            this.getAsyncStorage();
+        }catch (Exception e){
+            Log.e(LOG_TAG, "NO GET ASYNC STORAGE" + e);
+        }
+
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -160,6 +177,8 @@ public class RNPushNotificationHelper {
 
             Resources res = context.getResources();
             String packageName = context.getPackageName();
+
+            Boolean isTest = Boolean.parseBoolean(bundle.getString("isTestSystem", "false"));
 
             String title = bundle.getString("title");
             if (title == null) {
@@ -216,7 +235,7 @@ public class RNPushNotificationHelper {
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                soundName = bundle.getString("soundName");
+                soundName =  isTest ? "test" : bundle.getString("soundName");
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
 
@@ -233,11 +252,12 @@ public class RNPushNotificationHelper {
                         }
 
                         soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + resId);
+
                     }
                 }
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, this.getChannelId(soundName, soundUri))
+            final NotificationCompat.Builder notification = new NotificationCompat.Builder(context, this.getChannelId(soundName, soundUri))
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
@@ -333,8 +353,27 @@ public class RNPushNotificationHelper {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            NotificationManager notificationManager = notificationManager();
+            final NotificationManager notificationManager = notificationManager();
             checkOrCreateChannel(notificationManager, soundName, soundUri);
+
+            // IF CRITICAL ALERT is active in local storage
+            // active > strong (3)
+
+            String existIntensity = bundle.getString("intensity");
+            if(existIntensity != null){
+                int intensity = Integer.parseInt(bundle.getString("intensity"));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    int dndStatus = Settings.Global.getInt(context.getContentResolver(), "zen_mode");
+                    if(dndStatus != 0){
+                        Log.d(LOG_TAG, "on mode DND ");
+                        int statusFilter = intensity >= 3 ? NotificationManager.INTERRUPTION_FILTER_ALARMS : NotificationManager.INTERRUPTION_FILTER_NONE;
+                        changeInterruptionFiler(notificationManager, statusFilter , context);
+                    }else{
+                        Log.d(LOG_TAG, "off mode DND ");
+                    }
+                }
+            }
 
             notification.setContentIntent(pendingIntent);
 
@@ -396,6 +435,89 @@ public class RNPushNotificationHelper {
 
             Notification info = notification.build();
             info.defaults |= Notification.DEFAULT_LIGHTS;
+
+
+            // IF ETA is active in local storage
+            Boolean activeETA = true;
+
+            String impactAt = bundle.getString("impactAt");
+            if(impactAt != null && activeETA){
+                //TODO: GET STRINGS FROM XML
+                try {
+                    Date dateNow = new Date(System.currentTimeMillis());
+                    final Date dateImpact = formatDate.parse(impactAt);
+                    final Timer timer = new Timer();
+                    final int idNotification = notificationID;
+                    final String message = bundle.getString("message");
+
+                    Long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
+
+                    int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
+                    final int secondsInitial = (int) (diffTimeImpact / 1000) % 60 ;
+                    String ETA_min = minutes > 0 ? minutes +" minutos y " : "";
+                    String ETA_sec = secondsInitial > 0 ? secondsInitial +" segundos." : "";
+                    final String timeRead = ETA_min + ETA_sec;
+
+                    Log.d(LOG_TAG, "** Calculate Impact time "+timeRead+" for ID Notification "+idNotification+" **");
+
+                    timer.scheduleAtFixedRate(new TimerTask() {
+                      @Override
+                      public void run() {
+                          Date dateNow = new Date(System.currentTimeMillis());
+
+                          Long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
+
+                          int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
+                          int seconds = (int) (diffTimeImpact / 1000) % 60 ;
+
+                          String ETA_min = minutes > 0 ? minutes +" minutos, " : "";
+                          String ETA_sec = seconds > 0 ? seconds +" segundos." : "0 segundos.";
+                          String textETA = message + "\nTiempo estimado de arribo: en "+ETA_min+ETA_sec;
+
+                          notification.setContentText(textETA);
+                          notification.setStyle(new NotificationCompat.BigTextStyle().bigText(textETA));
+                          Log.d(LOG_TAG, "· ("+idNotification+") Remaining "+ETA_min + ETA_sec);
+
+                          //Change sound
+                          if(seconds % 10 == 0){
+                              //TODO: CHANGE SOUND
+                              // 10 | 20 | 30 | 60 | 80
+                              switch(seconds) {
+                                  case 10:
+                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 10 change sound.mp3");
+                                      break;
+                                  case 20:
+                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 20 seconds.mp3");
+                                      break;
+                                  case 30:
+                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 30 seconds.mp3");
+                                      break;
+                                  case 60:
+                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 1 minute.mp3");
+                                      break;
+                                  case 80:
+                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 1 minute 20 seconds.mp3");
+                                      break;
+                                  default:
+                                      break;
+                              }
+                          }
+
+                          notificationManager.notify(idNotification, notification.build());
+
+                          if(seconds <= 0){
+                              Log.d(LOG_TAG, ">> Finish timer for "+idNotification+"<<");
+                              timer.cancel();
+                              notificationManager.notify(idNotification, notification.build());
+                          }
+                      }
+                  }, 0, 1000);
+
+                }catch (Exception e) {
+                    Log.e(LOG_TAG, "ETA could not be obtained" + e.getMessage());
+                }
+            }
+
 
             if (bundle.containsKey("tag")) {
                 String tag = bundle.getString("tag");
@@ -628,5 +750,95 @@ public class RNPushNotificationHelper {
     private String getChannelId(String soundName, Uri soundUri) {
         String channelPrefix = this.config.getChannelPrefix();
         return (soundName != null && soundUri != null) ? channelPrefix + soundName : NOTIFICATION_CHANNEL_ID;
+    }
+
+    protected void changeInterruptionFiler(NotificationManager notificationManager, int interruptionFilter, Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // If api level minimum 23
+            /*
+                boolean isNotificationPolicyAccessGranted ()
+                    Checks the ability to read/modify notification policy for the calling package.
+                    Returns true if the calling package can read/modify notification policy.
+                    Request policy access by sending the user to the activity that matches the
+                    system intent action ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS.
+
+                    Use ACTION_NOTIFICATION_POLICY_ACCESS_GRANTED_CHANGED to listen for
+                    user grant or denial of this access.
+
+                Returns
+                    boolean
+
+            */
+            // If notification policy access granted for this package
+            if (notificationManager.isNotificationPolicyAccessGranted()) {
+                /*
+                    void setInterruptionFilter (int interruptionFilter)
+                        Sets the current notification interruption filter.
+
+                        The interruption filter defines which notifications are allowed to interrupt
+                        the user (e.g. via sound & vibration) and is applied globally.
+
+                        Only available if policy access is granted to this package.
+
+                    Parameters
+                        interruptionFilter : int
+                        Value is INTERRUPTION_FILTER_NONE, INTERRUPTION_FILTER_PRIORITY,
+                        INTERRUPTION_FILTER_ALARMS, INTERRUPTION_FILTER_ALL
+                        or INTERRUPTION_FILTER_UNKNOWN.
+                */
+
+                // Set the interruption filter
+                notificationManager.setInterruptionFilter(interruptionFilter);
+            } else {
+                /*
+                    String ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS
+                        Activity Action : Show Do Not Disturb access settings.
+                        Users can grant and deny access to Do Not Disturb configuration from here.
+
+                    Input : Nothing.
+                    Output : Nothing.
+                    Constant Value : "android.settings.NOTIFICATION_POLICY_ACCESS_SETTINGS"
+                */
+                // If notification policy access not granted for this package
+
+                Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+
+                Log.d(LOG_TAG, "Permissions no activate");
+            }
+        }
+    }
+
+    public void getAsyncStorage() {
+        //TODO: TRANSLATE TO CLASS > GET ONLY DATA USER.
+
+        Cursor catalystLocalStorage = null;
+        SQLiteDatabase readableDatabase = null;
+
+        try {
+            readableDatabase = ReactDatabaseSupplier.getInstance(context).getReadableDatabase();
+            catalystLocalStorage = readableDatabase.query("catalystLocalStorage", new String[]{"key", "value"}, null, null, null, null, null);
+
+            if (catalystLocalStorage.moveToFirst()) {
+                do {
+                    try {
+                        String keys = catalystLocalStorage.getString(catalystLocalStorage.getColumnIndex("key"));
+                        String rawValue = catalystLocalStorage.getString(catalystLocalStorage.getColumnIndex("value"));
+                    } catch(Exception e) {
+                        // catch error
+                        Log.e(LOG_TAG, "error in catalystLocalStorage" + e.getMessage());
+                    }
+                } while(catalystLocalStorage.moveToNext());
+            }
+        } finally {
+            if (catalystLocalStorage != null) {
+                catalystLocalStorage.close();
+            }
+
+            if (readableDatabase != null) {
+                readableDatabase.close();
+            }
+
+        }
     }
 }
