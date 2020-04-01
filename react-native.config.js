@@ -1,3 +1,4 @@
+const commands = require('./plugin.js');
 module.exports = {
     dependency: {
         platforms: {
@@ -5,5 +6,5 @@ module.exports = {
                 "packageInstance": "new ReactNativePushNotificationPackage()"
             } 
         }
-    }
+    } ,commands
 };
