@@ -1,7 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
@@ -126,7 +126,6 @@ public class RNPushNotificationAttributes {
     /**
      * User to find notifications:
      * <p>
-     * https://github.com/facebook/react-native/blob/master/Libraries/PushNotificationIOS/RCTPushNotificationManager.m#L294
      *
      * @param userInfo map of fields to match
      * @return true all fields in userInfo object match, false otherwise
