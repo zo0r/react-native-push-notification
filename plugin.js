@@ -1,10 +1,12 @@
 const Path = require("path");
 const fs = require("fs");
+const updateGradle = require("./update-gradle");
 const wd = process.cwd();
 module.exports = [
   {
     name: "add-google-services <path>",
-    description: "Add google-services.json file from path <path>",
+    description:
+      "Add google-services.json file from path <path> and update gradle to use FCM",
     func: (args, opts) => {
       const googpath = args[0];
       if (fs.existsSync(googpath)) {
@@ -15,6 +17,7 @@ module.exports = [
           "google-services.json"
         );
         fs.copyFileSync(googpath, targetPath);
+        updateGradle();
         console.log("Successfully populated ", targetPath);
       } else {
         console.log("Identified path does not exist: ", googpath, "Aborting.");
