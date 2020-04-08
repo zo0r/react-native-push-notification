@@ -21,9 +21,11 @@ Changelog is available from version 3.1.3 here: [Changelog](https://github.com/z
 
 ## Installation
 
-`npm install --save react-native-push-notification` or `yarn add react-native-push-notification`
+### NPM
+`npm install --save react-native-push-notification`
 
-`react-native link react-native-push-notification`
+### Yarn
+`yarn add react-native-push-notification`
 
 **NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
@@ -264,16 +266,16 @@ PushNotification.localNotification({
     importance: "high", // (optional) set notification importance, default: high
 
     /* iOS only properties */
-    alertAction: // (optional) default: view
-    category: // (optional) default: null
-    userInfo: // (optional) default: null (object containing additional notification data)
+    alertAction: 'view', // (optional) default: view
+    category: '', // (optional) default: empty string
+    userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
 
     /* iOS and Android properties */
     title: "My Notification Title", // (optional)
     message: "My Notification Message", // (required)
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
-    number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+    number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
     repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
@@ -460,4 +462,4 @@ Same parameters as `PushNotification.localNotification()`
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
 
-`PushNotification.abandonPermissions()` Unregister for all remote notifications received via Apple Push Notification service
+`PushNotification.abandonPermissions()` Unregister for all remote notifications received via Apple Push Notification service.
