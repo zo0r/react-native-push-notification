@@ -460,4 +460,4 @@ Same parameters as `PushNotification.localNotification()`
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
 
-`PushNotification.abandonPermissions()` Abandon permissions
+`PushNotification.abandonPermissions()` Unregister for all remote notifications received via Apple Push Notification service
