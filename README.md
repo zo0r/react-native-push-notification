@@ -1,67 +1,93 @@
 # React Native Push Notifications
-[![npm version](https://badge.fury.io/js/react-native-push-notification.svg?update=7)](http://badge.fury.io/js/react-native-push-notification)
-[![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?update=7)](http://badge.fury.io/js/react-native-push-notification)
+
+[![npm version](https://badge.fury.io/js/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification)
+[![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification)
 
 React Native Local and Remote Notifications for iOS and Android
 
 ## Supported React Native Versions
-| Component Version     | RN Versions    | README     |
-|-----------------------|---------------|------------|
-| **1.0.7**          | **<= 0.27**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/f42723817f1687e0da23e6753eb8a9f0385b6ac5/README.md)   |
-| **1.0.8**          | **0.28**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/2eafd1961273ca6a82ad4dd6514fbf1d1a829089/README.md)   |
-| **2.0.1**          | **0.29**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/c7ab7cd84ea19e42047379aefaf568bb16a81936/README.md)   |
-| **2.0.2**          | **0.30, 0.31, 0.32**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/a0f7d44e904ba0b92933518e5bf6b444f1c90abb/README.md)   |
-| **>= 2.1.0**          | **>= 0.33**   | [Open](https://github.com/zo0r/react-native-push-notification/blob/a359e5c00954aa324136eaa9808333d6ca246171/README.md)   |
 
+| Component Version | RN Versions          | README                                                                                                                 |
+| ----------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **1.0.7**         | **<= 0.27**          | [Open](https://github.com/zo0r/react-native-push-notification/blob/f42723817f1687e0da23e6753eb8a9f0385b6ac5/README.md) |
+| **1.0.8**         | **0.28**             | [Open](https://github.com/zo0r/react-native-push-notification/blob/2eafd1961273ca6a82ad4dd6514fbf1d1a829089/README.md) |
+| **2.0.1**         | **0.29**             | [Open](https://github.com/zo0r/react-native-push-notification/blob/c7ab7cd84ea19e42047379aefaf568bb16a81936/README.md) |
+| **2.0.2**         | **0.30, 0.31, 0.32** | [Open](https://github.com/zo0r/react-native-push-notification/blob/a0f7d44e904ba0b92933518e5bf6b444f1c90abb/README.md) |
+| **>= 2.1.0**      | **>= 0.33**          | [Open](https://github.com/zo0r/react-native-push-notification/blob/a359e5c00954aa324136eaa9808333d6ca246171/README.md) |
+
+## Changelog
+
+Changelog is available from version 3.1.3 here: [Changelog](https://github.com/zo0r/react-native-push-notification/blob/master/CHANGELOG.md)
 
 ## Installation
+
+### NPM
 `npm install --save react-native-push-notification`
 
-`react-native link`
+### Yarn
+`yarn add react-native-push-notification`
 
 **NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
 ## Issues
 
-Having a problem?  Read the [troubleshooting](./trouble-shooting.md) guide before raising an issue.
+Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before raising an issue.
 
 ## Pull Requests
 
 [Please read...](./submitting-a-pull-request.md)
 
 ## iOS manual Installation
+
 The component uses PushNotificationIOS for the iOS part.
 
-[Please see: PushNotificationIOS](https://facebook.github.io/react-native/docs/pushnotificationios.html#content)
+[Please see: PushNotificationIOS](https://github.com/react-native-community/react-native-push-notification-ios)
 
 ## Android manual Installation
 
-**NOTE: To use a specific `play-service-gcm` version, use in your `android/app/build.gradle` (change `8.1.0` for your version):**
+**NOTE: `play-service-gcm` and `firebase-messaging`, prior to version 15 requires to have the same version number in order to work correctly at build time and at run time. To use a specific version:**
+
+In your `android/build.gradle`
+
 ```gradle
-...
+ext {
+    googlePlayServicesVersion = "<Your play services version>" // default: "+"
+    firebaseVersion = "<Your Firebase version>" // default: "+"
 
-dependencies {
-    ...
-
-    compile project(':react-native-push-notification')
-    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
-        force = true;
-    }
+    // Other settings
+    compileSdkVersion = <Your compile SDK version> // default: 23
+    buildToolsVersion = "<Your build tools version>" // default: "23.0.1"
+    targetSdkVersion = <Your target SDK version> // default: 23
+    supportLibVersion = "<Your support lib version>" // default: 23.1.1
 }
 ```
+
+**NOTE: localNotification() works without changes in the application part, while localNotificationSchedule() only works with these changes:**
 
 In your `android/app/src/main/AndroidManifest.xml`
 ```xml
     .....
+    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
+    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
+                android:value="YOUR NOTIFICATION CHANNEL NAME"/>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
+                    android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
+        <!-- Change the resource name to your App's accent color - or any other color you want -->
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
+                    android:resource="@android:color/white"/>
+
+        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -71,6 +97,7 @@ In your `android/app/src/main/AndroidManifest.xml`
                 <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
+        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
@@ -79,23 +106,43 @@ In your `android/app/src/main/AndroidManifest.xml`
             </intent-filter>
         </receiver>
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
+
+        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-     .....
+        <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
 
+        <!-- < Else > -->
+        <service
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- </Else> -->
+     .....
 ```
 
 In `android/settings.gradle`
+
 ```gradle
 ...
-
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
+```
+
+In `android/app/src/res/values/colors.xml` (Create the file if it doesn't exist).
+
+```xml
+<resources>
+    <color name="white">#FFF</color>
+</resources>
 ```
 
 Manually register module in `MainApplication.java` (if you did not use `react-native link`):
@@ -126,48 +173,62 @@ public class MainApplication extends Application implements ReactApplication {
 ```
 
 ## Usage
+
 ```javascript
-var PushNotification = require('react-native-push-notification');
+var PushNotification = require("react-native-push-notification");
 
 PushNotification.configure({
+  // (optional) Called when Token is generated (iOS and Android)
+  onRegister: function(token) {
+    console.log("TOKEN:", token);
+  },
 
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: function(token) {
-        console.log( 'TOKEN:', token );
-    },
+  // (required) Called when a remote or local notification is opened or received
+  onNotification: function(notification) {
+    console.log("NOTIFICATION:", notification);
 
-    // (required) Called when a remote or local notification is opened or received
-    onNotification: function(notification) {
-        console.log( 'NOTIFICATION:', notification );
-    },
+    // process the notification
 
-    // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
-    senderID: "YOUR GCM SENDER ID",
+    // required on iOS only (see fetchCompletionHandler docs: https://github.com/react-native-community/react-native-push-notification-ios)
+    notification.finish(PushNotificationIOS.FetchResult.NoData);
+  },
 
-    // IOS ONLY (optional): default: all - Permissions to register.
-    permissions: {
-        alert: true,
-        badge: true,
-        sound: true
-    },
+  // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
+  senderID: "YOUR GCM (OR FCM) SENDER ID",
 
-    // Should the initial notification be popped automatically
-    // default: true
-    popInitialNotification: true,
+  // IOS ONLY (optional): default: all - Permissions to register.
+  permissions: {
+    alert: true,
+    badge: true,
+    sound: true
+  },
 
-    /**
-      * (optional) default: true
-      * - Specified if permissions (ios) and token (android and ios) will requested or not,
-      * - if not, you must call PushNotificationsHandler.requestPermissions() later
-      */
-    requestPermissions: true,
+  // Should the initial notification be popped automatically
+  // default: true
+  popInitialNotification: true,
+
+  /**
+   * (optional) default: true
+   * - Specified if permissions (ios) and token (android and ios) will requested or not,
+   * - if not, you must call PushNotificationsHandler.requestPermissions() later
+   */
+  requestPermissions: true
 });
 ```
 
+## Example app
+
+Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`. For Remote notifications, configure your SenderId in `app.json`. You can also edit it directly in the app.
+To send Push notifications, you can use the online tool [PushWatch](https://www.pushwatch.com/gcm/).
+
+Please test your PRs with this example app before submitting them. It'll help maintaining this repo.
+
 ## Handling Notifications
+
 When any notification is opened or received the callback `onNotification` is called passing an object with the notification data.
 
 Notification object example:
+
 ```javascript
 {
     foreground: false, // BOOLEAN: If the notification was received in foreground or not
@@ -178,9 +239,11 @@ Notification object example:
 ```
 
 ## Local Notifications
+
 `PushNotification.localNotification(details: Object)`
 
 EXAMPLE:
+
 ```javascript
 PushNotification.localNotification({
     /* Android Only Properties */
@@ -197,31 +260,37 @@ PushNotification.localNotification({
     tag: 'some_tag', // (optional) add tag to message
     group: "group", // (optional) add group to message
     ongoing: false, // (optional) set whether this is an "ongoing" notification
+    priority: "high", // (optional) set notification priority, default: high
+    visibility: "private", // (optional) set notification visibility, default: private
+    importance: "high", // (optional) set notification importance, default: high
 
     /* iOS only properties */
-    alertAction: // (optional) default: view
-    category: // (optional) default: null
-    userInfo: // (optional) default: null (object containing additional notification data)
+    alertAction: 'view', // (optional) default: view
+    category: '', // (optional) default: empty string
+    userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
 
     /* iOS and Android properties */
-    title: "My Notification Title", // (optional, for iOS this is only used in apple watch, the title will be the app name on other iOS devices)
+    title: "My Notification Title", // (optional)
     message: "My Notification Message", // (required)
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
-    number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-    repeatType: 'day', // (Android only) Repeating interval. Could be one of `week`, `day`, `hour`, `minute, `time`. If specified as time, it should be accompanied by one more parameter 'repeatTime` which should the number of milliseconds between each interval
+    number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+    repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
 ```
 
 ## Scheduled Notifications
+
 `PushNotification.localNotificationSchedule(details: Object)`
 
 EXAMPLE:
+
 ```javascript
 PushNotification.localNotificationSchedule({
+  //... You can use all the options from localNotifications
   message: "My Notification Message", // (required)
-  date: new Date(Date.now() + (60 * 1000)) // in 60 secs
+  date: new Date(Date.now() + 60 * 1000) // in 60 secs
 });
 ```
 
@@ -239,13 +308,73 @@ In the location notification json specify the full file name:
 
 ### 1) cancelLocalNotifications
 
-`PushNotification.cancelLocalNotifications(details);`
+#### Android
 
-The the `details` parameter allows you to specify a `userInfo` dictionary that can be used to match one or more *scheduled* notifications.  Each
-matched notification is cancelled and its alerts removed from the notification centre.  The RN docs suggest this is an optional parameter, but
-it is not.
+The `id` parameter for `PushNotification.localNotification` is required for this operation. The id supplied will then be used for the cancel operation.
 
 ```javascript
+// Android
+PushNotification.localNotification({
+    ...
+    id: '123'
+    ...
+});
+PushNotification.cancelLocalNotifications({id: '123'});
+```
+
+## Notification priority
+
+(optional) Specify `priority` to set priority of notification. Default value: "high"
+
+Available options:
+
+"max" = NotficationCompat.PRIORITY_MAX  
+"high" = NotficationCompat.PRIORITY_HIGH  
+"low" = NotficationCompat.PRIORITY_LOW  
+"min" = NotficationCompat.PRIORITY_MIN  
+"default" = NotficationCompat.PRIORITY_DEFAULT
+
+More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
+
+## Notification visibility
+
+(optional) Specify `visibility` to set visibility of notification. Default value: "private"
+
+Available options:
+
+"private" = NotficationCompat.VISIBILITY_PRIVATE  
+"public" = NotficationCompat.VISIBILITY_PUBLIC  
+"secret" = NotficationCompat.VISIBILITY_SECRET
+
+More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
+
+## Notification importance
+
+(optional) Specify `importance` to set importance of notification. Default value: "high"
+
+Available options:
+
+"default" = NotificationManager.IMPORTANCE_DEFAULT  
+"max" = NotificationManager.IMPORTANCE_MAX  
+"high" = NotificationManager.IMPORTANCE_HIGH  
+"low" = NotificationManager.IMPORTANCE_LOW  
+"min" = NotificationManager.IMPORTANCE_MIN  
+"none" = NotificationManager.IMPORTANCE_NONE  
+"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
+
+More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
+
+#### IOS
+
+The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
+
+```javascript
+// IOS
+PushNotification.localNotification({
+    ...
+    userInfo: { id: '123' }
+    ...
+});
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
 
@@ -255,28 +384,30 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
 
-*NOTE: there is currently no api for removing specific notification alerts from the notification centre.*
+_NOTE: there is currently no api for removing specific notification alerts from the notification centre._
 
-## Repeating Notifications ##
+## Repeating Notifications
 
-(Android only) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
+(optional) Specify `repeatType` and optionally `repeatTime` while scheduling the local notification. Check the local notification example above.
 
-For iOS, the repeating notification should land soon. It has already been merged to the [master](https://github.com/facebook/react-native/pull/10337)
+Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
 
-## Notification Actions ##
+## Notification Actions
 
 (Android only) [Refer](https://github.com/zo0r/react-native-push-notification/issues/151) to this issue to see an example of a notification action.
 
 Two things are required to setup notification actions.
 
 ### 1) Specify notification actions for a notification
-This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notificaiton action that will be presented with the notification.
 
-For e.g. `actions: '["Accept", "Reject"]'  // Must be in string format`
+This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notification action that will be presented with the notification.
+
+For e.g. `actions: '["Accept", "Reject"]' // Must be in string format`
 
 The array itself is specified in string format to circumvent some problems because of the way JSON arrays are handled by react-native android bridge.
 
 ### 2) Specify handlers for the notification actions
+
 For each action specified in the `actions` field, we need to add a handler that is called when the user clicks on the action. This can be done in the `componentWillMount` of your main app file or in a separate file which is imported in your main app file. Notification actions handlers can be configured as below:
 
 ```
@@ -309,11 +440,25 @@ Works natively in iOS.
 Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such will not work on all Android devices.
 
 ## Sending Notification Data From Server
+
 Same parameters as `PushNotification.localNotification()`
 
-## iOS Only Methods
+## Android Only Methods
+
+`PushNotification.subscribeToTopic(topic: string)` Subscribe to a topic (works only with Firebase)
+
+## Checking Notification Permissions
+
 `PushNotification.checkPermissions(callback: Function)` Check permissions
 
-`PushNotification.getApplicationIconBadgeNumber(callback: Function)` get badge number
+`callback` will be invoked with a `permissions` object:
 
-`PushNotification.abandonPermissions()` Abandon permissions
+- `alert`: boolean
+- `badge`: boolean
+- `sound`: boolean
+
+## iOS Only Methods
+
+`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
+
+`PushNotification.abandonPermissions()` Unregister for all remote notifications received via Apple Push Notification service.
