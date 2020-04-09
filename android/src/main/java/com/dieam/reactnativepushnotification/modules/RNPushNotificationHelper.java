@@ -24,8 +24,13 @@ import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 
 import android.provider.Settings;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 
+import com.dieam.reactnativepushnotification.helpers.RNAsyncStorage;
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONArray;
@@ -39,10 +44,6 @@ import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
-
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
 
@@ -53,8 +54,10 @@ public class RNPushNotificationHelper {
 
     private Context context;
     private RNPushNotificationConfig config;
-    private SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");;
+    private SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
+    private boolean isActiveETA, isActiveCriticalAlerts, isTestNotificationAlert = false;
+    private boolean isUserGold = true; //SIMULATOR USER GOLD
 
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
@@ -150,12 +153,6 @@ public class RNPushNotificationHelper {
     }
 
     public void sendToNotificationCentre(Bundle bundle) {
-        try{
-            this.getAsyncStorage();
-        }catch (Exception e){
-            Log.e(LOG_TAG, "NO GET ASYNC STORAGE" + e);
-        }
-
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -177,8 +174,6 @@ public class RNPushNotificationHelper {
 
             Resources res = context.getResources();
             String packageName = context.getPackageName();
-
-            Boolean isTest = Boolean.parseBoolean(bundle.getString("isTestSystem", "false"));
 
             String title = bundle.getString("title");
             if (title == null) {
@@ -230,12 +225,22 @@ public class RNPushNotificationHelper {
                 }
             }
 
+            //NOTIFICATION ALERT
+            String typeNotification = bundle.getString("type");
+            Log.d(LOG_TAG, "type notification bundle "+typeNotification);
+            if(typeNotification != null){
+                userDataAsyncStorage();
+            }
+
+           isTestNotificationAlert = Boolean.parseBoolean(bundle.getString("isTestSystem", "false"));
+
             Uri soundUri = null;
             String soundName = null;
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                soundName =  isTest ? "test" : bundle.getString("soundName");
+                soundName = isTestNotificationAlert ? "test" : bundle.getString("soundName");
+                Log.d(LOG_TAG, "set sound " + soundName);
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
 
@@ -252,12 +257,11 @@ public class RNPushNotificationHelper {
                         }
 
                         soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + resId);
-
                     }
                 }
             }
 
-            final NotificationCompat.Builder notification = new NotificationCompat.Builder(context, this.getChannelId(soundName, soundUri))
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, this.getChannelId(soundName, soundUri))
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
@@ -284,8 +288,7 @@ public class RNPushNotificationHelper {
                 notification.setNumber(Integer.parseInt(numberString));
             }
 
-            int smallIconResId;
-            int largeIconResId;
+            int smallIconResId, largeIconResId;
 
             String smallIcon = bundle.getString("smallIcon");
 
@@ -353,27 +356,8 @@ public class RNPushNotificationHelper {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            final NotificationManager notificationManager = notificationManager();
+            NotificationManager notificationManager = notificationManager();
             checkOrCreateChannel(notificationManager, soundName, soundUri);
-
-            // IF CRITICAL ALERT is active in local storage
-            // active > strong (3)
-
-            String existIntensity = bundle.getString("intensity");
-            if(existIntensity != null){
-                int intensity = Integer.parseInt(bundle.getString("intensity"));
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    int dndStatus = Settings.Global.getInt(context.getContentResolver(), "zen_mode");
-                    if(dndStatus != 0){
-                        Log.d(LOG_TAG, "on mode DND ");
-                        int statusFilter = intensity >= 3 ? NotificationManager.INTERRUPTION_FILTER_ALARMS : NotificationManager.INTERRUPTION_FILTER_NONE;
-                        changeInterruptionFiler(notificationManager, statusFilter , context);
-                    }else{
-                        Log.d(LOG_TAG, "off mode DND ");
-                    }
-                }
-            }
 
             notification.setContentIntent(pendingIntent);
 
@@ -436,94 +420,28 @@ public class RNPushNotificationHelper {
             Notification info = notification.build();
             info.defaults |= Notification.DEFAULT_LIGHTS;
 
-
-            // IF ETA is active in local storage
-            Boolean activeETA = true;
-
-            String impactAt = bundle.getString("impactAt");
-            if(impactAt != null && activeETA){
-                //TODO: GET STRINGS FROM XML
-                try {
-                    Date dateNow = new Date(System.currentTimeMillis());
-                    final Date dateImpact = formatDate.parse(impactAt);
-                    final Timer timer = new Timer();
-                    final int idNotification = notificationID;
-                    final String message = bundle.getString("message");
-
-                    Long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
-
-                    int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
-                    final int secondsInitial = (int) (diffTimeImpact / 1000) % 60 ;
-                    String ETA_min = minutes > 0 ? minutes +" minutos y " : "";
-                    String ETA_sec = secondsInitial > 0 ? secondsInitial +" segundos." : "";
-                    final String timeRead = ETA_min + ETA_sec;
-
-                    Log.d(LOG_TAG, "** Calculate Impact time "+timeRead+" for ID Notification "+idNotification+" **");
-
-                    timer.scheduleAtFixedRate(new TimerTask() {
-                      @Override
-                      public void run() {
-                          Date dateNow = new Date(System.currentTimeMillis());
-
-                          Long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
-
-                          int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
-                          int seconds = (int) (diffTimeImpact / 1000) % 60 ;
-
-                          String ETA_min = minutes > 0 ? minutes +" minutos, " : "";
-                          String ETA_sec = seconds > 0 ? seconds +" segundos." : "0 segundos.";
-                          String textETA = message + "\nTiempo estimado de arribo: en "+ETA_min+ETA_sec;
-
-                          notification.setContentText(textETA);
-                          notification.setStyle(new NotificationCompat.BigTextStyle().bigText(textETA));
-                          Log.d(LOG_TAG, "· ("+idNotification+") Remaining "+ETA_min + ETA_sec);
-
-                          //Change sound
-                          if(seconds % 10 == 0){
-                              //TODO: CHANGE SOUND
-                              // 10 | 20 | 30 | 60 | 80
-                              switch(seconds) {
-                                  case 10:
-                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 10 change sound.mp3");
-                                      break;
-                                  case 20:
-                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 20 seconds.mp3");
-                                      break;
-                                  case 30:
-                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 30 seconds.mp3");
-                                      break;
-                                  case 60:
-                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 1 minute.mp3");
-                                      break;
-                                  case 80:
-                                      Log.d(LOG_TAG, "· ("+idNotification+") Sound -> less 1 minute 20 seconds.mp3");
-                                      break;
-                                  default:
-                                      break;
-                              }
-                          }
-
-                          notificationManager.notify(idNotification, notification.build());
-
-                          if(seconds <= 0){
-                              Log.d(LOG_TAG, ">> Finish timer for "+idNotification+"<<");
-                              timer.cancel();
-                              notificationManager.notify(idNotification, notification.build());
-                          }
-                      }
-                  }, 0, 1000);
-
-                }catch (Exception e) {
-                    Log.e(LOG_TAG, "ETA could not be obtained" + e.getMessage());
+            //IF USER IS GOLD
+            if(isUserGold && typeNotification != null){
+                // IF CRITICAL ALERT is active in local storage
+                // active > strong (3)
+                String intensity = bundle.getString("intensity");
+                Log.d(LOG_TAG, "user critical alerts " + isActiveCriticalAlerts);
+                if(intensity != null && isActiveCriticalAlerts){
+                    alertsFilterDND(notificationManager, intensity);
                 }
-            }
 
-
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
-            } else {
-                notificationManager.notify(notificationID, info);
+                // IF ETA is active in local storage
+                Log.d(LOG_TAG, "user ETA " + isActiveETA);
+                if(bundle.getString("impactAt") != null && isActiveETA){
+                    notificationWithETA(notificationManager, notification, notificationID, bundle);
+                }
+            }else{
+                if (bundle.containsKey("tag")) {
+                    String tag = bundle.getString("tag");
+                    notificationManager.notify(tag, notificationID, info);
+                } else {
+                    notificationManager.notify(notificationID, info);
+                }
             }
 
             // Can't use setRepeating for recurring notifications because setRepeating
@@ -752,7 +670,111 @@ public class RNPushNotificationHelper {
         return (soundName != null && soundUri != null) ? channelPrefix + soundName : NOTIFICATION_CHANNEL_ID;
     }
 
-    protected void changeInterruptionFiler(NotificationManager notificationManager, int interruptionFilter, Context context) {
+
+    private void userDataAsyncStorage(){
+        try{
+            RNAsyncStorage RNStorage = new RNAsyncStorage(context);
+            isActiveETA = true; //RNStorage.getUserETA();
+            isActiveCriticalAlerts = RNStorage.getUserDisplayCriticalAlerts();
+        }catch (Exception e){
+            Log.e(LOG_TAG, "NO GET ASYNC STORAGE " + e);
+        }
+    }
+
+    private void alertsFilterDND(NotificationManager notificationManager, String intensity){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int statusDND = 0;
+            try{
+                statusDND = Settings.Global.getInt(context.getContentResolver(), "zen_mode");
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "NOT GET STATE DND");
+            }
+
+            if(statusDND != 0){
+                Log.d(LOG_TAG, "Is active DND ");
+                int level = Integer.parseInt(intensity);
+                int statusFilter = level >= 3 ? NotificationManager.INTERRUPTION_FILTER_ALARMS : NotificationManager.INTERRUPTION_FILTER_NONE;
+                changeInterruptionFiler(notificationManager, statusFilter, context);
+            }else{
+                Log.d(LOG_TAG, "Is disable DND");
+            }
+        }
+    }
+
+    private void notificationWithETA(final NotificationManager notificationManager,
+                                 final NotificationCompat.Builder notification,
+                                 final int notificationID, Bundle bundle){
+        try {
+            final Timer timer;
+            final Date dateImpact;
+            final String message, groupBySegment;
+            final int level;
+
+            if(isTestNotificationAlert){
+                message = bundle.getString("message").replace("<<System test>> ","");
+            }else{
+                message = bundle.getString("message");
+            }
+
+            //groupBySegment =  bundle.getString("segment");
+            dateImpact = formatDate.parse(bundle.getString("impactAt"));
+            level = Integer.parseInt(bundle.getString("intensity"));
+
+            Log.d(LOG_TAG, ">>> Init Timer <<<");
+
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    Date dateNow = new Date(System.currentTimeMillis());
+
+                    long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
+
+                    int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
+                    int seconds = (int) (diffTimeImpact / 1000) % 60 ;
+
+                    String textTime = readableTimeFormat("minutes", minutes) + readableTimeFormat("seconds", seconds);
+
+                    Log.d(LOG_TAG, "· ID:("+notificationID+") Remaining "+ textTime);
+
+                    int idStringCollapsed = getResourceId("notification_message_collapsed", "string");
+                    String messageCollapsed = context.getString(idStringCollapsed, message, textTime);
+
+                    int idStringExpanded = getResourceId("notification_message_expanded", "string");
+                    String messageExpand = context.getString(idStringExpanded, message, textTime);
+
+                    notification.setContentText(messageCollapsed);
+                    notification.setColor(getColorIntensity(level));
+                    notification.setStyle(new NotificationCompat.BigTextStyle()
+                            //.setSummaryText("Alerta v4")
+                            .bigText(messageExpand));
+
+                    //Change sound depending seconds remaining
+                    if(seconds % 10 == 0){
+                        setNewSoundNotification(seconds, notificationID);
+                    }
+
+                    //Group notifications
+                    //notification.setGroup(groupBySegment);
+
+                    if(seconds <= 0){
+                        timer.cancel();
+                        notificationManager.notify(notificationID, notification.build());
+                        Log.d(LOG_TAG, ">> Finish timer for "+notificationID+"<<");
+                    }else{
+                        //Send Notification
+                        notificationManager.notify(notificationID, notification.build());
+                    }
+                }
+            }, 0, 1000);
+
+        }catch (Exception e) {
+            Log.e(LOG_TAG, "ETA could not be obtained" + e.getMessage());
+        }
+    }
+
+    private void changeInterruptionFiler(NotificationManager notificationManager, int interruptionFilter, Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // If api level minimum 23
             /*
                 boolean isNotificationPolicyAccessGranted ()
@@ -809,36 +831,64 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void getAsyncStorage() {
-        //TODO: TRANSLATE TO CLASS > GET ONLY DATA USER.
-
-        Cursor catalystLocalStorage = null;
-        SQLiteDatabase readableDatabase = null;
-
-        try {
-            readableDatabase = ReactDatabaseSupplier.getInstance(context).getReadableDatabase();
-            catalystLocalStorage = readableDatabase.query("catalystLocalStorage", new String[]{"key", "value"}, null, null, null, null, null);
-
-            if (catalystLocalStorage.moveToFirst()) {
-                do {
-                    try {
-                        String keys = catalystLocalStorage.getString(catalystLocalStorage.getColumnIndex("key"));
-                        String rawValue = catalystLocalStorage.getString(catalystLocalStorage.getColumnIndex("value"));
-                    } catch(Exception e) {
-                        // catch error
-                        Log.e(LOG_TAG, "error in catalystLocalStorage" + e.getMessage());
-                    }
-                } while(catalystLocalStorage.moveToNext());
-            }
-        } finally {
-            if (catalystLocalStorage != null) {
-                catalystLocalStorage.close();
-            }
-
-            if (readableDatabase != null) {
-                readableDatabase.close();
-            }
-
+    private void setNewSoundNotification(int seconds, int notificationID){
+        //TODO: CHANGE SOUND
+        // 10 | 20 | 30 | 60 | 80
+        switch(seconds) {
+            case 10:
+                Log.d(LOG_TAG, "· ("+notificationID+") Sound -> less 10 change sound.mp3");
+                break;
+            case 20:
+                Log.d(LOG_TAG, "· ("+notificationID+") Sound -> less 20 seconds.mp3");
+                break;
+            case 30:
+                Log.d(LOG_TAG, "· ("+notificationID+") Sound -> less 30 seconds.mp3");
+                break;
+            case 60:
+                Log.d(LOG_TAG, "· ("+notificationID+") Sound -> less 1 minute.mp3");
+                break;
+            case 80:
+                Log.d(LOG_TAG, "· ("+notificationID+") Sound -> less 1 minute 20 seconds.mp3");
+                break;
+            default:
+                break;
         }
+    }
+
+    private int getResourceId(String name, String defType){
+        return context.getResources().getIdentifier(name, defType, context.getPackageName());
+    }
+
+    private int getColorIntensity(int level){
+        int idColorLevel = getResourceId("intensity_"+level, "color");
+        return context.getResources().getColor(idColorLevel);
+    }
+
+    private String readableTimeFormat(String unit, int time){
+        if(unit.equals("minutes")){
+            int idSourceTextMin = getResourceId("plural_time_minutes", "plurals");
+            return time >= 1 && time < 2 ? context.getResources().getQuantityString(idSourceTextMin, time, time) + ", " : "";
+        }else if(unit.equals("seconds")){
+            int idSourceTextSec = getResourceId("plural_time_seconds", "plurals");
+            return context.getResources().getQuantityString(idSourceTextSec, time, time);
+        }else{
+            return "";
+        }
+    }
+
+    private SpannableStringBuilder setColorIntensity(String message, int intensity){
+
+        int startIndexIntensity = message.indexOf(":") + 1;
+        int endIndexIntensity = message.length() - 1;
+
+        SpannableStringBuilder messageStyle = new SpannableStringBuilder(message);
+        messageStyle.setSpan(
+                new ForegroundColorSpan(getColorIntensity(intensity)),
+                startIndexIntensity,
+                endIndexIntensity,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
+        );
+
+        return messageStyle;
     }
 }
