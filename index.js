@@ -131,7 +131,7 @@ Notifications.localNotification = function(details: Object) {
 			soundName = ''; // empty string results in no sound (and no vibration)
 		}
 
-		// for valid fields see: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html
+		// for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
 		// alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle
 
 		this.handler.presentLocalNotification({
