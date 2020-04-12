@@ -50,6 +50,13 @@ The component uses PushNotificationIOS for the iOS part.
 In your `android/build.gradle`
 
 ```gradle
+ compile ('com.google.android.gms:play-services-gcm:8.1.0') {
+        force = true;
+    }
+```
+In your `android/build.gradle`
+
+```gradle
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
     firebaseVersion = "<Your Firebase version>" // default: "+"
