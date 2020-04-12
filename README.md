@@ -50,6 +50,15 @@ The component uses PushNotificationIOS for the iOS part.
 In your `android/build.gradle`
 
 ```gradle
+ dependencies {
+    ...
+    implementation project(':react-native-push-notification')
+    ...
+ }
+```
+In your `android/build.gradle`
+
+```gradle
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
     firebaseVersion = "<Your Firebase version>" // default: "+"
