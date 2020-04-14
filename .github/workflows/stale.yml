@@ -14,4 +14,4 @@ jobs:
           stale-pr-message: "This pull request has been automatically marked as stale because it has not had recent activity. It will be closed in 30 days if no further activity occurs. Thank you for your contributions."
           days-before-stale: 730
           days-before-close: 30
-          operations-per-run: 5
+          operations-per-run: 30
