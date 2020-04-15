@@ -7,24 +7,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+
+- (Android) Allow to set the notification to executes on idle [#959](https://github.com/zo0r/react-native-push-notification/pull/959)
+- (iOS) Add missing "category" parameter when scheduling local notifications. [#457](https://github.com/zo0r/react-native-push-notification/pull/457)
+
 ### Fixed
 
-- Update documentation:
-  - Abandon permissions unregisters remote only [#1282](https://github.com/zo0r/react-native-push-notification/pull/1282)
-  - Use full path for manifest [#567](https://github.com/zo0r/react-native-push-notification/pull/567)
-  - Update broken link to docs [#995](https://github.com/zo0r/react-native-push-notification/pull/995)
-- Add missing "category" parameter when scheduling local notifications. [#457](https://github.com/zo0r/react-native-push-notification/pull/457)
 - Fix: Breaking android x compatibility regression
 - Fix: Use FirebaseInstanceId for deviceToken, not from Intent [#1355](https://github.com/zo0r/react-native-push-notification/pull/1355)
 - Fix: security issue `limit the components that Intent will resolve to` [#687](https://github.com/zo0r/react-native-push-notification/pull/687)
 - Fix: remove fishy reference from android project files [#1226](https://github.com/zo0r/react-native-push-notification/pull/1226)
 - Fix: `JSON value '<null>' of type NSNull cannot be converted to NSDictionary` [#1030](https://github.com/zo0r/react-native-push-notification/pull/1030)
+- Upgrade ShortCutBadger to 1.1.22 [#646](https://github.com/zo0r/react-native-push-notification/pull/646)
 - Upgrade exemple to React-Native 0.62.2
 - Remove Types from the code use [@types/react-native-push-notification](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react-native-push-notification) instead.
 
 ### Possible Breaking change
 
 - Rename firebaseVersion to firebaseMessagingVersion [#1191](https://github.com/zo0r/react-native-push-notification/pull/1191) in gradle.build
+
+### Documentation
+
+- Abandon permissions unregisters remote only [#1282](https://github.com/zo0r/react-native-push-notification/pull/1282)
+- Use full path for manifest [#567](https://github.com/zo0r/react-native-push-notification/pull/567)
+- Update broken link to docs [#995](https://github.com/zo0r/react-native-push-notification/pull/995)
+- Missing step for android manual installation [#1363](https://github.com/zo0r/react-native-push-notification/pull/1363)
 
 ## [3.1.3] - 2019-05-25
 
