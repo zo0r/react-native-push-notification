@@ -352,6 +352,14 @@ PushNotification.localNotification({
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
 
+### 2) cancelAllLocalNotifications
+
+`PushNotification.cancelAllLocalNotifications()`
+
+Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
+
+_NOTE: there is currently no api for removing specific notification alerts from the notification centre._
+
 ## Notification priority
 
 (optional) Specify `priority` to set priority of notification. Default value: "high"
@@ -404,14 +412,6 @@ This can significantly impact the power use of the device when idle. So it must 
 
 More information:
 https://developer.android.com/training/monitoring-device-state/doze-standby
-
-### 2) cancelAllLocalNotifications
-
-`PushNotification.cancelAllLocalNotifications()`
-
-Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
-
-_NOTE: there is currently no api for removing specific notification alerts from the notification centre._
 
 ## Repeating Notifications
 
