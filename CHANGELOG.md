@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+- (Android) Allow to silence Android foreground notifications [#1183](https://github.com/zo0r/react-native-push-notification/pull/1183)
 - (Android) Allow to set the notification to executes on idle [#959](https://github.com/zo0r/react-native-push-notification/pull/959)
 - (iOS) Add missing "category" parameter when scheduling local notifications. [#457](https://github.com/zo0r/react-native-push-notification/pull/457)
 
