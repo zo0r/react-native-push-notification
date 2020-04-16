@@ -155,6 +155,16 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             Log.d("EXCEPTION SERVICE::::::", "requestPermissions: " + e);
         }
     }
+    
+    @ReactMethod
+    public void abandonPermissions() {
+        ReactContext reactContext = getReactApplicationContext();
+
+        Intent GCMService = new Intent(reactContext, RNPushNotificationRegistrationService.class);
+
+        GCMService.putExtra("senderID", "");
+        reactContext.startService(GCMService);
+    }
 
     @ReactMethod
     public void subscribeToTopic(String topic) {
