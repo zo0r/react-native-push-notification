@@ -62,7 +62,7 @@ NotificationsComponent.prototype.setApplicationIconBadgeNumber = function(number
 };
 
 NotificationsComponent.prototype.abandonPermissions = function() {
-	/* Void */
+	RNPushNotification.abandonPermissions();
 };
 
 NotificationsComponent.prototype.checkPermissions = function(callback: Function) {
