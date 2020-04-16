@@ -21,9 +21,11 @@ Changelog is available from version 3.1.3 here: [Changelog](https://github.com/z
 
 ## Installation
 
-`npm install --save react-native-push-notification` or `yarn add react-native-push-notification`
+### NPM
+`npm install --save react-native-push-notification`
 
-`react-native link react-native-push-notification`
+### Yarn
+`yarn add react-native-push-notification`
 
 **NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
@@ -48,6 +50,15 @@ The component uses PushNotificationIOS for the iOS part.
 In your `android/build.gradle`
 
 ```gradle
+ dependencies {
+    ...
+    implementation project(':react-native-push-notification')
+    ...
+ }
+```
+In your `android/build.gradle`
+
+```gradle
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
     firebaseVersion = "<Your Firebase version>" // default: "+"
@@ -62,8 +73,7 @@ ext {
 
 **NOTE: localNotification() works without changes in the application part, while localNotificationSchedule() only works with these changes:**
 
-In your `AndroidManifest.xml`
-
+In your `android/app/src/main/AndroidManifest.xml`
 ```xml
     .....
     <!-- < Only if you're using GCM or localNotificationSchedule() > -->
@@ -84,7 +94,7 @@ In your `AndroidManifest.xml`
                     android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
         <!-- Change the resource name to your App's accent color - or any other color you want -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                    android:resource="@android:color/white"/>
+                    android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
 
         <!-- < Only if you're using GCM or localNotificationSchedule() > -->
         <receiver
@@ -128,20 +138,20 @@ In your `AndroidManifest.xml`
      .....
 ```
 
+If not using a built in Android color (`@android:color/{name}`) for the `notification_color` `meta-data` item.
+In `android/app/src/main/res/values/colors.xml` (Create the file if it doesn't exist).
+```xml
+<resources>
+    <color name="white">#FFF</color>
+</resources>
+```
+
 In `android/settings.gradle`
 
 ```gradle
 ...
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
-```
-
-In `android/app/src/res/values/colors.xml` (Create the file if it doesn't exist).
-
-```xml
-<resources>
-    <color name="white">#FFF</color>
-</resources>
 ```
 
 Manually register module in `MainApplication.java` (if you did not use `react-native link`):
@@ -262,19 +272,20 @@ PushNotification.localNotification({
     priority: "high", // (optional) set notification priority, default: high
     visibility: "private", // (optional) set notification visibility, default: private
     importance: "high", // (optional) set notification importance, default: high
+    allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
     ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
 
     /* iOS only properties */
-    alertAction: // (optional) default: view
-    category: // (optional) default: null
-    userInfo: // (optional) default: null (object containing additional notification data)
+    alertAction: 'view', // (optional) default: view
+    category: '', // (optional) default: empty string
+    userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
 
     /* iOS and Android properties */
     title: "My Notification Title", // (optional)
     message: "My Notification Message", // (required)
     playSound: false, // (optional) default: true
     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
-    number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+    number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
     repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
     actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
 });
@@ -363,6 +374,17 @@ Available options:
 "unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
+
+## Notification while idle  ##
+
+(optional) Specify `allowWhileIdle` to set if the notification should be allowed to execute even when the system is on low-power idle modes.
+
+On Android 6.0 (API level 23) and forward, the Doze was introduced  to reduce battery consumption when the device is unused for long periods of time. But while on Doze the AlarmManager alarms (used to show scheduled notifications) are deferred to the next maintenance window. This may cause the notification to be delayed while on Doze.
+
+This can significantly impact the power use of the device when idle. So it must only be used when the notification is required to go off on a exact time, for example on a calendar notification.
+
+More information:
+https://developer.android.com/training/monitoring-device-state/doze-standby
 
 #### IOS
 
@@ -461,4 +483,4 @@ Same parameters as `PushNotification.localNotification()`
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
 
-`PushNotification.abandonPermissions()` Abandon permissions
+`PushNotification.abandonPermissions()` Unregister for all remote notifications received via Apple Push Notification service.
