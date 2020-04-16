@@ -22,9 +22,6 @@ public class RNPushNotificationRegistrationService extends IntentService {
         try {
             String SenderID = intent.getStringExtra("senderID");
             InstanceID instanceID = InstanceID.getInstance(this);
-            String token = instanceID.getToken(SenderID,
-                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            sendRegistrationToken(token);
             if (SenderID.isEmpty()) {
                 Log.v(LOG_TAG, "abandonPermissions: ");
                 instanceID.deleteInstanceID();
