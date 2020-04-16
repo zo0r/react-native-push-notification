@@ -1,6 +1,8 @@
 package com.dieam.reactnativepushnotification.modules;
 
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -392,14 +395,16 @@ public class RNPushNotificationHelper {
                 commit(editor);
             }
 
-            Notification info = notification.build();
-            info.defaults |= Notification.DEFAULT_LIGHTS;
-
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
-            } else {
-                notificationManager.notify(notificationID, info);
+            if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
+                Notification info = notification.build();
+                info.defaults |= Notification.DEFAULT_LIGHTS;
+                
+                if (bundle.containsKey("tag")) {
+                    String tag = bundle.getString("tag");
+                    notificationManager.notify(tag, notificationID, info);
+                } else {
+                    notificationManager.notify(notificationID, info);
+                }
             }
 
             // Can't use setRepeating for recurring notifications because setRepeating
@@ -607,4 +612,20 @@ public class RNPushNotificationHelper {
         manager.createNotificationChannel(channel);
         channelCreated = true;
     }
+    
+    private boolean isApplicationInForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
+        if (processInfos != null) {
+            for (RunningAppProcessInfo processInfo : processInfos) {
+                if (processInfo.processName.equals(context.getPackageName())
+                    && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    && processInfo.pkgList.length > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
