@@ -17,11 +17,11 @@
     "gcm"
   ],
   "bugs": {
-    "url": "https://github.com/zo0r/react-native-push-notification/issues"
+    "url": "https://github.com/big-surprise/react-native-push-notification/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:zo0r/react-native-push-notification.git"
+    "url": "git+ssh://git@github.com:big-surprise/react-native-push-notification.git"
   },
   "dependencies": {
     "@react-native-community/push-notification-ios": "^1.0.1"
@@ -29,6 +29,6 @@
   "peerDependencies": {
     "react-native": ">=0.33"
   },
-  "author": "zo0r <http://zo0r.me>",
+  "author": "big-surprise",
   "license": "MIT"
 }

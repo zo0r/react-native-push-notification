@@ -30,11 +30,12 @@ import java.util.Random;
 
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hmf.tasks.OnCompleteListener;
+import com.huawei.hmf.tasks.Task;
+import com.huawei.hms.aaid.HmsInstanceId;
+import com.huawei.hms.aaid.entity.AAIDResult;
+import com.huawei.hms.push.HmsMessaging;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
@@ -94,17 +95,17 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                FirebaseInstanceId.getInstance().getInstanceId()
-                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            public void onReceive(final Context context, Intent intent) {
+                HmsInstanceId.getInstance(context).getAAID()
+                        .addOnCompleteListener(new OnCompleteListener<AAIDResult>() {
                             @Override
-                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            public void onComplete(@NonNull Task<AAIDResult> task) {
                                 if (!task.isSuccessful()) {
                                     return;
                                 }
 
                                 WritableMap params = Arguments.createMap();
-                                params.putString("deviceToken", task.getResult().getToken());
+                                params.putString("deviceToken", task.getResult().getId());
                                 fMjsDelivery.sendEvent("remoteNotificationsRegistered", params);
                             }
                         });
@@ -158,7 +159,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void subscribeToTopic(String topic) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic);
+        HmsMessaging.getInstance(getReactApplicationContext()).subscribeToTopic(topic);
     }
 
     @ReactMethod

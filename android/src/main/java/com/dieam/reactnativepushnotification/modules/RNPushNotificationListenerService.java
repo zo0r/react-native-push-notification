@@ -1,8 +1,8 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import java.util.Map;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
+import com.huawei.hms.push.HmsMessageService;
+import com.huawei.hms.push.RemoteMessage;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -25,7 +25,7 @@ import java.util.Random;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
-public class RNPushNotificationListenerService extends FirebaseMessagingService {
+public class RNPushNotificationListenerService extends HmsMessageService {
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
@@ -41,9 +41,9 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             bundle.putString("message", remoteNotification.getBody());
         }
 
-        for(Map.Entry<String, String> entry : message.getData().entrySet()) {
-            bundle.putString(entry.getKey(), entry.getValue());
-        }
+//        for(Map.Entry<String, String> entry : message.getData().entrySet()) {
+//            bundle.putString(entry.getKey(), entry.getValue());
+//        }
         JSONObject data = getPushData(bundle.getString("data"));
         // Copy `twi_body` to `message` to support Twilio
         if (bundle.containsKey("twi_body")) {
