@@ -47,7 +47,7 @@ The component uses PushNotificationIOS for the iOS part.
 
 ## Android manual Installation
 
-**NOTE: `play-service-gcm` and `firebase-messaging`, prior to version 15 requires to have the same version number in order to work correctly at build time and at run time. To use a specific version:**
+**NOTE: `firebase-messaging`, prior to version 15 requires to have the same version number in order to work correctly at build time and at run time. To use a specific version:**
 
 In your `android/build.gradle`
 
@@ -80,13 +80,7 @@ In your `android/app/src/main/AndroidManifest.xml`
 
 ```xml
     .....
-    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <permission
-        android:name="${applicationId}.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
-    <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -100,18 +94,6 @@ In your `android/app/src/main/AndroidManifest.xml`
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                     android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
 
-        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="${applicationId}" />
-            </intent-filter>
-        </receiver>
-        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
             <intent-filter>
@@ -120,17 +102,6 @@ In your `android/app/src/main/AndroidManifest.xml`
         </receiver>
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
 
-        <!-- < Only if you're using GCM or localNotificationSchedule() > -->
-        <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-        <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
-
-        <!-- < Else > -->
         <service
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
             android:exported="false" >
@@ -138,7 +109,6 @@ In your `android/app/src/main/AndroidManifest.xml`
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!-- </Else> -->
      .....
 ```
 
@@ -207,8 +177,8 @@ PushNotification.configure({
     notification.finish(PushNotificationIOS.FetchResult.NoData);
   },
 
-  // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-  senderID: "YOUR GCM (OR FCM) SENDER ID",
+  // ANDROID ONLY: FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
+  senderID: "YOUR FCM SENDER ID",
 
   // IOS ONLY (optional): default: all - Permissions to register.
   permissions: {
@@ -233,7 +203,6 @@ PushNotification.configure({
 ## Example app
 
 Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`. For Remote notifications, configure your SenderId in `app.json`. You can also edit it directly in the app.
-To send Push notifications, you can use the online tool [PushWatch](https://www.pushwatch.com/gcm/).
 
 Please test your PRs with this example app before submitting them. It'll help maintaining this repo.
 

@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Upgrade ShortCutBadger to 1.1.22 [#646](https://github.com/zo0r/react-native-push-notification/pull/646)
 - Upgrade exemple to React-Native 0.62.2
 - Remove Types from the code use [@types/react-native-push-notification](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react-native-push-notification) instead.
+- Remove GCM and C2DM references in README.md
 
 ### Possible Breaking change
 

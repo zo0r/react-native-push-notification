@@ -7,7 +7,7 @@ export default class NotifService {
     this.lastId = 0;
   }
 
-  configure(onRegister, onNotification, gcm = '') {
+  configure(onRegister, onNotification, fcm = '') {
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
       onRegister: onRegister, //this._onRegister.bind(this),
@@ -15,8 +15,8 @@ export default class NotifService {
       // (required) Called when a remote or local notification is opened or received
       onNotification: onNotification, //this._onNotification,
 
-      // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
-      senderID: gcm,
+      // ANDROID ONLY: FCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+      senderID: fcm,
 
       // IOS ONLY (optional): default: all - Permissions to register.
       permissions: {
