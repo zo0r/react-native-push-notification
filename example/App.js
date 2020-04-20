@@ -101,7 +101,7 @@ export default class App extends Component {
           }}>
           <Text>Configure Sender ID</Text>
         </TouchableOpacity>
-        {this.state.gcmRegistered && <Text>GCM Configured !</Text>}
+        {this.state.fcmRegistered && <Text>FCM Configured !</Text>}
 
         <View style={styles.spacer}></View>
       </View>
@@ -111,7 +111,7 @@ export default class App extends Component {
   onRegister(token) {
     Alert.alert('Registered !', JSON.stringify(token));
     console.log(token);
-    this.setState({registerToken: token.token, gcmRegistered: true});
+    this.setState({registerToken: token.token, fcmRegistered: true});
   }
 
   onNotif(notif) {
