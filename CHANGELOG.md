@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.2.0] - 2020-04-20
+
 ### Features
 
 - (Android) Allow to silence Android foreground notifications [#1183](https://github.com/zo0r/react-native-push-notification/pull/1183)
