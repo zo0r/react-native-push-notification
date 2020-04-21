@@ -3,7 +3,7 @@ package com.dieam.reactnativepushnotification.modules;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -31,7 +31,10 @@ class RNPushNotificationConfig {
 
     public String getChannelName() {
         try {
-            return metadata.getString(KEY_CHANNEL_NAME);
+            final String name = metadata.getString(KEY_CHANNEL_NAME);
+            if (name != null && name.length() > 0) {
+                return name;
+            }
         } catch (Exception e) {
             Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_NAME + " in manifest. Falling back to default");
         }
@@ -40,7 +43,10 @@ class RNPushNotificationConfig {
     }
     public String getChannelDescription() {
         try {
-            return metadata.getString(KEY_CHANNEL_DESCRIPTION);
+            final String description = metadata.getString(KEY_CHANNEL_DESCRIPTION);
+            if (description != null) {
+                return description;
+            }
         } catch (Exception e) {
             Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_DESCRIPTION + " in manifest. Falling back to default");
         }
