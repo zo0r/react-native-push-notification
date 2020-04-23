@@ -1,6 +1,5 @@
 package com.dieam.reactnativepushnotification.modules;
 
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlarmManager;
@@ -25,6 +24,22 @@ import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.common.Priority;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
+
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONArray;
@@ -34,7 +49,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -51,6 +65,7 @@ public class RNPushNotificationHelper {
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
 
+    private String TAG = "RNPushNotificationHelper";
     public RNPushNotificationHelper(Application context) {
         this.context = context;
         this.config = new RNPushNotificationConfig(context);
@@ -125,7 +140,6 @@ public class RNPushNotificationHelper {
 
     public void sendNotificationScheduledCore(Bundle bundle) {
         long fireDate = (long) bundle.getDouble("fireDate");
-        boolean allowWhileIdle = bundle.getBoolean("allowWhileIdle");
 
         // If the fireDate is in past, this will fire immediately and show the
         // notification to the user
@@ -134,17 +148,15 @@ public class RNPushNotificationHelper {
         Log.d(LOG_TAG, String.format("Setting a notification with id %s at time %s",
                 bundle.getString("id"), Long.toString(fireDate)));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if(allowWhileIdle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
-            } else {
-                getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
-            }
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         } else {
             getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         }
     }
 
-    public void sendToNotificationCentre(Bundle bundle) {
+    public void sendNotificationWithImage(Bundle bundle, Bitmap image, Bitmap largeIconImage) {
+        Log.d(TAG, "sendNotificationWithImage: bitmao log: "+image);
+        Log.d(TAG, "sendNotificationWithImage: bitmao log: "+largeIconImage);
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -166,7 +178,7 @@ public class RNPushNotificationHelper {
 
             Resources res = context.getResources();
             String packageName = context.getPackageName();
-
+            String message = bundle.getString("message");
             String title = bundle.getString("title");
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
@@ -217,22 +229,14 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            String channel_id = NOTIFICATION_CHANNEL_ID;
-
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channel_id)
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
-            
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
-                // Changing Default mode of notification
-                notification.setDefaults(Notification.DEFAULT_LIGHTS);
-            }
-      
-            String group = bundle.getString("group");
 
+            String group = bundle.getString("group");
             if (group != null) {
                 notification.setGroup(group);
             }
@@ -279,9 +283,7 @@ public class RNPushNotificationHelper {
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
 
-            if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                notification.setLargeIcon(largeIconBitmap);
-            }
+
 
             notification.setSmallIcon(smallIconResId);
             String bigText = bundle.getString("bigText");
@@ -290,20 +292,31 @@ public class RNPushNotificationHelper {
                 bigText = bundle.getString("message");
             }
 
-            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            if (image != null && largeIconImage != null) {
+                notification.setLargeIcon(largeIconImage);
+                notification.setStyle(
+                        new NotificationCompat.BigPictureStyle()
+                                .bigPicture(image)
+                                .setBigContentTitle(title)
+                                .setSummaryText(message)
+                );
+            } else {
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    notification.setLargeIcon(largeIconBitmap);
+                }
+                notification.setContentText(message);
+                notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            }
+            // notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
 
-            Uri soundUri = null;
-
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
-                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                
+                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 String soundName = bundle.getString("soundName");
-                
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
 
@@ -320,20 +333,9 @@ public class RNPushNotificationHelper {
                         }
 
                         soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
-                            channel_id = channel_id + "-" + soundName;
-
-                            notification.setChannelId(channel_id);
-                        }
                     }
                 }
-
                 notification.setSound(soundUri);
-            }
-
-            if (soundUri == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notification.setSound(null);
             }
 
             if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
@@ -358,8 +360,7 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-
-            checkOrCreateChannel(notificationManager, channel_id, soundUri);
+            checkOrCreateChannel(notificationManager);
 
             notification.setContentIntent(pendingIntent);
 
@@ -393,12 +394,11 @@ public class RNPushNotificationHelper {
 
                     Intent actionIntent = new Intent(context, intentClass);
                     actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    actionIntent.setAction(packageName + "." + action);
+                    actionIntent.setAction(context.getPackageName() + "." + action);
 
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
-                    actionIntent.setPackage(packageName);
 
                     PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
@@ -420,16 +420,14 @@ public class RNPushNotificationHelper {
                 commit(editor);
             }
 
-            if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
-                Notification info = notification.build();
-                info.defaults |= Notification.DEFAULT_LIGHTS;
-                
-                if (bundle.containsKey("tag")) {
-                    String tag = bundle.getString("tag");
-                    notificationManager.notify(tag, notificationID, info);
-                } else {
-                    notificationManager.notify(notificationID, info);
-                }
+            Notification info = notification.build();
+            info.defaults |= Notification.DEFAULT_LIGHTS;
+
+            if (bundle.containsKey("tag")) {
+                String tag = bundle.getString("tag");
+                notificationManager.notify(tag, notificationID, info);
+            } else {
+                notificationManager.notify(notificationID, info);
             }
 
             // Can't use setRepeating for recurring notifications because setRepeating
@@ -440,6 +438,62 @@ public class RNPushNotificationHelper {
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
+    }
+
+    public void sendToNotificationCentre(final Bundle bundle) {
+        Log.d(TAG, "sendToNotificationCentre: bundle: "+bundle.toString());
+        String imageUrl = bundle.getString("imageUrl");
+        String largeIconUrl = bundle.getString("largeIconUrl");
+
+        if (imageUrl == null && largeIconUrl == null) {
+            sendNotificationWithImage(bundle, null, null);
+            return;
+        }
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+
+        ImageRequest imageRequest = ImageRequestBuilder
+                .newBuilderWithSource(Uri.parse(imageUrl))
+                .setRequestPriority(Priority.HIGH)
+                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                .build();
+
+        ImageRequest largeIconRequest = ImageRequestBuilder
+                .newBuilderWithSource(Uri.parse(largeIconUrl))
+                .setRequestPriority(Priority.HIGH)
+                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                .build();
+
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, context);
+
+        final DataSource<CloseableReference<CloseableImage>>  largeIcondataSource =
+                imagePipeline.fetchDecodedImage(largeIconRequest, context);
+
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            public void onNewResultImpl(final @Nullable Bitmap bitmap1) {
+
+                largeIcondataSource.subscribe(new BaseBitmapDataSubscriber() {
+                    @Override
+                    public void onNewResultImpl(@Nullable Bitmap bitmap2) {
+                        sendNotificationWithImage(bundle, bitmap1, bitmap2);
+                    }
+
+                    @Override
+                    public void onFailureImpl(DataSource dataSource) {
+                        return;
+                    }
+                }, CallerThreadExecutor.getInstance());
+            }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                return;
+            }
+        }, CallerThreadExecutor.getInstance());
+
+
     }
 
     private void scheduleNextNotificationIfRepeating(Bundle bundle) {
@@ -586,15 +640,11 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void checkOrCreateDefaultChannel() {
-      NotificationManager manager = notificationManager();
-      String channel_id = NOTIFICATION_CHANNEL_ID;
-
-      checkOrCreateChannel(manager, channel_id, null);
-    }
-
-    private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri) {
+    private static boolean channelCreated = false;
+    private void checkOrCreateChannel(NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+        if (channelCreated)
             return;
         if (manager == null)
             return;
@@ -632,42 +682,13 @@ public class RNPushNotificationHelper {
             }
         }
 
-        NotificationChannel channel = manager.getNotificationChannel(channel_id);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
 
-        if (channel == null) {
-            channel = new NotificationChannel(channel_id, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
-            channel.enableLights(true);
-            channel.enableVibration(true);
-            channel.setDescription(this.config.getChannelDescription());
+        channel.setDescription(this.config.getChannelDescription());
+        channel.enableLights(true);
+        channel.enableVibration(true);
 
-            if (soundUri != null) {
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .build();
-
-                channel.setSound(soundUri, audioAttributes);
-            } else {
-                channel.setSound(null, null);
-            }
-
-            manager.createNotificationChannel(channel);
-        }
+        manager.createNotificationChannel(channel);
+        channelCreated = true;
     }
-    
-    private boolean isApplicationInForeground(Context context) {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
-        if (processInfos != null) {
-            for (RunningAppProcessInfo processInfo : processInfos) {
-                if (processInfo.processName.equals(context.getPackageName())
-                    && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                    && processInfo.pkgList.length > 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
 }
