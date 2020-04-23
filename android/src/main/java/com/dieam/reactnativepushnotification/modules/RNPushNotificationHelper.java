@@ -586,6 +586,13 @@ public class RNPushNotificationHelper {
         }
     }
 
+    public void checkOrCreateDefaultChannel() {
+      NotificationManager manager = notificationManager();
+      String channel_id = NOTIFICATION_CHANNEL_ID;
+
+      checkOrCreateChannel(manager, channel_id, null);
+    }
+
     private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
