@@ -292,8 +292,15 @@ public class RNPushNotificationHelper {
                 bigText = bundle.getString("message");
             }
 
-            if (image != null && largeIconImage != null) {
+            if (largeIconImage != null){
                 notification.setLargeIcon(largeIconImage);
+            }else{
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    notification.setLargeIcon(largeIconBitmap);
+                }
+            }
+
+            if (image != null) {
                 notification.setStyle(
                         new NotificationCompat.BigPictureStyle()
                                 .bigPicture(image)
@@ -301,9 +308,6 @@ public class RNPushNotificationHelper {
                                 .setSummaryText(message)
                 );
             } else {
-                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                    notification.setLargeIcon(largeIconBitmap);
-                }
                 notification.setContentText(message);
                 notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
             }
@@ -452,32 +456,84 @@ public class RNPushNotificationHelper {
 
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
 
-        ImageRequest imageRequest = ImageRequestBuilder
-                .newBuilderWithSource(Uri.parse(imageUrl))
-                .setRequestPriority(Priority.HIGH)
-                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
-                .build();
+        if (imageUrl == null){
+            ImageRequest largeIconRequest = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(largeIconUrl))
+                    .setRequestPriority(Priority.HIGH)
+                    .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                    .build();
+            DataSource<CloseableReference<CloseableImage>>  largeIcondataSource =
+                    imagePipeline.fetchDecodedImage(largeIconRequest, context);
 
-        ImageRequest largeIconRequest = ImageRequestBuilder
-                .newBuilderWithSource(Uri.parse(largeIconUrl))
-                .setRequestPriority(Priority.HIGH)
-                .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
-                .build();
+            largeIcondataSource.subscribe(new BaseBitmapDataSubscriber() {
+                @Override
+                public void onNewResultImpl(@Nullable Bitmap bitmap2) {
+                    sendNotificationWithImage(bundle, null, bitmap2);
+                }
 
-        DataSource<CloseableReference<CloseableImage>> dataSource =
-                imagePipeline.fetchDecodedImage(imageRequest, context);
+                @Override
+                public void onFailureImpl(DataSource dataSource) {
+                    sendNotificationWithImage(bundle, null, null);
+                }
+            }, CallerThreadExecutor.getInstance());
+        }
 
-        final DataSource<CloseableReference<CloseableImage>>  largeIcondataSource =
-                imagePipeline.fetchDecodedImage(largeIconRequest, context);
+        else if (largeIconUrl == null){
+            ImageRequest imageRequest = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(imageUrl))
+                    .setRequestPriority(Priority.HIGH)
+                    .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                    .build();
 
-        dataSource.subscribe(new BaseBitmapDataSubscriber() {
-            @Override
-            public void onNewResultImpl(final @Nullable Bitmap bitmap1) {
+            DataSource<CloseableReference<CloseableImage>> dataSource =
+                    imagePipeline.fetchDecodedImage(imageRequest, context);
 
-                largeIcondataSource.subscribe(new BaseBitmapDataSubscriber() {
+            dataSource.subscribe(new BaseBitmapDataSubscriber() {
+                @Override
+                public void onNewResultImpl(final @Nullable Bitmap bitmap1) {
+                    sendNotificationWithImage(bundle, bitmap1, null);
+                }
+                @Override
+                public void onFailureImpl(DataSource dataSource) {
+                    sendNotificationWithImage(bundle, null, null);;
+                }
+            }, CallerThreadExecutor.getInstance());
+        }
+
+        else {
+                ImageRequest imageRequest = ImageRequestBuilder
+                        .newBuilderWithSource(Uri.parse(imageUrl))
+                        .setRequestPriority(Priority.HIGH)
+                        .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                        .build();
+
+                ImageRequest largeIconRequest = ImageRequestBuilder
+                        .newBuilderWithSource(Uri.parse(largeIconUrl))
+                        .setRequestPriority(Priority.HIGH)
+                        .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                        .build();
+
+                DataSource<CloseableReference<CloseableImage>> dataSource =
+                        imagePipeline.fetchDecodedImage(imageRequest, context);
+
+                final DataSource<CloseableReference<CloseableImage>>  largeIcondataSource =
+                        imagePipeline.fetchDecodedImage(largeIconRequest, context);
+
+                dataSource.subscribe(new BaseBitmapDataSubscriber() {
                     @Override
-                    public void onNewResultImpl(@Nullable Bitmap bitmap2) {
-                        sendNotificationWithImage(bundle, bitmap1, bitmap2);
+                    public void onNewResultImpl(final @Nullable Bitmap bitmap1) {
+
+                        largeIcondataSource.subscribe(new BaseBitmapDataSubscriber() {
+                            @Override
+                            public void onNewResultImpl(@Nullable Bitmap bitmap2) {
+                                sendNotificationWithImage(bundle, bitmap1, bitmap2);
+                            }
+
+                            @Override
+                            public void onFailureImpl(DataSource dataSource) {
+                                return;
+                            }
+                        }, CallerThreadExecutor.getInstance());
                     }
 
                     @Override
@@ -486,13 +542,6 @@ public class RNPushNotificationHelper {
                     }
                 }, CallerThreadExecutor.getInstance());
             }
-
-            @Override
-            public void onFailureImpl(DataSource dataSource) {
-                return;
-            }
-        }, CallerThreadExecutor.getInstance());
-
 
     }
 
