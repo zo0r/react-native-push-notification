@@ -1,6 +1,8 @@
 package com.dieam.reactnativepushnotification.modules;
 
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
@@ -15,13 +17,14 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -33,6 +36,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -123,6 +130,7 @@ public class RNPushNotificationHelper {
 
     public void sendNotificationScheduledCore(Bundle bundle) {
         long fireDate = (long) bundle.getDouble("fireDate");
+        boolean allowWhileIdle = bundle.getBoolean("allowWhileIdle");
 
         // If the fireDate is in past, this will fire immediately and show the
         // notification to the user
@@ -131,7 +139,11 @@ public class RNPushNotificationHelper {
         Log.d(LOG_TAG, String.format("Setting a notification with id %s at time %s",
                 bundle.getString("id"), Long.toString(fireDate)));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            if(allowWhileIdle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            } else {
+                getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            }
         } else {
             getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         }
@@ -210,14 +222,22 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            String channel_id = NOTIFICATION_CHANNEL_ID;
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channel_id)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
-
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
+                // Changing Default mode of notification
+                notification.setDefaults(Notification.DEFAULT_LIGHTS);
+            }
+      
             String group = bundle.getString("group");
+
             if (group != null) {
                 notification.setGroup(group);
             }
@@ -282,9 +302,13 @@ public class RNPushNotificationHelper {
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
 
+            Uri soundUri = null;
+
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
-                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                
                 String soundName = bundle.getString("soundName");
+                
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
 
@@ -301,9 +325,20 @@ public class RNPushNotificationHelper {
                         }
 
                         soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
+                            channel_id = channel_id + "-" + soundName;
+
+                            notification.setChannelId(channel_id);
+                        }
                     }
                 }
+
                 notification.setSound(soundUri);
+            }
+
+            if (soundUri == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notification.setSound(null);
             }
 
             if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
@@ -328,7 +363,8 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
+
+            checkOrCreateChannel(notificationManager, channel_id, soundUri);
 
             notification.setContentIntent(pendingIntent);
 
@@ -362,11 +398,12 @@ public class RNPushNotificationHelper {
 
                     Intent actionIntent = new Intent(context, intentClass);
                     actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    actionIntent.setAction(context.getPackageName() + "." + action);
+                    actionIntent.setAction(packageName + "." + action);
 
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
+                    actionIntent.setPackage(packageName);
 
                     PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
@@ -388,14 +425,16 @@ public class RNPushNotificationHelper {
                 commit(editor);
             }
 
-            Notification info = notification.build();
-            info.defaults |= Notification.DEFAULT_LIGHTS;
-
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
-            } else {
-                notificationManager.notify(notificationID, info);
+            if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
+                Notification info = notification.build();
+                info.defaults |= Notification.DEFAULT_LIGHTS;
+                
+                if (bundle.containsKey("tag")) {
+                    String tag = bundle.getString("tag");
+                    notificationManager.notify(tag, notificationID, info);
+                } else {
+                    notificationManager.notify(notificationID, info);
+                }
             }
 
             // Can't use setRepeating for recurring notifications because setRepeating
@@ -415,7 +454,7 @@ public class RNPushNotificationHelper {
         if (repeatType != null) {
             long fireDate = (long) bundle.getDouble("fireDate");
 
-            boolean validRepeatType = Arrays.asList("time", "week", "day", "hour", "minute").contains(repeatType);
+            boolean validRepeatType = Arrays.asList("time", "month", "week", "day", "hour", "minute").contains(repeatType);
 
             // Sanity checks
             if (!validRepeatType) {
@@ -434,6 +473,26 @@ public class RNPushNotificationHelper {
             switch (repeatType) {
                 case "time":
                     newFireDate = fireDate + repeatTime;
+                    break;
+                case "month":
+                    final Calendar fireDateCalendar = new GregorianCalendar();
+                    fireDateCalendar.setTime(new Date(fireDate));
+                    final int fireDay = fireDateCalendar.get(Calendar.DAY_OF_MONTH);
+                    final int fireMinute = fireDateCalendar.get(Calendar.MINUTE);
+                    final int fireHour = fireDateCalendar.get(Calendar.HOUR_OF_DAY);
+
+                    final Calendar nextEvent = new GregorianCalendar();
+                    nextEvent.setTime(new Date());
+                    final int currentMonth = nextEvent.get(Calendar.MONTH);
+                    int nextMonth = currentMonth < 11 ? (currentMonth + 1) : 0;
+                    nextEvent.set(Calendar.YEAR, nextEvent.get(Calendar.YEAR) + (nextMonth == 0 ? 1 : 0));
+                    nextEvent.set(Calendar.MONTH, nextMonth);
+                    final int maxDay = nextEvent.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    nextEvent.set(Calendar.DAY_OF_MONTH, fireDay <= maxDay ? fireDay : maxDay);
+                    nextEvent.set(Calendar.HOUR_OF_DAY, fireHour);
+                    nextEvent.set(Calendar.MINUTE, fireMinute);
+                    nextEvent.set(Calendar.SECOND, 0);
+                    newFireDate = nextEvent.getTimeInMillis();
                     break;
                 case "week":
                     newFireDate = fireDate + 7 * ONE_DAY;
@@ -566,11 +625,15 @@ public class RNPushNotificationHelper {
         }
     }
 
-    private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager) {
+    public void checkOrCreateDefaultChannel() {
+      NotificationManager manager = notificationManager();
+      String channel_id = NOTIFICATION_CHANNEL_ID;
+
+      checkOrCreateChannel(manager, channel_id, null);
+    }
+
+    private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return;
-        if (channelCreated)
             return;
         if (manager == null)
             return;
@@ -608,12 +671,42 @@ public class RNPushNotificationHelper {
             }
         }
 
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName(), importance);
-        channel.setDescription(this.config.getChannelDescription());
-        channel.enableLights(true);
-        channel.enableVibration(true);
+        NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
-        manager.createNotificationChannel(channel);
-        channelCreated = true;
+        if (channel == null) {
+            channel = new NotificationChannel(channel_id, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setDescription(this.config.getChannelDescription());
+
+            if (soundUri != null) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
+
+                channel.setSound(soundUri, audioAttributes);
+            } else {
+                channel.setSound(null, null);
+            }
+
+            manager.createNotificationChannel(channel);
+        }
     }
+    
+    private boolean isApplicationInForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
+        if (processInfos != null) {
+            for (RunningAppProcessInfo processInfo : processInfos) {
+                if (processInfo.processName.equals(context.getPackageName())
+                    && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    && processInfo.pkgList.length > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

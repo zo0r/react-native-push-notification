@@ -34,9 +34,15 @@ local.properties
 node_modules/*
 npm-debug.log
 
+yarn.lock
+package-lock.json
+
 android/android.iml
 android/gradle.properties
 android/gradle/
 android/gradlew
 android/gradlew.bat
 android/src/main/gen
+
+#Debug only
+google-services.json

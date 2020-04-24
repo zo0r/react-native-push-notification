@@ -60,3 +60,6 @@ local.properties
 
 # Example app
 example
+
+# Git
+.git 
