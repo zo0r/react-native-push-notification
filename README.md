@@ -248,6 +248,8 @@ PushNotification.localNotification({
   importance: "high", // (optional) set notification importance, default: high
   allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
   ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
+  imageUrl: 'url image' // (optional) set big image
+  largeIconUrl: 'url image' //(optional ) set large icon. default : take largeIcon value
 
   /* iOS only properties */
   alertAction: "view", // (optional) default: view
