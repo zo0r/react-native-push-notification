@@ -121,6 +121,47 @@ In `android/app/src/main/res/values/colors.xml` (Create the file if it doesn't e
 </resources>
 ```
 
+### If you use remote notifications
+
+Make sure you have installed setup Firebase correctly.
+
+In `android/build.gradle`
+
+```gradle
+
+buildscript {
+    ...
+    dependencies {
+        ...
+        classpath('com.google.gms:google-services:4.3.3')
+        ...
+    }
+}
+```
+
+In `android/app/build.gradle`
+
+```gradle
+dependencies {
+  ...
+  implementation 'com.google.firebase:firebase-analytics:17.3.0'
+  ...
+}
+
+apply plugin: 'com.google.gms.google-services'
+
+```
+
+Then put your `google-services.json` in `android/app/`.
+
+**Note: [firebase/release-notes](https://firebase.google.com/support/release-notes/android)**
+
+> The Firebase Android library `firebase-core` is no longer needed. This SDK included the Firebase SDK for Google Analytics.
+>
+> Now, to use Analytics or any Firebase product that recommends the use of Analytics (see table below), you need to explicitly add the Analytics dependency: `com.google.firebase:firebase-analytics:17.3.0`.
+
+### If you don't use autolink
+
 In `android/settings.gradle`
 
 ```gradle
