@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Features
+- (Android) Keep interface parity with PushNotificationIOS [#909](https://github.com/zo0r/react-native-push-notification/pull/909)
+
+### Fixed
+- (Android) Create default channel to receive notification when background / killed.
+
+### Breaking changes
+- (Android) Remove specific code for GCM [#1322](https://github.com/zo0r/react-native-push-notification/issues/1322)
+
+
 ## [3.2.1] - 2020-04-20
 
 ### Fixed

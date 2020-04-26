@@ -56,8 +56,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         // This is used to delivery callbacks to JS
         mJsDelivery = new RNPushNotificationJsDelivery(reactContext);
 
-        registerNotificationsRegistration();
-
         mRNPushNotificationHelper.checkOrCreateDefaultChannel();
     }
 
@@ -91,30 +89,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         }
     }
 
-    private void registerNotificationsRegistration() {
-        IntentFilter intentFilter = new IntentFilter(getReactApplicationContext().getPackageName() + ".RNPushNotificationRegisteredToken");
-        final RNPushNotificationJsDelivery fMjsDelivery = mJsDelivery;
-
-        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                FirebaseInstanceId.getInstance().getInstanceId()
-                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                if (!task.isSuccessful()) {
-                                    return;
-                                }
-
-                                WritableMap params = Arguments.createMap();
-                                params.putString("deviceToken", task.getResult().getToken());
-                                fMjsDelivery.sendEvent("remoteNotificationsRegistered", params);
-                            }
-                        });
-            }
-        }, intentFilter);
-    }
-
     private void registerNotificationsReceiveNotificationActions(ReadableArray actions) {
         IntentFilter intentFilter = new IntentFilter();
         // Add filter for each actions.
@@ -122,6 +96,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             String action = actions.getString(i);
             intentFilter.addAction(getReactApplicationContext().getPackageName() + "." + action);
         }
+        
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -146,17 +121,22 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void requestPermissions(String senderID) {
-        ReactContext reactContext = getReactApplicationContext();
+    public void requestPermissions() {
+      final RNPushNotificationJsDelivery fMjsDelivery = mJsDelivery;
+      
+      FirebaseInstanceId.getInstance().getInstanceId()
+              .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                  @Override
+                  public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                      if (!task.isSuccessful()) {
+                          return;
+                      }
 
-        Intent GCMService = new Intent(reactContext, RNPushNotificationRegistrationService.class);
-
-        try {
-            GCMService.putExtra("senderID", senderID);
-            reactContext.startService(GCMService);
-        } catch (Exception e) {
-            Log.d("EXCEPTION SERVICE::::::", "requestPermissions: " + e);
-        }
+                      WritableMap params = Arguments.createMap();
+                      params.putString("deviceToken", task.getResult().getToken());
+                      fMjsDelivery.sendEvent("remoteNotificationsRegistered", params);
+                  }
+              });
     }
 
     @ReactMethod

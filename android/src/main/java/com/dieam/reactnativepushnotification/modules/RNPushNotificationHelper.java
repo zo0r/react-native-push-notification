@@ -675,9 +675,15 @@ public class RNPushNotificationHelper {
 
         if (channel == null) {
             channel = new NotificationChannel(channel_id, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
-            channel.enableLights(true);
-            channel.enableVibration(true);
+
             channel.setDescription(this.config.getChannelDescription());
+            channel.enableLights(true);
+        
+            long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
+            long[] vibratePattern = (bundle.containsKey("vibrate") && bundle.getBoolean("vibrate")) ? new long[]{0, vibration} : new long[]{ 0 };
+    
+            channel.enableVibration(true);
+            channel.setVibrationPattern(vibratePattern);
 
             if (soundUri != null) {
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
