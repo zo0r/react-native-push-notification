@@ -77,6 +77,13 @@ export default class App extends Component {
           }}>
           <Text>Check Permission</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            this.notif.requestPermissions();
+          }}>
+          <Text>Request Permissions</Text>
+        </TouchableOpacity>
 
         <View style={styles.spacer}></View>
 

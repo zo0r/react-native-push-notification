@@ -120,10 +120,10 @@ NotificationsComponent.prototype.removeAllDeliveredNotifications = function() {
   RNPushNotification.removeAllDeliveredNotifications();
 }
 
-NotificationsComponent.prototype.getDeliveredNotifications = function(callback: Function) {
+NotificationsComponent.prototype.getDeliveredNotifications = function(callback) {
   RNPushNotification.getDeliveredNotifications(callback);
 }
-NotificationsComponent.prototype.removeDeliveredNotifications = function(identifiers: Array) {
+NotificationsComponent.prototype.removeDeliveredNotifications = function(identifiers) {
   RNPushNotification.removeDeliveredNotifications(identifiers);
 }
 
