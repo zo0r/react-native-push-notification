@@ -75,8 +75,10 @@ NotificationsComponent.prototype.addEventListener = function(type, handler) {
 		listener =  DeviceEventEmitter.addListener(
 			DEVICE_NOTIF_EVENT,
 			function(notifData) {
-				var data = JSON.parse(notifData.dataJSON);
-				handler(data);
+				if (notifData && notifData.dataJSON) {
+					var data = JSON.parse(notifData.dataJSON);
+					handler(data);
+				}
 			}
 		);
 	} else if (type === 'register') {
@@ -90,8 +92,10 @@ NotificationsComponent.prototype.addEventListener = function(type, handler) {
 		listener = DeviceEventEmitter.addListener(
 			REMOTE_FETCH_EVENT,
 			function(notifData) {
-				var notificationData = JSON.parse(notifData.dataJSON)
-				handler(notificationData);
+				if (notifData && notifData.dataJSON) {
+					var notificationData = JSON.parse(notifData.dataJSON)
+					handler(notificationData);
+				}
 			}
 		);
 	}
