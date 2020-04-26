@@ -146,6 +146,22 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+    public void navigateToSettings() {
+        Intent intent = new Intent();
+        intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        //for Android 5-7
+        intent.putExtra("app_package", getReactApplicationContext().getPackageName());
+        intent.putExtra("app_uid", getReactApplicationContext().getApplicationInfo().uid);
+
+        // for Android O
+        intent.putExtra("android.provider.extra.APP_PACKAGE", getReactApplicationContext().getPackageName());
+
+        getReactApplicationContext().startActivity(intent);
+    }
+
+    @ReactMethod
     public void requestPermissions(String senderID) {
         ReactContext reactContext = getReactApplicationContext();
 
