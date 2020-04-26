@@ -29,7 +29,7 @@ var Notifications = {
 	}
 };
 
-Notifications.callNative = function(name: String, params: Array) {
+Notifications.callNative = function(name, params) {
 	if ( typeof this.handler[name] === 'function' ) {
 		if ( typeof params !== 'array' &&
 			 typeof params !== 'object' ) {
@@ -51,7 +51,7 @@ Notifications.callNative = function(name: String, params: Array) {
  * @param {Object}		options.permissions - Permissions list
  * @param {Boolean}		options.requestPermissions - Check permissions when register
  */
-Notifications.configure = function(options: Object) {
+Notifications.configure = function(options) {
 	if ( typeof options.onRegister !== 'undefined' ) {
 		this.onRegister = options.onRegister;
 	}
@@ -117,7 +117,7 @@ Notifications.unregister = function() {
  * @param {String}		details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
  * @param {Object}		details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
-Notifications.localNotification = function(details: Object) {
+Notifications.localNotification = function(details) {
 	if ( Platform.OS === 'ios' ) {
 		// https://developer.apple.com/reference/uikit/uilocalnotification
 
@@ -149,7 +149,7 @@ Notifications.localNotification = function(details: Object) {
  * @param {Object}		details (same as localNotification)
  * @param {Date}		details.date - The date and time when the system should deliver the notification
  */
-Notifications.localNotificationSchedule = function(details: Object) {
+Notifications.localNotificationSchedule = function(details) {
 	if ( Platform.OS === 'ios' ) {
 		let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
@@ -189,7 +189,7 @@ Notifications.localNotificationSchedule = function(details: Object) {
 };
 
 /* Internal Functions */
-Notifications._onRegister = function(token: String) {
+Notifications._onRegister = function(token) {
 	if ( this.onRegister !== false ) {
 		this.onRegister({
 			token: token,
@@ -198,7 +198,7 @@ Notifications._onRegister = function(token: String) {
 	}
 };
 
-Notifications._onRemoteFetch = function(notificationData: Object) {
+Notifications._onRemoteFetch = function(notificationData) {
 	if ( this.onRemoteFetch !== false ) {
 		this.onRemoteFetch(notificationData)
 	}
