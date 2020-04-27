@@ -116,6 +116,17 @@ NotificationsComponent.prototype.clearAllNotifications = function() {
 	RNPushNotification.clearAllNotifications()
 }
 
+NotificationsComponent.prototype.removeAllDeliveredNotifications = function() {
+  RNPushNotification.removeAllDeliveredNotifications();
+}
+
+NotificationsComponent.prototype.getDeliveredNotifications = function(callback: Function) {
+  RNPushNotification.getDeliveredNotifications(callback);
+}
+NotificationsComponent.prototype.removeDeliveredNotifications = function(identifiers: Array) {
+  RNPushNotification.removeDeliveredNotifications(identifiers);
+}
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()
