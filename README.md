@@ -54,7 +54,7 @@ In your `android/build.gradle`
 ```gradle
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
-    firebaseVersion = "<Your Firebase version>" // default: "+"
+    firebaseMessagingVersion = "<Your Firebase version>" // default: "+"
 
     // Other settings
     compileSdkVersion = <Your compile SDK version> // default: 23
@@ -418,10 +418,10 @@ Removes the specified notifications from Notification Center
 
 Available options:
 
-"max" = NotficationCompat.PRIORITY_MAX  
-"high" = NotficationCompat.PRIORITY_HIGH  
-"low" = NotficationCompat.PRIORITY_LOW  
-"min" = NotficationCompat.PRIORITY_MIN  
+"max" = NotficationCompat.PRIORITY_MAX
+"high" = NotficationCompat.PRIORITY_HIGH
+"low" = NotficationCompat.PRIORITY_LOW
+"min" = NotficationCompat.PRIORITY_MIN
 "default" = NotficationCompat.PRIORITY_DEFAULT
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
@@ -432,8 +432,8 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"private" = NotficationCompat.VISIBILITY_PRIVATE  
-"public" = NotficationCompat.VISIBILITY_PUBLIC  
+"private" = NotficationCompat.VISIBILITY_PRIVATE
+"public" = NotficationCompat.VISIBILITY_PUBLIC
 "secret" = NotficationCompat.VISIBILITY_SECRET
 
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
@@ -444,12 +444,12 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"default" = NotificationManager.IMPORTANCE_DEFAULT  
-"max" = NotificationManager.IMPORTANCE_MAX  
-"high" = NotificationManager.IMPORTANCE_HIGH  
-"low" = NotificationManager.IMPORTANCE_LOW  
-"min" = NotificationManager.IMPORTANCE_MIN  
-"none" = NotificationManager.IMPORTANCE_NONE  
+"default" = NotificationManager.IMPORTANCE_DEFAULT
+"max" = NotificationManager.IMPORTANCE_MAX
+"high" = NotificationManager.IMPORTANCE_HIGH
+"low" = NotificationManager.IMPORTANCE_LOW
+"min" = NotificationManager.IMPORTANCE_MIN
+"none" = NotificationManager.IMPORTANCE_NONE
 "unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT

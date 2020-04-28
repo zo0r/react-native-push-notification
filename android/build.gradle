@@ -43,10 +43,15 @@ android {
 }
 
 dependencies {
+    // Use either AndroidX library names or old/support library names based on major version of support lib
+    def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
+    def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
+    def appCompatLibName =  (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "$appCompatLibName:$supportLibVersion"
     implementation 'com.facebook.react:react-native:+'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
-    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseMessagingVersion', '+')}"    
+    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseMessagingVersion', '+')}"
 }
