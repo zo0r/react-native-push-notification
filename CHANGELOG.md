@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Breaking changes
 
 - (Android) Remove specific code for GCM [#1322](https://github.com/zo0r/react-native-push-notification/issues/1322)
+- `<service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>` must be removed.
 
 ## [3.2.1] - 2020-04-20
 
