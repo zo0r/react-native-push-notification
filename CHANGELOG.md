@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+### Fixed
+
+## [3.3.0] - 2020-04-29
+
+### Features
+
 - (Android) Keep interface parity with PushNotificationIOS [#909](https://github.com/zo0r/react-native-push-notification/pull/909)
 - (Android) Unsubscribe from topic [#917](https://github.com/zo0r/react-native-push-notification/pull/917)
 - (Android) Add notification data in onNotification [#1212](https://github.com/zo0r/react-native-push-notification/pull/1212)
@@ -16,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - (Android) Create default channel to receive notification when background / killed.
+- (Android) Fix vibrate: false is ignored [#878](https://github.com/zo0r/react-native-push-notification/issues/1140)
 - `package.json` fix suffic in main, `index` => `index.js` [#878](https://github.com/zo0r/react-native-push-notification/pull/878)
 
 ### Breaking changes

@@ -159,7 +159,7 @@ include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 ```
 
-In your `android/build.gradle`
+In your `android/app/build.gradle`
 
 ```gradle
  dependencies {
@@ -410,7 +410,6 @@ Removes the specified notifications from Notification Center
 | Name        | Type  | Required | Description                        |
 | ----------- | ----- | -------- | ---------------------------------- |
 | identifiers | array | Yes      | Array of notification identifiers. |
-
 
 ## Notification priority
 
