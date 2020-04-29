@@ -331,8 +331,6 @@ public class RNPushNotificationHelper {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
                             channel_id = channel_id + "-" + soundName;
-
-                            notification.setChannelId(channel_id);
                         }
                     }
                 }
@@ -383,6 +381,7 @@ public class RNPushNotificationHelper {
 
             checkOrCreateChannel(notificationManager, channel_id, soundUri, priority, vibratePattern);
 
+            notification.setChannelId(channel_id);
             notification.setContentIntent(pendingIntent);
 
             JSONArray actionsArray = null;
