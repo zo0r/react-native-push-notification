@@ -54,7 +54,7 @@ In your `android/build.gradle`
 ```gradle
 ext {
     googlePlayServicesVersion = "<Your play services version>" // default: "+"
-    firebaseVersion = "<Your Firebase version>" // default: "+"
+    firebaseMessagingVersion = "<Your Firebase version>" // default: "+"
 
     // Other settings
     compileSdkVersion = <Your compile SDK version> // default: 23
@@ -90,7 +90,6 @@ In your `android/app/src/main/AndroidManifest.xml`
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
 
         <service
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
@@ -160,7 +159,7 @@ include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 ```
 
-In your `android/build.gradle`
+In your `android/app/build.gradle`
 
 ```gradle
  dependencies {
@@ -218,9 +217,6 @@ PushNotification.configure({
     notification.finish(PushNotificationIOS.FetchResult.NoData);
   },
 
-  // ANDROID ONLY: FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-  senderID: "YOUR FCM SENDER ID",
-
   // IOS ONLY (optional): default: all - Permissions to register.
   permissions: {
     alert: true,
@@ -243,7 +239,7 @@ PushNotification.configure({
 
 ## Example app
 
-Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`. For Remote notifications, configure your SenderId in `app.json`. You can also edit it directly in the app.
+Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`.
 
 Please test your PRs with this example app before submitting them. It'll help maintaining this repo.
 
@@ -372,16 +368,61 @@ Cancels all scheduled notifications AND clears the notifications alerts that are
 
 _NOTE: there is currently no api for removing specific notification alerts from the notification centre._
 
+### 3) removeAllDeliveredNotifications
+
+```javascript
+PushNotificationIOS.removeAllDeliveredNotifications();
+```
+
+Remove all delivered notifications from Notification Center
+
+### 4) getDeliveredNotifications
+
+```javascript
+PushNotificationIOS.getDeliveredNotifications(callback);
+```
+
+Provides you with a list of the app’s notifications that are still displayed in Notification Center
+
+**Parameters:**
+
+| Name     | Type     | Required | Description                                                 |
+| -------- | -------- | -------- | ----------------------------------------------------------- |
+| callback | function | Yes      | Function which receive an array of delivered notifications. |
+
+A delivered notification is an object containing:
+
+- `identifier` : The identifier of this notification.
+- `title` : The title of this notification.
+- `body` : The body of this notification.
+- `category` : The category of this notification (optional).
+- `userInfo` : An object containing additional notification data (optional).
+- `thread-id` : The thread identifier of this notification, if has one.
+
+### 5) removeDeliveredNotifications
+
+```javascript
+PushNotificationIOS.removeDeliveredNotifications(identifiers);
+```
+
+Removes the specified notifications from Notification Center
+
+**Parameters:**
+
+| Name        | Type  | Required | Description                        |
+| ----------- | ----- | -------- | ---------------------------------- |
+| identifiers | array | Yes      | Array of notification identifiers. |
+
 ## Notification priority
 
 (optional) Specify `priority` to set priority of notification. Default value: "high"
 
 Available options:
 
-"max" = NotficationCompat.PRIORITY_MAX  
-"high" = NotficationCompat.PRIORITY_HIGH  
-"low" = NotficationCompat.PRIORITY_LOW  
-"min" = NotficationCompat.PRIORITY_MIN  
+"max" = NotficationCompat.PRIORITY_MAX
+"high" = NotficationCompat.PRIORITY_HIGH
+"low" = NotficationCompat.PRIORITY_LOW
+"min" = NotficationCompat.PRIORITY_MIN
 "default" = NotficationCompat.PRIORITY_DEFAULT
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
@@ -392,8 +433,8 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"private" = NotficationCompat.VISIBILITY_PRIVATE  
-"public" = NotficationCompat.VISIBILITY_PUBLIC  
+"private" = NotficationCompat.VISIBILITY_PRIVATE
+"public" = NotficationCompat.VISIBILITY_PUBLIC
 "secret" = NotficationCompat.VISIBILITY_SECRET
 
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
@@ -404,12 +445,12 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"default" = NotificationManager.IMPORTANCE_DEFAULT  
-"max" = NotificationManager.IMPORTANCE_MAX  
-"high" = NotificationManager.IMPORTANCE_HIGH  
-"low" = NotificationManager.IMPORTANCE_LOW  
-"min" = NotificationManager.IMPORTANCE_MIN  
-"none" = NotificationManager.IMPORTANCE_NONE  
+"default" = NotificationManager.IMPORTANCE_DEFAULT
+"max" = NotificationManager.IMPORTANCE_MAX
+"high" = NotificationManager.IMPORTANCE_HIGH
+"low" = NotificationManager.IMPORTANCE_LOW
+"min" = NotificationManager.IMPORTANCE_MIN
+"none" = NotificationManager.IMPORTANCE_NONE
 "unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT

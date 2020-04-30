@@ -1,8 +1,8 @@
 {
   "name": "react-native-push-notification",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "React Native Local and Remote Notifications",
-  "main": "index",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

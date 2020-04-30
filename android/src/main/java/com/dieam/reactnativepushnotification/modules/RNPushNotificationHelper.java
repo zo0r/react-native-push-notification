@@ -55,6 +55,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import java.util.List;
+import java.util.Set;
+
+
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
 
@@ -184,6 +188,10 @@ public class RNPushNotificationHelper {
             Resources res = context.getResources();
             String packageName = context.getPackageName();
             String message = bundle.getString("message");
+
+
+            String channel_id = NOTIFICATION_CHANNEL_ID;
+
             String title = bundle.getString("title");
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
@@ -215,6 +223,8 @@ public class RNPushNotificationHelper {
                 }
             }
 
+            channel_id = channel_id + "-" + priority;
+
             int visibility = NotificationCompat.VISIBILITY_PRIVATE;
             final String visibilityString = bundle.getString("visibility");
 
@@ -234,7 +244,8 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channel_id)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(visibility)
@@ -342,6 +353,11 @@ public class RNPushNotificationHelper {
                         }
 
                         soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
+                            channel_id = channel_id + "-" + soundName;
+                        }
                     }
                 }
                 notification.setSound(soundUri);
@@ -369,16 +385,26 @@ public class RNPushNotificationHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
 
-            notification.setContentIntent(pendingIntent);
+
+            long[] vibratePattern = new long[]{0};
 
             if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
                 long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
                 if (vibration == 0)
                     vibration = DEFAULT_VIBRATION;
-                notification.setVibrate(new long[]{0, vibration});
+                
+                channel_id = channel_id + "-" + vibration;
+
+                vibratePattern = new long[]{0, vibration};
+
+                notification.setVibrate(vibratePattern);
             }
+
+            checkOrCreateChannel(notificationManager, channel_id, soundUri, priority, vibratePattern);
+
+            notification.setChannelId(channel_id);
+            notification.setContentIntent(pendingIntent);
 
             JSONArray actionsArray = null;
             try {
@@ -728,8 +754,18 @@ public class RNPushNotificationHelper {
         }
     }
 
-    private static boolean channelCreated = false;
-    private void checkOrCreateChannel(NotificationManager manager) {
+
+    public void checkOrCreateDefaultChannel() {
+      NotificationManager manager = notificationManager();
+
+      int importance = NotificationCompat.PRIORITY_HIGH;
+
+      String channel_id = NOTIFICATION_CHANNEL_ID + "-" + importance;
+
+      checkOrCreateChannel(manager, channel_id, null, importance, new long[] {0});
+    }
+
+    private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri, int importance, long[] vibratePattern) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (channelCreated)
@@ -737,40 +773,22 @@ public class RNPushNotificationHelper {
         if (manager == null)
             return;
 
-        Bundle bundle = new Bundle();
 
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        final String importanceString = bundle.getString("importance");
+        NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
-        if (importanceString != null) {
-            switch(importanceString.toLowerCase()) {
-                case "default":
-                    importance = NotificationManager.IMPORTANCE_DEFAULT;
-                    break;
-                case "max":
-                    importance = NotificationManager.IMPORTANCE_MAX;
-                    break;
-                case "high":
-                    importance = NotificationManager.IMPORTANCE_HIGH;
-                    break;
-                case "low":
-                    importance = NotificationManager.IMPORTANCE_LOW;
-                    break;
-                case "min":
-                    importance = NotificationManager.IMPORTANCE_MIN;
-                    break;
-                case "none":
-                    importance = NotificationManager.IMPORTANCE_NONE;
-                    break;
-                case "unspecified":
-                    importance = NotificationManager.IMPORTANCE_UNSPECIFIED;
-                    break;
-                default:
-                    importance = NotificationManager.IMPORTANCE_HIGH;
-            }
-        }
+        if (channel == null) {
+            channel = new NotificationChannel(channel_id, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
 
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
+            channel.setDescription(this.config.getChannelDescription());
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(vibratePattern);
+
+            if (soundUri != null) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
 
         channel.setDescription(this.config.getChannelDescription());
         channel.enableLights(true);
