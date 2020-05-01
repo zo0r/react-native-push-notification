@@ -670,9 +670,9 @@ public class RNPushNotificationHelper {
 
       int importance = NotificationManager.IMPORTANCE_HIGH;
 
-      String channel_id = NOTIFICATION_CHANNEL_ID + "-" + importance;
+      String channel_id = NOTIFICATION_CHANNEL_ID + "-" + importance + "-" + DEFAULT_VIBRATION;
 
-      checkOrCreateChannel(manager, channel_id, null, importance, new long[] {0});
+      checkOrCreateChannel(manager, channel_id, null, importance, new long[] {0, DEFAULT_VIBRATION});
     }
 
     private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri, int importance, long[] vibratePattern) {
