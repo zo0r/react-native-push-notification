@@ -206,7 +206,38 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            channel_id = channel_id + "-" + priority;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            final String importanceString = bundle.getString("importance");	
+
+            if (importanceString != null) {	
+                switch(importanceString.toLowerCase()) {	
+                    case "default":	
+                        importance = NotificationManager.IMPORTANCE_DEFAULT;	
+                        break;	
+                    case "max":	
+                        importance = NotificationManager.IMPORTANCE_MAX;	
+                        break;	
+                    case "high":	
+                        importance = NotificationManager.IMPORTANCE_HIGH;	
+                        break;	
+                    case "low":	
+                        importance = NotificationManager.IMPORTANCE_LOW;	
+                        break;	
+                    case "min":	
+                        importance = NotificationManager.IMPORTANCE_MIN;	
+                        break;	
+                    case "none":	
+                        importance = NotificationManager.IMPORTANCE_NONE;	
+                        break;	
+                    case "unspecified":	
+                        importance = NotificationManager.IMPORTANCE_UNSPECIFIED;	
+                        break;	
+                    default:	
+                        importance = NotificationManager.IMPORTANCE_HIGH;	
+                }	
+            }	
+
+            channel_id = channel_id + "-" + importance;
 
             int visibility = NotificationCompat.VISIBILITY_PRIVATE;
             final String visibilityString = bundle.getString("visibility");
@@ -379,7 +410,7 @@ public class RNPushNotificationHelper {
                 notification.setVibrate(vibratePattern);
             }
 
-            checkOrCreateChannel(notificationManager, channel_id, soundUri, priority, vibratePattern);
+            checkOrCreateChannel(notificationManager, channel_id, soundUri, importance, vibratePattern);
 
             notification.setChannelId(channel_id);
             notification.setContentIntent(pendingIntent);
@@ -637,7 +668,7 @@ public class RNPushNotificationHelper {
     public void checkOrCreateDefaultChannel() {
       NotificationManager manager = notificationManager();
 
-      int importance = NotificationCompat.PRIORITY_HIGH;
+      int importance = NotificationManager.IMPORTANCE_HIGH;
 
       String channel_id = NOTIFICATION_CHANNEL_ID + "-" + importance;
 
