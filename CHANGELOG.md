@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- (Android) Fix regression with the importance of the notication.
+- (Android) Fix regression with the importance of the notification.
 
 ## [3.3.0] - 2020-04-29
 
