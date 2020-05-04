@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+- (Android) Add a new key in `AndroidManifest.xml` to allow/remove notification in foreground.
+
+```xml
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
+                    android:value="false"/>
+```
+
 ### Fixed
 
 ## [3.3.1] - 2020-05-01

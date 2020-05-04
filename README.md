@@ -80,6 +80,10 @@ In your `android/app/src/main/AndroidManifest.xml`
                 android:value="YOUR NOTIFICATION CHANNEL NAME"/>
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
                     android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
+
+        <!-- Change the value to true to enable pop-up for in foreground (remote-only, for local use ignoreInForeground) -->
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
+                    android:value="false"/>
         <!-- Change the resource name to your App's accent color - or any other color you want -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                     android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->

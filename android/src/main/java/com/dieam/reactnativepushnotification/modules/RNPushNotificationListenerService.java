@@ -122,6 +122,8 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
+        RNPushNotificationConfig config = new RNPushNotificationConfig(getApplication());
+
         Boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
@@ -135,7 +137,8 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         }
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
-        if (!isForeground) {
+
+        if (config.getNotificationForeground() || !isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
@@ -147,12 +150,10 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         if (processInfos != null) {
             for (RunningAppProcessInfo processInfo : processInfos) {
-                if (processInfo.processName.equals(getApplication().getPackageName())) {
-                    if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                        for (String d : processInfo.pkgList) {
-                            return true;
-                        }
-                    }
+                if (processInfo.processName.equals(getApplication().getPackageName())
+                    && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    && processInfo.pkgList.length > 0) {
+                    return true;
                 }
             }
         }
