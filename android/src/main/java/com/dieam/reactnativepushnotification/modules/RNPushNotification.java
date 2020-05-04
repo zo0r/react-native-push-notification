@@ -129,6 +129,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
                   @Override
                   public void onComplete(@NonNull Task<InstanceIdResult> task) {
                       if (!task.isSuccessful()) {
+                          Log.e(LOG_TAG, "exception", task.getException());
                           return;
                       }
 
