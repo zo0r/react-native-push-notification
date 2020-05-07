@@ -207,7 +207,7 @@ PushNotification.configure({
     console.log("TOKEN:", token);
   },
 
-  // (required) Called when a remote or local notification is opened or received
+  // (required) Called when a remote is received in foreground or opened, or local notification is opened
   onNotification: function (notification) {
     console.log("NOTIFICATION:", notification);
 
