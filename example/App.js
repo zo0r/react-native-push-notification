@@ -84,6 +84,17 @@ export default class App extends Component {
           }}>
           <Text>Request Permissions</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            this.notif.revokeToken();
+            Alert.alert(
+              'Revoke Token',
+              'Token has been revoked. Reload the app to register again with a new token.'
+            );
+          }}>
+          <Text>Revoke Token</Text>
+        </TouchableOpacity>
 
         <View style={styles.spacer}></View>
 

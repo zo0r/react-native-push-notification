@@ -116,4 +116,8 @@ export default class NotifService {
   cancelAll() {
     PushNotification.cancelAllLocalNotifications();
   }
+
+  revokeToken() {
+    PushNotification.revokeToken();
+  }
 }
