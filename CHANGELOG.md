@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+### Fixed
+
+## [3.4.0] - 2020-05-08
+
+### Features
+
 - (Android) Call `onRegister` when [Firebase renew token](<https://firebase.google.com/docs/reference/android/com/google/firebase/messaging/FirebaseMessagingService#onNewToken(java.lang.String)>).
 - (Android) Added Abandon Permissions method to Android [#1425](https://github.com/zo0r/react-native-push-notification/pull/1425)
 - (Android) Add a new key in `AndroidManifest.xml` to allow/remove notification in foreground.
@@ -21,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - (Android) `number` and `id` are now correctly handled as number in Android.
+- (iOS) Update push-notification-ios to 1.2.0 [#1410](https://github.com/zo0r/react-native-push-notification/pull/1410)
 - Make sure to import PushNotificationIOS from react-native first [#617](https://github.com/zo0r/react-native-push-notification/pull/617)
 
 ## [3.3.1] - 2020-05-01
