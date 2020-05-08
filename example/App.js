@@ -102,10 +102,6 @@ export default class App extends Component {
           style={styles.button}
           onPress={() => {
             this.notif.abandonPermissions();
-            Alert.alert(
-              'Abandon Permissions',
-              'Reload the app to register again with a new token'
-            );
           }}>
           <Text>Abandon Permissions</Text>
         </TouchableOpacity>

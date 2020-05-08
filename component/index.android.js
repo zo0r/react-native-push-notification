@@ -127,6 +127,10 @@ NotificationsComponent.prototype.removeDeliveredNotifications = function(identif
   RNPushNotification.removeDeliveredNotifications(identifiers);
 }
 
+NotificationsComponent.prototype.abandonPermissions = function() {
+	RNPushNotification.abandonPermissions();
+}
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()

@@ -265,11 +265,16 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      * Unregister for all remote notifications received
      */
     public void abandonPermissions() {
-      try {
-        FirebaseInstanceId.getInstance().deleteInstanceId();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "exception", e);
-        return;
-      }
+      new Thread(new Runnable() {
+          @Override
+          public void run() {
+              try {
+                  FirebaseInstanceId.getInstance().deleteInstanceId();
+                  Log.i(LOG_TAG, "InstanceID deleted");
+              } catch (IOException e) {
+                  Log.e(LOG_TAG, "exception", e);
+              }
+          }
+      }).start();
     }
 }
