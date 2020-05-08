@@ -140,6 +140,14 @@ Notifications.localNotification = function(details) {
 			userInfo: details.userInfo
 		});
 	} else {
+    if(details && typeof details.id === 'number') {
+      details.id = '' + details.id;
+    }
+
+    if(details && typeof details.number === 'number') {
+      details.number = '' + details.number;
+    }
+  
 		this.handler.presentLocalNotification(details);
 	}
 };
@@ -178,6 +186,14 @@ Notifications.localNotificationSchedule = function(details) {
 		}
 		this.handler.scheduleLocalNotification(iosDetails);
 	} else {
+    if(details && typeof details.id === 'number') {
+      details.id = '' + details.id;
+    }
+
+    if(details && typeof details.number === 'number') {
+      details.number = '' + details.number;
+    }
+  
 		details.fireDate = details.date.getTime();
 		delete details.date;
 		// ignore iOS only repeatType

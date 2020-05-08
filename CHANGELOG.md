@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+- (Android) Call `onRegister` when [Firebase renew token](<https://firebase.google.com/docs/reference/android/com/google/firebase/messaging/FirebaseMessagingService#onNewToken(java.lang.String)>).
 - (Android) Add a new key in `AndroidManifest.xml` to allow/remove notification in foreground.
 
 ```xml
@@ -17,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ```
 
 ### Fixed
+
+- (Android) `number` and `id` are now correctly handled as number in Android.
 
 ## [3.3.1] - 2020-05-01
 
