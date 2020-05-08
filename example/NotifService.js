@@ -117,7 +117,7 @@ export default class NotifService {
     PushNotification.cancelAllLocalNotifications();
   }
 
-  revokeToken() {
-    PushNotification.revokeToken();
+  abandonPermissions() {
+    PushNotification.abandonPermissions();
   }
 }

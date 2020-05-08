@@ -87,13 +87,13 @@ export default class App extends Component {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            this.notif.revokeToken();
+            this.notif.abandonPermissions();
             Alert.alert(
-              'Revoke Token',
-              'Token has been revoked. Reload the app to register again with a new token.'
+              'Abandon Permissions',
+              'Reload the app to register again with a new token'
             );
           }}>
-          <Text>Revoke Token</Text>
+          <Text>Abandon Permissions</Text>
         </TouchableOpacity>
 
         <View style={styles.spacer}></View>
