@@ -217,7 +217,7 @@ PushNotification.configure({
 
     // process the notification
 
-    // required on iOS only (see fetchCompletionHandler docs: https://github.com/react-native-community/react-native-push-notification-ios)
+    // (required) Called when a remote is received or opened, or local notification is opened
     notification.finish(PushNotificationIOS.FetchResult.NoData);
   },
 
