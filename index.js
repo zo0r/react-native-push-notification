@@ -204,6 +204,11 @@ Notifications.localNotificationSchedule = function(details) {
 	}
 };
 
+/* Abandon Permissions */
+Notifications.abandonPermissions = function() {
+	this.handler.abandonPermissions();
+}
+
 /* Internal Functions */
 Notifications._onRegister = function(token) {
 	if ( this.onRegister !== false ) {
@@ -329,10 +334,6 @@ Notifications.popInitialNotification = function(handler) {
 	this.callNative('getInitialNotification').then(function(result){
 		handler(result);
 	});
-};
-
-Notifications.abandonPermissions = function() {
-	return this.callNative('abandonPermissions', arguments);
 };
 
 Notifications.checkPermissions = function() {

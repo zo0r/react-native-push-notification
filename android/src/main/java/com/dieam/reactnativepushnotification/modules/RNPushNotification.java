@@ -25,6 +25,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -257,5 +258,18 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      */
     public void removeDeliveredNotifications(ReadableArray identifiers) {
       mRNPushNotificationHelper.clearDeliveredNotifications(identifiers);
+    }
+
+    @ReactMethod
+    /**
+     * Unregister for all remote notifications received
+     */
+    public void abandonPermissions() {
+      try {
+        FirebaseInstanceId.getInstance().deleteInstanceId();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "exception", e);
+        return;
+      }
     }
 }
