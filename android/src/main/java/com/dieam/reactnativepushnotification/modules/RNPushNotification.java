@@ -258,4 +258,18 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     public void removeDeliveredNotifications(ReadableArray identifiers) {
       mRNPushNotificationHelper.clearDeliveredNotifications(identifiers);
     }
+
+    @ReactMethod
+    /**
+     * Revokes the current token. Useful on logout cases and multi users at
+     * same device
+     */
+    public void revokeToken() {
+      try {
+        FirebaseInstanceId.getInstance().deleteInstanceId();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "exception", e);
+        return;
+      }
+    }
 }

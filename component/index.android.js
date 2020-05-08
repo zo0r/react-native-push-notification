@@ -131,6 +131,10 @@ NotificationsComponent.prototype.removeDeliveredNotifications = function(identif
   RNPushNotification.removeDeliveredNotifications(identifiers);
 }
 
+NotificationsComponent.prototype.revokeToken = function() {
+	RNPushNotification.revokeToken();
+}
+
 module.exports = {
 	state: false,
 	component: new NotificationsComponent()

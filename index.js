@@ -188,6 +188,11 @@ Notifications.localNotificationSchedule = function(details) {
 	}
 };
 
+/* Revoke Token */
+Notifications.revokeToken = function() {
+	this.handler.revokeToken();
+}
+
 /* Internal Functions */
 Notifications._onRegister = function(token) {
 	if ( this.onRegister !== false ) {
