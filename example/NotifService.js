@@ -5,7 +5,7 @@ export default class NotifService {
   constructor(onRegister, onNotification) {
     this.lastId = 0;
 
-    NotificationHandler.onRegister(onRegister);
+    NotificationHandler.attachRegister(onRegister);
     NotificationHandler.attachNotification(onNotification);
 
     // Clear badge number at start

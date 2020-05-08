@@ -120,13 +120,10 @@ export default class App extends Component {
   }
 
   onRegister(token) {
-    //Alert.alert('Registered !', JSON.stringify(token));
-    console.log(token);
     this.setState({registerToken: token.token, fcmRegistered: true});
   }
 
   onNotif(notif) {
-    console.log('onNotification', notif);
     Alert.alert(notif.title, notif.message);
   }
 
