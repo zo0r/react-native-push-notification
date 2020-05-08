@@ -413,6 +413,11 @@ Removes the specified notifications from Notification Center
 | ----------- | ----- | -------- | ---------------------------------- |
 | identifiers | array | Yes      | Array of notification identifiers. |
 
+
+## Abandon Permissions
+
+`PushNotification.abandonPermissions()` Revokes the current token and unregister for all remote notifications received via APNS or FCM.
+
 ## Notification priority
 
 (optional) Specify `priority` to set priority of notification. Default value: "high"
@@ -537,12 +542,6 @@ Same parameters as `PushNotification.localNotification()`
 - `badge`: boolean
 - `sound`: boolean
 
-## Revoke Token
-
-`PushNotification.revokeToken()` Revokes the current token. Useful on logout cases and multi users at same device
-
 ## iOS Only Methods
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
-
-`PushNotification.abandonPermissions()` Unregister for all remote notifications received via Apple Push Notification service.
