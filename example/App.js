@@ -52,9 +52,23 @@ export default class App extends Component {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
+            this.notif.localNotif('sample.mp3');
+          }}>
+          <Text>Local Notification with sound (now)</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
             this.notif.scheduleNotif();
           }}>
           <Text>Schedule Notification in 30s</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            this.notif.scheduleNotif('sample.mp3');
+          }}>
+          <Text>Schedule Notification with sound in 30s</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
