@@ -203,6 +203,7 @@ public class MainApplication extends Application implements ReactApplication {
 ## Usage
 
 ```javascript
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
 var PushNotification = require("react-native-push-notification");
 
 PushNotification.configure({
@@ -211,7 +212,7 @@ PushNotification.configure({
     console.log("TOKEN:", token);
   },
 
-  // (required) Called when a remote or local notification is opened or received
+  // (required) Called when a remote is received in foreground or opened, or local notification is opened
   onNotification: function (notification) {
     console.log("NOTIFICATION:", notification);
 
