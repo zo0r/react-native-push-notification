@@ -25,6 +25,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -261,10 +262,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     /**
-     * Revokes the current token. Useful on logout cases and multi users at
-     * same device
+     * Unregister for all remote notifications received
      */
-    public void revokeToken() {
+    public void abandonPermissions() {
       try {
         FirebaseInstanceId.getInstance().deleteInstanceId();
       } catch (IOException e) {

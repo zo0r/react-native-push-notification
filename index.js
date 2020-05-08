@@ -188,9 +188,9 @@ Notifications.localNotificationSchedule = function(details) {
 	}
 };
 
-/* Revoke Token */
-Notifications.revokeToken = function() {
-	this.handler.revokeToken();
+/* Abandon Permissions */
+Notifications.abandonPermissions = function() {
+	this.handler.abandonPermissions();
 }
 
 /* Internal Functions */
@@ -318,10 +318,6 @@ Notifications.popInitialNotification = function(handler) {
 	this.callNative('getInitialNotification').then(function(result){
 		handler(result);
 	});
-};
-
-Notifications.abandonPermissions = function() {
-	return this.callNative('abandonPermissions', arguments);
 };
 
 Notifications.checkPermissions = function() {

@@ -61,10 +61,6 @@ NotificationsComponent.prototype.setApplicationIconBadgeNumber = function(number
        RNPushNotification.setApplicationIconBadgeNumber(number);
 };
 
-NotificationsComponent.prototype.abandonPermissions = function() {
-	/* Void */
-};
-
 NotificationsComponent.prototype.checkPermissions = function(callback) {
 	RNPushNotification.checkPermissions().then(alert => callback({ alert }));
 };
@@ -131,8 +127,8 @@ NotificationsComponent.prototype.removeDeliveredNotifications = function(identif
   RNPushNotification.removeDeliveredNotifications(identifiers);
 }
 
-NotificationsComponent.prototype.revokeToken = function() {
-	RNPushNotification.revokeToken();
+NotificationsComponent.prototype.abandonPermissions = function() {
+	RNPushNotification.abandonPermissions();
 }
 
 module.exports = {
