@@ -537,6 +537,10 @@ Same parameters as `PushNotification.localNotification()`
 - `badge`: boolean
 - `sound`: boolean
 
+## Revoke Token
+
+`PushNotification.revokeToken()` Revokes the current token. Useful on logout cases and multi users at same device
+
 ## iOS Only Methods
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
