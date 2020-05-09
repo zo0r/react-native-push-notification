@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- (Android) `number` and `id` do not crash if NaN is passed in Android.
+
 ## [3.4.0] - 2020-05-08
 
 ### Features
