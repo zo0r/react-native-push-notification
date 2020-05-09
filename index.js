@@ -141,12 +141,25 @@ Notifications.localNotification = function(details) {
 		});
 	} else {
     if(details && typeof details.id === 'number') {
-      details.id = '' + details.id;
+      if(isNaN(details.id)) {
+        console.warn('NaN value has been passed as id');
+        delete details.id;
+      }
+      else {
+        details.id = '' + details.id;
+      }
     }
 
     if(details && typeof details.number === 'number') {
-      details.number = '' + details.number;
+      if(isNaN(details.number)) {
+        console.warn('NaN value has been passed as number');
+        delete details.number;
+      }
+      else {
+        details.number = '' + details.number;
+      }
     }
+  
   
 		this.handler.presentLocalNotification(details);
 	}
@@ -187,11 +200,23 @@ Notifications.localNotificationSchedule = function(details) {
 		this.handler.scheduleLocalNotification(iosDetails);
 	} else {
     if(details && typeof details.id === 'number') {
-      details.id = '' + details.id;
+      if(isNaN(details.id)) {
+        console.warn('NaN value has been passed as id');
+        delete details.id;
+      }
+      else {
+        details.id = '' + details.id;
+      }
     }
 
     if(details && typeof details.number === 'number') {
-      details.number = '' + details.number;
+      if(isNaN(details.number)) {
+        console.warn('NaN value has been passed as number');
+        delete details.number;
+      }
+      else {
+        details.number = '' + details.number;
+      }
     }
   
 		details.fireDate = details.date.getTime();

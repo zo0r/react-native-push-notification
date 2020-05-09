@@ -80,13 +80,19 @@ public class RNPushNotificationHelper {
     }
 
     private PendingIntent toScheduleNotificationIntent(Bundle bundle) {
-        int notificationID = Integer.parseInt(bundle.getString("id"));
+        try {
+            int notificationID = Integer.parseInt(bundle.getString("id"));
 
-        Intent notificationIntent = new Intent(context, RNPushNotificationPublisher.class);
-        notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
-        notificationIntent.putExtras(bundle);
+            Intent notificationIntent = new Intent(context, RNPushNotificationPublisher.class);
+            notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
+            notificationIntent.putExtras(bundle);
 
-        return PendingIntent.getBroadcast(context, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            return PendingIntent.getBroadcast(context, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Unable to parse Notification ID", e);
+        }
+
+        return null;
     }
 
     public void sendNotificationScheduled(Bundle bundle) {
@@ -136,6 +142,10 @@ public class RNPushNotificationHelper {
         // If the fireDate is in past, this will fire immediately and show the
         // notification to the user
         PendingIntent pendingIntent = toScheduleNotificationIntent(bundle);
+
+        if(pendingIntent == null) {
+            return;
+        }
 
         Log.d(LOG_TAG, String.format("Setting a notification with id %s at time %s",
                 bundle.getString("id"), Long.toString(fireDate)));
@@ -636,7 +646,11 @@ public class RNPushNotificationHelper {
         // remove it from the alarm manger schedule
         Bundle b = new Bundle();
         b.putString("id", notificationIDString);
-        getAlarmManager().cancel(toScheduleNotificationIntent(b));
+        PendingIntent pendingIntent = toScheduleNotificationIntent(b);
+
+        if(pendingIntent != null) {
+            getAlarmManager().cancel(pendingIntent);
+        }
 
         if (scheduledNotificationsPersistence.contains(notificationIDString)) {
             // remove it from local storage
@@ -650,7 +664,11 @@ public class RNPushNotificationHelper {
         // removed it from the notification center
         NotificationManager notificationManager = notificationManager();
 
-        notificationManager.cancel(Integer.parseInt(notificationIDString));
+        try {
+            notificationManager.cancel(Integer.parseInt(notificationIDString));
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Unable to parse Notification ID " + notificationIDString, e);
+        }
     }
 
     private NotificationManager notificationManager() {
