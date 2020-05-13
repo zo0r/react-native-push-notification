@@ -369,11 +369,13 @@ public class RNPushNotificationHelper {
                         }
 
                         soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
-                            channel_id = channel_id + "-" + soundName;
-                        }
                     }
+                } else {
+                    soundName = "default";
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
+                    channel_id = channel_id + "-" + soundName;
                 }
 
                 notification.setSound(soundUri);
@@ -687,10 +689,13 @@ public class RNPushNotificationHelper {
       NotificationManager manager = notificationManager();
 
       int importance = NotificationManager.IMPORTANCE_HIGH;
+      Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+      
+      String channel_id_sound = NOTIFICATION_CHANNEL_ID + "-default-" + importance + "-" + DEFAULT_VIBRATION;
+      checkOrCreateChannel(manager, channel_id, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
 
-      String channel_id = NOTIFICATION_CHANNEL_ID + "-" + importance + "-" + DEFAULT_VIBRATION;
-
-      checkOrCreateChannel(manager, channel_id, null, importance, new long[] {0, DEFAULT_VIBRATION});
+      String channel_id_no_sound = NOTIFICATION_CHANNEL_ID + "-" + importance + "-" + DEFAULT_VIBRATION;
+      checkOrCreateChannel(manager, channel_id_no_sound, null, importance, new long[] {0, DEFAULT_VIBRATION});
     }
 
     private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri, int importance, long[] vibratePattern) {
