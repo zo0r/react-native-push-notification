@@ -691,9 +691,11 @@ public class RNPushNotificationHelper {
       int importance = NotificationManager.IMPORTANCE_HIGH;
       Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
       
+      // Instanciate a default channel with default sound.
       String channel_id_sound = NOTIFICATION_CHANNEL_ID + "-default-" + importance + "-" + DEFAULT_VIBRATION;
-      checkOrCreateChannel(manager, channel_id, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
+      checkOrCreateChannel(manager, channel_id_sound, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
 
+      // Instanciate a default channel without sound defined for backward compatibility.
       String channel_id_no_sound = NOTIFICATION_CHANNEL_ID + "-" + importance + "-" + DEFAULT_VIBRATION;
       checkOrCreateChannel(manager, channel_id_no_sound, null, importance, new long[] {0, DEFAULT_VIBRATION});
     }
