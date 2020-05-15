@@ -265,6 +265,12 @@ public class RNPushNotificationHelper {
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
             
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // API 24 and higher
+                // Restore showing timestamp on Android 7+
+                // Source: https://developer.android.com/reference/android/app/Notification.Builder.html#setShowWhen(boolean)
+                notification.setShowWhen(true);
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
                 // Changing Default mode of notification
                 notification.setDefaults(Notification.DEFAULT_LIGHTS);
