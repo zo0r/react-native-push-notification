@@ -26,6 +26,19 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
+import androidx.annotation.Nullable;
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.common.Priority;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -56,6 +69,8 @@ public class RNPushNotificationHelper {
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
+
+    private String TAG = "RNPushNotificationHelper";
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -145,12 +160,15 @@ public class RNPushNotificationHelper {
             } else {
                 getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
             }
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         } else {
             getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
         }
     }
 
-    public void sendToNotificationCentre(Bundle bundle) {
+    public void sendNotificationWithImage(Bundle bundle, Bitmap image, Bitmap largeIconImage) {
+        Log.d(TAG, "sendNotificationWithImage: bitmao log: " + image);
+        Log.d(TAG, "sendNotificationWithImage: bitmao log: " + largeIconImage);
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -172,6 +190,7 @@ public class RNPushNotificationHelper {
 
             Resources res = context.getResources();
             String packageName = context.getPackageName();
+            String message = bundle.getString("message");
 
             String channel_id = NOTIFICATION_CHANNEL_ID;
 
@@ -330,6 +349,26 @@ public class RNPushNotificationHelper {
             }
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            if (largeIconImage != null) {
+                notification.setLargeIcon(largeIconImage);
+            } else {
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    notification.setLargeIcon(largeIconBitmap);
+                }
+            }
+
+            if (image != null) {
+                notification.setStyle(
+                        new NotificationCompat.BigPictureStyle()
+                                .bigPicture(image)
+                                .setBigContentTitle(title)
+                                .setSummaryText(message)
+                );
+            } else {
+                notification.setContentText(message);
+                notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            }
+            // notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -410,6 +449,7 @@ public class RNPushNotificationHelper {
                 notification.setVibrate(vibratePattern);
             }
 
+            soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             checkOrCreateChannel(notificationManager, channel_id, soundUri, importance, vibratePattern);
 
             notification.setChannelId(channel_id);
@@ -485,6 +525,105 @@ public class RNPushNotificationHelper {
         } catch (Exception e) {
             Log.e(LOG_TAG, "failed to send push notification", e);
         }
+    }
+
+    public void sendToNotificationCentre(final Bundle bundle) {
+        Log.d(TAG, "sendToNotificationCentre: bundle: " + bundle.toString());
+        String imageUrl = bundle.getString("imageUrl");
+        String largeIconUrl = bundle.getString("largeIconUrl");
+
+        if (imageUrl == null && largeIconUrl == null) {
+            sendNotificationWithImage(bundle, null, null);
+            return;
+        }
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+
+        if (imageUrl == null) {
+            ImageRequest largeIconRequest = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(largeIconUrl))
+                    .setRequestPriority(Priority.HIGH)
+                    .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                    .build();
+            DataSource<CloseableReference<CloseableImage>> largeIcondataSource =
+                    imagePipeline.fetchDecodedImage(largeIconRequest, context);
+
+            largeIcondataSource.subscribe(new BaseBitmapDataSubscriber() {
+                @Override
+                public void onNewResultImpl(@Nullable Bitmap bitmap2) {
+                    sendNotificationWithImage(bundle, null, bitmap2);
+                }
+
+                @Override
+                public void onFailureImpl(DataSource dataSource) {
+                    sendNotificationWithImage(bundle, null, null);
+                }
+            }, CallerThreadExecutor.getInstance());
+        } else if (largeIconUrl == null) {
+            ImageRequest imageRequest = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(imageUrl))
+                    .setRequestPriority(Priority.HIGH)
+                    .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                    .build();
+
+            DataSource<CloseableReference<CloseableImage>> dataSource =
+                    imagePipeline.fetchDecodedImage(imageRequest, context);
+
+            dataSource.subscribe(new BaseBitmapDataSubscriber() {
+                @Override
+                public void onNewResultImpl(final @Nullable Bitmap bitmap1) {
+                    sendNotificationWithImage(bundle, bitmap1, null);
+                }
+
+                @Override
+                public void onFailureImpl(DataSource dataSource) {
+                    sendNotificationWithImage(bundle, null, null);
+                    ;
+                }
+            }, CallerThreadExecutor.getInstance());
+        } else {
+            ImageRequest imageRequest = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(imageUrl))
+                    .setRequestPriority(Priority.HIGH)
+                    .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                    .build();
+
+            ImageRequest largeIconRequest = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(largeIconUrl))
+                    .setRequestPriority(Priority.HIGH)
+                    .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+                    .build();
+
+            DataSource<CloseableReference<CloseableImage>> dataSource =
+                    imagePipeline.fetchDecodedImage(imageRequest, context);
+
+            final DataSource<CloseableReference<CloseableImage>> largeIcondataSource =
+                    imagePipeline.fetchDecodedImage(largeIconRequest, context);
+
+            dataSource.subscribe(new BaseBitmapDataSubscriber() {
+                @Override
+                public void onNewResultImpl(final @Nullable Bitmap bitmap1) {
+
+                    largeIcondataSource.subscribe(new BaseBitmapDataSubscriber() {
+                        @Override
+                        public void onNewResultImpl(@Nullable Bitmap bitmap2) {
+                            sendNotificationWithImage(bundle, bitmap1, bitmap2);
+                        }
+
+                        @Override
+                        public void onFailureImpl(DataSource dataSource) {
+                            return;
+                        }
+                    }, CallerThreadExecutor.getInstance());
+                }
+
+                @Override
+                public void onFailureImpl(DataSource dataSource) {
+                    return;
+                }
+            }, CallerThreadExecutor.getInstance());
+        }
+
     }
 
     private void scheduleNextNotificationIfRepeating(Bundle bundle) {
@@ -698,6 +837,9 @@ public class RNPushNotificationHelper {
                         .build();
 
                 channel.setSound(soundUri, audioAttributes);
+                channel.setDescription(this.config.getChannelDescription());
+                channel.enableLights(true);
+                channel.enableVibration(true);
             } else {
                 channel.setSound(null, null);
             }
