@@ -10,6 +10,11 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
     private RNReceivedMessageHandler mMessageReceivedHandler = new RNReceivedMessageHandler(this);
 
     @Override
+    public void onNewToken(String token) {
+        mMessageReceivedHandler.onNewToken(token);
+    }
+
+    @Override
     public void onMessageReceived(RemoteMessage message) {
         mMessageReceivedHandler.handleReceivedMessage(message);
     }
