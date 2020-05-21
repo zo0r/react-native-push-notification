@@ -1,6 +1,6 @@
 {
   "name": "react-native-push-notification",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "React Native Local and Remote Notifications",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "notifications",
     "push",
     "apns",
-    "gcm"
+    "firebase"
   ],
   "bugs": {
     "url": "https://github.com/zo0r/react-native-push-notification/issues"

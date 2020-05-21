@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## [3.5.1] - 2020-05-20
+
+### Fixed
+
+- (Android) When updating 3.4 to 3.5, unable to compile Android [#1449](https://github.com/zo0r/react-native-push-notification/pull/1449)
+
 ## [3.5.0] - 2020-05-20
 
 ### Features
@@ -20,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - (Android) No sound on notifications [#1432](https://github.com/zo0r/react-native-push-notification/issues/1432)
-- (Android) onNotification is not calling when app is in background  [#1446](https://github.com/zo0r/react-native-push-notification/pull/1446)
+- (Android) onNotification is not calling when app is in background [#1446](https://github.com/zo0r/react-native-push-notification/pull/1446)
 - (Android) `number` and `id` do not crash if NaN is passed in Android.
 
 ## [3.4.0] - 2020-05-08
