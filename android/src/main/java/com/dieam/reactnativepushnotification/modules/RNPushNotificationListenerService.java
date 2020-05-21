@@ -6,7 +6,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.support.annotation.NonNull;
 
 import com.dieam.reactnativepushnotification.modules.RNReceivedMessageHandler;
 import com.facebook.react.ReactApplication;
