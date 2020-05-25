@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## [3.5.2] - 2020-05-25
+
+### Fixed
+
+- (Android) Sounds are playing even in Do Not Disturb [#1432](https://github.com/zo0r/react-native-push-notification/issues/1432#issuecomment-633367111)
+- (Android) onNotification fires every time when the app goes from background to foreground [#1455](https://github.com/zo0r/react-native-push-notification/issues/1455)
+- (Android) Cannot send to notification centre because there is no 'message' field in: Bundle [#1452](https://github.com/zo0r/react-native-push-notification/issues/1452)
+
 ## [3.5.1] - 2020-05-20
 
 ### Fixed
