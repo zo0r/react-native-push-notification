@@ -719,7 +719,7 @@ public class RNPushNotificationHelper {
             if (soundUri != null) {
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                         .build();
 
                 channel.setSound(soundUri, audioAttributes);
