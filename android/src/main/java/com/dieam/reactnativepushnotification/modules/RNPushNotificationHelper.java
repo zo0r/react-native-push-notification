@@ -709,9 +709,9 @@ public class RNPushNotificationHelper {
         NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
         if (channel == null) {
-            channel = new NotificationChannel(channel_id, this.config.getChannelName() != null ? this.config.getChannelName() : "rn-push-notification-channel", importance);
+            channel = new NotificationChannel(channel_id, this.config.getChannelName(channel_id), importance);
 
-            channel.setDescription(this.config.getChannelDescription());
+            channel.setDescription(this.config.getChannelDescription(channel_id));
             channel.enableLights(true);
             channel.enableVibration(true);
             channel.setVibrationPattern(vibratePattern);
