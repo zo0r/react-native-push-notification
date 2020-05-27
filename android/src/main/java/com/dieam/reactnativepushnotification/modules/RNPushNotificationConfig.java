@@ -34,7 +34,7 @@ class RNPushNotificationConfig {
         try {
             final String value = metadata.getString(key);
 
-            if (value != null && name.length() > 0) {
+            if (value != null && value.length() > 0) {
                 return value;
             }
         } catch (Exception e) {
