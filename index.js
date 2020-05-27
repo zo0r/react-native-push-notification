@@ -266,6 +266,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				badge: data.getBadgeCount(),
 				alert: data.getAlert(),
 				sound: data.getSound(),
+				fireDate: data._fireDate,
   			finish: (res) => data.finish(res)
 			});
 		} else {
