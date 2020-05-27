@@ -46,15 +46,15 @@ class RNPushNotificationConfig {
     }
 
     public String getChannelName(String channel_id) {
-        String overrided = this.getStringValue(KEY_CHANNEL_NAME + "." + channel_id, "rn-push-notification-channel");  
+        String overrided = this.getStringValue(KEY_CHANNEL_NAME, "rn-push-notification-channel");  
 
-        return this.getStringValue(KEY_CHANNEL_NAME, overrided);
+        return this.getStringValue(KEY_CHANNEL_NAME + "." + channel_id, overrided);
     }
     
     public String getChannelDescription(String channel_id) {
-        String overrided = this.getStringValue(KEY_CHANNEL_DESCRIPTION + "." + channel_id, "");  
+        String overrided = this.getStringValue(KEY_CHANNEL_DESCRIPTION, "");  
         
-        return this.getStringValue(KEY_CHANNEL_DESCRIPTION, overrided);
+        return this.getStringValue(KEY_CHANNEL_DESCRIPTION + "." + channel_id, overrided);
     }
 
     public int getNotificationColor() {
