@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+- (iOS) Add fire date in notification response, NOTE: `push-notification-ios` in version `> 1.2.0` [#1345](https://github.com/zo0r/react-native-push-notification/pull/1345)
+
 ### Fixed
 
 ## [3.5.2] - 2020-05-25
