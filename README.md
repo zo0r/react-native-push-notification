@@ -293,7 +293,7 @@ PushNotification.localNotification({
   allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
   ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
   shortcutId: "shortcut-id", // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
-  channelId: "your-custom-channel-id", // (optional) custom channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created custom channel, it will apply options of the channel.
+  channelId: "your-custom-channel-id", // (optional) custom channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
 
   /* iOS only properties */
   alertAction: "view", // (optional) default: view
@@ -334,6 +334,51 @@ In iOS, add your custom sound file to the project `Resources` in xCode.
 In the location notification json specify the full file name:
 
     soundName: 'my_sound.mp3'
+
+## Channel Management (Android)
+
+This library doesn't include a full Channel Management at the moment. Channels are generated on the fly when you pass options to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
+
+The pattern of `channel_id` is:
+
+```
+rn-push-notification-channel-id(-soundname, default if playSound "-default")-(importance: default "4")-(vibration, default "300")
+```
+
+By default, 2 channels are created:
+
+- rn-push-notification-channel-id-default-4-300 (used for remote notification if none already exist).
+- rn-push-notification-channel-id-4-300 (previously used for remote notification but without sounds).
+
+In the notifications options, you can provide a custom channel id with `channelId: "your-custom-channel-id"`, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your `channelId` is different if you change these options. If you have created a custom channel in another way, it will apply options of the channel.
+
+Custom and generated channels can have custom name and description in the `AndroidManifest.xml`, only if the library is responsible of the creation of the channel.
+
+```xml
+  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name.[CHANNEL_ID]"
+          android:value="YOUR NOTIFICATION CHANNEL NAME FOR CHANNEL_ID"/>
+  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description.[CHANNEL_ID]"
+              android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION FOR CHANNEL_ID"/>
+```
+
+For example:
+
+```xml
+  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name.rn-push-notification-channel-id-4-300"
+          android:value="YOUR NOTIFICATION CHANNEL NAME FOR SILENT CHANNEL"/>
+  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description.rn-push-notification-channel-id-4-300"
+              android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION FOR SILENT CHANNEL"/>
+```
+
+If you want to use a different default channel for remote notification, refer to the documentation of Firebase:
+
+[Set up a Firebase Cloud Messaging client app on Android](https://firebase.google.com/docs/cloud-messaging/android/client?hl=fr)
+
+```xml
+  <meta-data
+      android:name="com.google.firebase.messaging.default_notification_channel_id"
+      android:value="@string/default_notification_channel_id" />
+```
 
 ## Cancelling notifications
 
