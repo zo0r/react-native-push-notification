@@ -217,35 +217,35 @@ public class RNPushNotificationHelper {
             }
 
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            final String importanceString = bundle.getString("importance");	
+            final String importanceString = bundle.getString("importance");
 
-            if (importanceString != null) {	
-                switch(importanceString.toLowerCase()) {	
-                    case "default":	
-                        importance = NotificationManager.IMPORTANCE_DEFAULT;	
-                        break;	
-                    case "max":	
-                        importance = NotificationManager.IMPORTANCE_MAX;	
-                        break;	
-                    case "high":	
-                        importance = NotificationManager.IMPORTANCE_HIGH;	
-                        break;	
-                    case "low":	
-                        importance = NotificationManager.IMPORTANCE_LOW;	
-                        break;	
-                    case "min":	
-                        importance = NotificationManager.IMPORTANCE_MIN;	
-                        break;	
-                    case "none":	
-                        importance = NotificationManager.IMPORTANCE_NONE;	
-                        break;	
-                    case "unspecified":	
-                        importance = NotificationManager.IMPORTANCE_UNSPECIFIED;	
-                        break;	
-                    default:	
-                        importance = NotificationManager.IMPORTANCE_HIGH;	
-                }	
-            }	
+            if (importanceString != null) {
+                switch(importanceString.toLowerCase()) {
+                    case "default":
+                        importance = NotificationManager.IMPORTANCE_DEFAULT;
+                        break;
+                    case "max":
+                        importance = NotificationManager.IMPORTANCE_MAX;
+                        break;
+                    case "high":
+                        importance = NotificationManager.IMPORTANCE_HIGH;
+                        break;
+                    case "low":
+                        importance = NotificationManager.IMPORTANCE_LOW;
+                        break;
+                    case "min":
+                        importance = NotificationManager.IMPORTANCE_MIN;
+                        break;
+                    case "none":
+                        importance = NotificationManager.IMPORTANCE_NONE;
+                        break;
+                    case "unspecified":
+                        importance = NotificationManager.IMPORTANCE_UNSPECIFIED;
+                        break;
+                    default:
+                        importance = NotificationManager.IMPORTANCE_HIGH;
+                }
+            }
 
             channel_id = channel_id + "-" + importance;
 
@@ -420,6 +420,15 @@ public class RNPushNotificationHelper {
                 vibratePattern = new long[]{0, vibration};
 
                 notification.setVibrate(vibratePattern); 
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { 
+              // Define the shortcutId
+              String shortcutId = bundle.getString("shortcutId");
+              
+              if (shortcutId != null) {
+                notification.setShortcutId(shortcutId);
+              }
             }
 
             // Override channel_id if there is one provided
