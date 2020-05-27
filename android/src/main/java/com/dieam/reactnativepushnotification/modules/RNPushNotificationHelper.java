@@ -419,7 +419,14 @@ public class RNPushNotificationHelper {
 
                 vibratePattern = new long[]{0, vibration};
 
-                notification.setVibrate(vibratePattern);
+                notification.setVibrate(vibratePattern); 
+            }
+
+            // Override channel_id if there is one provided
+            String customChannelId = bundle.getString("channelId");
+            
+            if (customChannelId != null) {
+              channel_id = customChannelId;
             }
 
             checkOrCreateChannel(notificationManager, channel_id, soundUri, importance, vibratePattern);
