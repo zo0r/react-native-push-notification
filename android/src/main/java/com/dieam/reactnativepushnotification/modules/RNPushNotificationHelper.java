@@ -1,6 +1,5 @@
 package com.dieam.reactnativepushnotification.modules;
 
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlarmManager;
@@ -160,7 +159,19 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void sendToNotificationCentre(Bundle bundle) {
+
+    public void sendToNotificationCentre(final Bundle bundle) {
+      RNPushNotificationPicturesAggregator aggregator = new RNPushNotificationPicturesAggregator(new RNPushNotificationPicturesAggregator.Callback() {
+        public void call(Bitmap largeIconImage, Bitmap bigPictureImage) {
+          sendToNotificationCentreWithPicture(bundle, largeIconImage, bigPictureImage);
+        }
+      });
+
+      aggregator.setLargeIconUrl(context, bundle.getString("largeIconUrl"));
+      aggregator.setBigPictureUrl(context, bundle.getString("bigPictureUrl"));
+    }
+
+    public void sendToNotificationCentreWithPicture(Bundle bundle, Bitmap largeIconBitmap, Bitmap bigPictureBitmap) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -286,23 +297,13 @@ public class RNPushNotificationHelper {
                 notification.setGroup(group);
             }
 
-            notification.setContentText(bundle.getString("message"));
-
-            String largeIcon = bundle.getString("largeIcon");
-
-            String subText = bundle.getString("subText");
-
-            if (subText != null) {
-                notification.setSubText(subText);
-            }
-
             String numberString = bundle.getString("number");
             if (numberString != null) {
                 notification.setNumber(Integer.parseInt(numberString));
             }
 
+            // Small icon
             int smallIconResId;
-            int largeIconResId;
 
             String smallIcon = bundle.getString("smallIcon");
 
@@ -320,26 +321,59 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            if (largeIcon != null) {
-                largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-            } else {
-                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-            }
-
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-
-            if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                notification.setLargeIcon(largeIconBitmap);
-            }
-
             notification.setSmallIcon(smallIconResId);
+
+            // Large icon
+            if(largeIconBitmap == null) {
+                int largeIconResId;
+
+                String largeIcon = bundle.getString("largeIcon");
+
+                if (largeIcon != null) {
+                    largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                } else {
+                    largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                }
+
+                // Before Lolipop there was no large icon for notifications.
+                if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                    largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+                }
+            }
+            
+            if (largeIconBitmap != null){
+              notification.setLargeIcon(largeIconBitmap);
+            }
+
+            String message = bundle.getString("message");
+
+            notification.setContentText(message);
+
+            String subText = bundle.getString("subText");
+
+            if (subText != null) {
+                notification.setSubText(subText);
+            }
+ 
             String bigText = bundle.getString("bigText");
 
             if (bigText == null) {
-                bigText = bundle.getString("message");
+                bigText = message;
             }
 
-            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            NotificationCompat.Style style;
+
+            if(bigPictureBitmap != null) {
+              style = new NotificationCompat.BigPictureStyle()
+                      .bigPicture(bigPictureBitmap)
+                      .setBigContentTitle(title)
+                      .setSummaryText(message);
+            }
+            else {
+              style = new NotificationCompat.BigTextStyle().bigText(bigText);
+            }
+
+            notification.setStyle(style);
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -761,5 +795,4 @@ public class RNPushNotificationHelper {
         }
         return false;
     }
-
 }

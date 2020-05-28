@@ -20,9 +20,13 @@ public class RNPushNotificationAttributes {
     private static final String TICKER = "ticker";
     private static final String AUTO_CANCEL = "autoCancel";
     private static final String LARGE_ICON = "largeIcon";
+    private static final String LARGE_ICON_URL = "largeIconUrl";
     private static final String SMALL_ICON = "smallIcon";
     private static final String BIG_TEXT = "bigText";
     private static final String SUB_TEXT = "subText";
+    private static final String BIG_PICTURE_URL = "bigPictureUrl";
+    private static final String SHORTCUT_ID = "shortcutId";
+    private static final String CHANNEL_ID = "channelId";
     private static final String NUMBER = "number";
     private static final String SOUND = "sound";
     private static final String COLOR = "color";
@@ -36,6 +40,8 @@ public class RNPushNotificationAttributes {
     private static final String REPEAT_TYPE = "repeatType";
     private static final String REPEAT_TIME = "repeatTime";
     private static final String ONGOING = "ongoing";
+    private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+    private static final String IGNORE_IN_FOREGROUND = "ignoreInForeground";
 
     private final String id;
     private final String message;
@@ -44,10 +50,14 @@ public class RNPushNotificationAttributes {
     private final String ticker;
     private final boolean autoCancel;
     private final String largeIcon;
+    private final String largeIconUrl;
     private final String smallIcon;
     private final String bigText;
     private final String subText;
+    private final String bigPictureUrl;
+    private final String shortcutId;
     private final String number;
+    private final String channelId;
     private final String sound;
     private final String color;
     private final String group;
@@ -60,6 +70,8 @@ public class RNPushNotificationAttributes {
     private final String repeatType;
     private final double repeatTime;
     private final boolean ongoing;
+    private final boolean allowWhileIdle;
+    private final boolean ignoreInForeground;
 
     public RNPushNotificationAttributes(Bundle bundle) {
         id = bundle.getString(ID);
@@ -69,10 +81,14 @@ public class RNPushNotificationAttributes {
         ticker = bundle.getString(TICKER);
         autoCancel = bundle.getBoolean(AUTO_CANCEL);
         largeIcon = bundle.getString(LARGE_ICON);
+        largeIconUrl = bundle.getString(LARGE_ICON_URL);
         smallIcon = bundle.getString(SMALL_ICON);
         bigText = bundle.getString(BIG_TEXT);
         subText = bundle.getString(SUB_TEXT);
+        bigPictureUrl= bundle.getString(BIG_PICTURE_URL);
+        shortcutId = bundle.getString(SHORTCUT_ID);
         number = bundle.getString(NUMBER);
+        channelId = bundle.getString(CHANNEL_ID);
         sound = bundle.getString(SOUND);
         color = bundle.getString(COLOR);
         group = bundle.getString(GROUP);
@@ -85,6 +101,8 @@ public class RNPushNotificationAttributes {
         repeatType = bundle.getString(REPEAT_TYPE);
         repeatTime = bundle.getDouble(REPEAT_TIME);
         ongoing = bundle.getBoolean(ONGOING);
+        allowWhileIdle = bundle.getBoolean(ALLOW_WHILE_IDLE);
+        ignoreInForeground = bundle.getBoolean(IGNORE_IN_FOREGROUND);
     }
 
     private RNPushNotificationAttributes(JSONObject jsonObject) {
@@ -96,10 +114,14 @@ public class RNPushNotificationAttributes {
             ticker = jsonObject.has(TICKER) ? jsonObject.getString(TICKER) : null;
             autoCancel = jsonObject.has(AUTO_CANCEL) ? jsonObject.getBoolean(AUTO_CANCEL) : true;
             largeIcon = jsonObject.has(LARGE_ICON) ? jsonObject.getString(LARGE_ICON) : null;
+            largeIconUrl = jsonObject.has(LARGE_ICON_URL) ? jsonObject.getString(LARGE_ICON_URL) : null;
             smallIcon = jsonObject.has(SMALL_ICON) ? jsonObject.getString(SMALL_ICON) : null;
             bigText = jsonObject.has(BIG_TEXT) ? jsonObject.getString(BIG_TEXT) : null;
             subText = jsonObject.has(SUB_TEXT) ? jsonObject.getString(SUB_TEXT) : null;
+            bigPictureUrl = jsonObject.has(BIG_PICTURE_URL) ? jsonObject.getString(BIG_PICTURE_URL) : null;
+            shortcutId = jsonObject.has(SHORTCUT_ID) ? jsonObject.getString(SHORTCUT_ID) : null;
             number = jsonObject.has(NUMBER) ? jsonObject.getString(NUMBER) : null;
+            channelId = jsonObject.has(CHANNEL_ID) ? jsonObject.getString(CHANNEL_ID) : null;
             sound = jsonObject.has(SOUND) ? jsonObject.getString(SOUND) : null;
             color = jsonObject.has(COLOR) ? jsonObject.getString(COLOR) : null;
             group = jsonObject.has(GROUP) ? jsonObject.getString(GROUP) : null;
@@ -112,6 +134,8 @@ public class RNPushNotificationAttributes {
             repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
             repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
+            allowWhileIdle = jsonObject.has(ALLOW_WHILE_IDLE) ? jsonObject.getBoolean(ALLOW_WHILE_IDLE) : false;
+            ignoreInForeground = jsonObject.has(IGNORE_IN_FOREGROUND) ? jsonObject.getBoolean(IGNORE_IN_FOREGROUND) : false;
         } catch (JSONException e) {
             throw new IllegalStateException("Exception while initializing RNPushNotificationAttributes from JSON", e);
         }
@@ -180,10 +204,14 @@ public class RNPushNotificationAttributes {
         bundle.putString(TICKER, ticker);
         bundle.putBoolean(AUTO_CANCEL, autoCancel);
         bundle.putString(LARGE_ICON, largeIcon);
+        bundle.putString(LARGE_ICON_URL, largeIconUrl);
         bundle.putString(SMALL_ICON, smallIcon);
         bundle.putString(BIG_TEXT, bigText);
         bundle.putString(SUB_TEXT, subText);
+        bundle.putString(BIG_PICTURE_URL, bigPictureUrl);
+        bundle.putString(SHORTCUT_ID, shortcutId);
         bundle.putString(NUMBER, number);
+        bundle.putString(CHANNEL_ID, channelId);
         bundle.putString(SOUND, sound);
         bundle.putString(COLOR, color);
         bundle.putString(GROUP, group);
@@ -196,6 +224,8 @@ public class RNPushNotificationAttributes {
         bundle.putString(REPEAT_TYPE, repeatType);
         bundle.putDouble(REPEAT_TIME, repeatTime);
         bundle.putBoolean(ONGOING, ongoing);
+        bundle.putBoolean(ALLOW_WHILE_IDLE, allowWhileIdle);
+        bundle.putBoolean(IGNORE_IN_FOREGROUND, ignoreInForeground);
         return bundle;
     }
 
@@ -209,10 +239,14 @@ public class RNPushNotificationAttributes {
             jsonObject.put(TICKER, ticker);
             jsonObject.put(AUTO_CANCEL, autoCancel);
             jsonObject.put(LARGE_ICON, largeIcon);
+            jsonObject.put(LARGE_ICON_URL, largeIconUrl);
             jsonObject.put(SMALL_ICON, smallIcon);
             jsonObject.put(BIG_TEXT, bigText);
+            jsonObject.put(BIG_PICTURE_URL, bigPictureUrl);
             jsonObject.put(SUB_TEXT, subText);
+            jsonObject.put(SHORTCUT_ID, shortcutId);
             jsonObject.put(NUMBER, number);
+            jsonObject.put(CHANNEL_ID, channelId);
             jsonObject.put(SOUND, sound);
             jsonObject.put(COLOR, color);
             jsonObject.put(GROUP, group);
@@ -225,6 +259,8 @@ public class RNPushNotificationAttributes {
             jsonObject.put(REPEAT_TYPE, repeatType);
             jsonObject.put(REPEAT_TIME, repeatTime);
             jsonObject.put(ONGOING, ongoing);
+            jsonObject.put(ALLOW_WHILE_IDLE, allowWhileIdle);
+            jsonObject.put(IGNORE_IN_FOREGROUND, ignoreInForeground);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Exception while converting RNPushNotificationAttributes to " +
                     "JSON. Returning an empty object", e);
@@ -244,10 +280,14 @@ public class RNPushNotificationAttributes {
                 ", ticker='" + ticker + '\'' +
                 ", autoCancel=" + autoCancel +
                 ", largeIcon='" + largeIcon + '\'' +
+                ", largeIconUrl='" + largeIconUrl + '\'' +
                 ", smallIcon='" + smallIcon + '\'' +
                 ", bigText='" + bigText + '\'' +
                 ", subText='" + subText + '\'' +
+                ", bigPictureUrl='" + bigPictureUrl + '\'' +
+                ", shortcutId='" + shortcutId + '\'' +
                 ", number='" + number + '\'' +
+                ", channelId='" + channelId + '\'' +
                 ", sound='" + sound + '\'' +
                 ", color='" + color + '\'' +
                 ", group='" + group + '\'' +
@@ -260,6 +300,8 @@ public class RNPushNotificationAttributes {
                 ", repeatType='" + repeatType + '\'' +
                 ", repeatTime=" + repeatTime +
                 ", ongoing=" + ongoing +
+                ", allowWhileIdle=" + allowWhileIdle +
+                ", ignoreInForeground=" + ignoreInForeground +
                 '}';
     }
 
@@ -270,5 +312,4 @@ public class RNPushNotificationAttributes {
     public double getFireDate() {
         return fireDate;
     }
-
 }
