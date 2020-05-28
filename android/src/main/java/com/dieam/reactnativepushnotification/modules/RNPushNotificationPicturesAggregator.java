@@ -12,10 +12,13 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
+import android.util.Log;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationPicturesAggregator {
   interface Callback {
@@ -49,9 +52,19 @@ public class RNPushNotificationPicturesAggregator {
       return;
     }
 
+    Uri uri = null;
+
+    try {
+      uri = Uri.parse(url);
+    } catch(Exception ex) {
+      Log.e(LOG_TAG, "Failed to parse bigPictureUrl", ex);
+      this.setBigPicture(null);
+      return;
+    }
+
     final RNPushNotificationPicturesAggregator aggregator = this;
 
-    this.downloadRequest(context, url, new BaseBitmapDataSubscriber() {
+    this.downloadRequest(context, uri, new BaseBitmapDataSubscriber() {
       @Override
       public void onNewResultImpl(@Nullable Bitmap bitmap) {
         aggregator.setBigPicture(bitmap);
@@ -75,9 +88,19 @@ public class RNPushNotificationPicturesAggregator {
       return;
     }
 
+    Uri uri = null;
+
+    try {
+      uri = Uri.parse(url);
+    } catch(Exception ex) {
+      Log.e(LOG_TAG, "Failed to parse largeIconUrl", ex);
+      this.setLargeIcon(null);
+      return;
+    }
+
     final RNPushNotificationPicturesAggregator aggregator = this;
 
-    this.downloadRequest(context, url, new BaseBitmapDataSubscriber() {
+    this.downloadRequest(context, uri, new BaseBitmapDataSubscriber() {
       @Override
       public void onNewResultImpl(@Nullable Bitmap bitmap) {
         aggregator.setLargeIcon(bitmap);
@@ -90,9 +113,9 @@ public class RNPushNotificationPicturesAggregator {
     });
   }
   
-  private void downloadRequest(Context context, String url, BaseBitmapDataSubscriber subscriber) {
+  private void downloadRequest(Context context, Uri uri, BaseBitmapDataSubscriber subscriber) {
     ImageRequest imageRequest = ImageRequestBuilder
-      .newBuilderWithSource(Uri.parse(url))
+      .newBuilderWithSource(uri)
       .setRequestPriority(Priority.HIGH)
       .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
       .build();
