@@ -15,10 +15,8 @@ import androidx.annotation.NonNull;
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.WritableMap;
 
 import org.json.JSONObject;
 
@@ -132,7 +130,7 @@ public class RNReceivedMessageHandler {
 
         RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());
 
-        Boolean isForeground = isApplicationInForeground();
+        boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
         bundle.putBoolean("foreground", isForeground);
@@ -144,9 +142,9 @@ public class RNReceivedMessageHandler {
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        Log.v(LOG_TAG, "sendNotification: " + bundle);
-
         if (config.getNotificationForeground() || !isForeground) {
+            Log.v(LOG_TAG, "sendNotification: " + bundle);
+
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);

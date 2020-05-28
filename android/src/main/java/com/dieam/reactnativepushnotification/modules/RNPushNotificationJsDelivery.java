@@ -67,7 +67,7 @@ public class RNPushNotificationJsDelivery {
     }
     
     // a Bundle is not a map, so we have to convert it explicitly
-    JSONObject convertJSONObject(Bundle bundle) throws JSONException {
+    private JSONObject convertJSONObject(Bundle bundle) throws JSONException {
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {

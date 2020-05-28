@@ -23,6 +23,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.Arguments;
@@ -39,7 +41,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -124,7 +125,7 @@ public class RNPushNotificationHelper {
 
         SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
         editor.putString(id, notificationAttributes.toJson().toString());
-        commit(editor);
+        editor.apply();
 
         boolean isSaved = scheduledNotificationsPersistence.contains(id);
         if (!isSaved) {
@@ -206,7 +207,7 @@ public class RNPushNotificationHelper {
             final String priorityString = bundle.getString("priority");
 
             if (priorityString != null) {
-                switch(priorityString.toLowerCase()) {
+                switch (priorityString.toLowerCase()) {
                     case "max":
                         priority = NotificationCompat.PRIORITY_MAX;
                         break;
@@ -227,34 +228,39 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            final String importanceString = bundle.getString("importance");
+            int importance = 4; // Same as HIGH for lower version
 
-            if (importanceString != null) {
-                switch(importanceString.toLowerCase()) {
-                    case "default":
-                        importance = NotificationManager.IMPORTANCE_DEFAULT;
-                        break;
-                    case "max":
-                        importance = NotificationManager.IMPORTANCE_MAX;
-                        break;
-                    case "high":
-                        importance = NotificationManager.IMPORTANCE_HIGH;
-                        break;
-                    case "low":
-                        importance = NotificationManager.IMPORTANCE_LOW;
-                        break;
-                    case "min":
-                        importance = NotificationManager.IMPORTANCE_MIN;
-                        break;
-                    case "none":
-                        importance = NotificationManager.IMPORTANCE_NONE;
-                        break;
-                    case "unspecified":
-                        importance = NotificationManager.IMPORTANCE_UNSPECIFIED;
-                        break;
-                    default:
-                        importance = NotificationManager.IMPORTANCE_HIGH;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                importance = NotificationManager.IMPORTANCE_HIGH;
+
+                final String importanceString = bundle.getString("importance");
+
+                if (importanceString != null) {
+                    switch (importanceString.toLowerCase()) {
+                        case "default":
+                            importance = NotificationManager.IMPORTANCE_DEFAULT;
+                            break;
+                        case "max":
+                            importance = NotificationManager.IMPORTANCE_MAX;
+                            break;
+                        case "high":
+                            importance = NotificationManager.IMPORTANCE_HIGH;
+                            break;
+                        case "low":
+                            importance = NotificationManager.IMPORTANCE_LOW;
+                            break;
+                        case "min":
+                            importance = NotificationManager.IMPORTANCE_MIN;
+                            break;
+                        case "none":
+                            importance = NotificationManager.IMPORTANCE_NONE;
+                            break;
+                        case "unspecified":
+                            importance = NotificationManager.IMPORTANCE_UNSPECIFIED;
+                            break;
+                        default:
+                            importance = NotificationManager.IMPORTANCE_HIGH;
+                    }
                 }
             }
 
@@ -289,7 +295,9 @@ public class RNPushNotificationHelper {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // API 24 and higher
                 // Restore showing timestamp on Android 7+
                 // Source: https://developer.android.com/reference/android/app/Notification.Builder.html#setShowWhen(boolean)
-                notification.setShowWhen(true);
+                boolean showWhen = bundle.getBoolean("showWhen", true);
+
+                notification.setShowWhen(showWhen);
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
@@ -537,7 +545,7 @@ public class RNPushNotificationHelper {
             if (scheduledNotificationsPersistence.getString(notificationIdString, null) != null) {
                 SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
                 editor.remove(notificationIdString);
-                commit(editor);
+                editor.apply();
             }
 
             if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
@@ -603,7 +611,7 @@ public class RNPushNotificationHelper {
                     nextEvent.set(Calendar.YEAR, nextEvent.get(Calendar.YEAR) + (nextMonth == 0 ? 1 : 0));
                     nextEvent.set(Calendar.MONTH, nextMonth);
                     final int maxDay = nextEvent.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    nextEvent.set(Calendar.DAY_OF_MONTH, fireDay <= maxDay ? fireDay : maxDay);
+                    nextEvent.set(Calendar.DAY_OF_MONTH, Math.min(fireDay, maxDay));
                     nextEvent.set(Calendar.HOUR_OF_DAY, fireHour);
                     nextEvent.set(Calendar.MINUTE, fireMinute);
                     nextEvent.set(Calendar.SECOND, 0);
@@ -656,6 +664,7 @@ public class RNPushNotificationHelper {
       }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public WritableArray getDeliveredNotifications() {
       NotificationManager notificationManager = notificationManager();
       StatusBarNotification delivered[] = notificationManager.getActiveNotifications();
@@ -721,7 +730,7 @@ public class RNPushNotificationHelper {
             // remove it from local storage
             SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
             editor.remove(notificationIDString);
-            commit(editor);
+            editor.apply();
         } else {
             Log.w(LOG_TAG, "Unable to find notification " + notificationIDString);
         }
@@ -740,18 +749,15 @@ public class RNPushNotificationHelper {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private static void commit(SharedPreferences.Editor editor) {
-        if (Build.VERSION.SDK_INT < 9) {
-            editor.commit();
-        } else {
-            editor.apply();
-        }
-    }
-
     public void checkOrCreateDefaultChannel() {
       NotificationManager manager = notificationManager();
 
-      int importance = NotificationManager.IMPORTANCE_HIGH;
+      int importance = 4; // Default value of HIGH for lower version
+
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+          importance = NotificationManager.IMPORTANCE_HIGH;
+      }
+
       Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
       
       // Instanciate a default channel with default sound.

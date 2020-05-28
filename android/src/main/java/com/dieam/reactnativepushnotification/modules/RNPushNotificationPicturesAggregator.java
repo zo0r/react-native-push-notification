@@ -25,7 +25,6 @@ public class RNPushNotificationPicturesAggregator {
     public void call(Bitmap largeIconImage, Bitmap bigPictureImage);
   }
 
-  final private int wait = 2;
   private AtomicInteger count = new AtomicInteger(0);
 
   private Bitmap largeIconImage;
@@ -128,8 +127,8 @@ public class RNPushNotificationPicturesAggregator {
   private void finished() {
     synchronized(this.count) {
       int val = this.count.incrementAndGet();
-      
-      if(val >= this.wait && this.callback != null) {
+
+      if(val >= 2 && this.callback != null) {
         this.callback.call(this.largeIconImage, this.bigPictureImage);
       }
     }

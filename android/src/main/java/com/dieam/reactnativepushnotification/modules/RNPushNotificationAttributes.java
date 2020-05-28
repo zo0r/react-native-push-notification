@@ -18,6 +18,7 @@ public class RNPushNotificationAttributes {
     private static final String FIRE_DATE = "fireDate";
     private static final String TITLE = "title";
     private static final String TICKER = "ticker";
+    private static final String SHOW_WHEN = "showWhen";
     private static final String AUTO_CANCEL = "autoCancel";
     private static final String LARGE_ICON = "largeIcon";
     private static final String LARGE_ICON_URL = "largeIconUrl";
@@ -49,6 +50,7 @@ public class RNPushNotificationAttributes {
     private final double fireDate;
     private final String title;
     private final String ticker;
+    private final boolean showWhen;
     private final boolean autoCancel;
     private final String largeIcon;
     private final String largeIconUrl;
@@ -81,6 +83,7 @@ public class RNPushNotificationAttributes {
         fireDate = bundle.getDouble(FIRE_DATE);
         title = bundle.getString(TITLE);
         ticker = bundle.getString(TICKER);
+        showWhen = bundle.getBoolean(SHOW_WHEN);
         autoCancel = bundle.getBoolean(AUTO_CANCEL);
         largeIcon = bundle.getString(LARGE_ICON);
         largeIconUrl = bundle.getString(LARGE_ICON_URL);
@@ -115,6 +118,7 @@ public class RNPushNotificationAttributes {
             fireDate = jsonObject.has(FIRE_DATE) ? jsonObject.getDouble(FIRE_DATE) : 0.0;
             title = jsonObject.has(TITLE) ? jsonObject.getString(TITLE) : null;
             ticker = jsonObject.has(TICKER) ? jsonObject.getString(TICKER) : null;
+            showWhen = jsonObject.has(SHOW_WHEN) ? jsonObject.getBoolean(SHOW_WHEN) : true;
             autoCancel = jsonObject.has(AUTO_CANCEL) ? jsonObject.getBoolean(AUTO_CANCEL) : true;
             largeIcon = jsonObject.has(LARGE_ICON) ? jsonObject.getString(LARGE_ICON) : null;
             largeIconUrl = jsonObject.has(LARGE_ICON_URL) ? jsonObject.getString(LARGE_ICON_URL) : null;
@@ -206,6 +210,7 @@ public class RNPushNotificationAttributes {
         bundle.putDouble(FIRE_DATE, fireDate);
         bundle.putString(TITLE, title);
         bundle.putString(TICKER, ticker);
+        bundle.putBoolean(SHOW_WHEN, showWhen);
         bundle.putBoolean(AUTO_CANCEL, autoCancel);
         bundle.putString(LARGE_ICON, largeIcon);
         bundle.putString(LARGE_ICON_URL, largeIconUrl);
@@ -242,6 +247,7 @@ public class RNPushNotificationAttributes {
             jsonObject.put(FIRE_DATE, fireDate);
             jsonObject.put(TITLE, title);
             jsonObject.put(TICKER, ticker);
+            jsonObject.put(SHOW_WHEN, showWhen);
             jsonObject.put(AUTO_CANCEL, autoCancel);
             jsonObject.put(LARGE_ICON, largeIcon);
             jsonObject.put(LARGE_ICON_URL, largeIconUrl);
@@ -284,6 +290,7 @@ public class RNPushNotificationAttributes {
                 ", fireDate=" + fireDate +
                 ", title='" + title + '\'' +
                 ", ticker='" + ticker + '\'' +
+                ", showWhen=" + showWhen +
                 ", autoCancel=" + autoCancel +
                 ", largeIcon='" + largeIcon + '\'' +
                 ", largeIconUrl='" + largeIconUrl + '\'' +

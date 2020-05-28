@@ -20,7 +20,7 @@ public class RNPushNotificationBootEventReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.i(LOG_TAG, "RNPushNotificationBootEventReceiver loading scheduled notifications");
 
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
             Set<String> ids = sharedPreferences.getAll().keySet();
 
