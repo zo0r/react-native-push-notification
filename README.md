@@ -298,6 +298,8 @@ PushNotification.localNotification({
   shortcutId: "shortcut-id", // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
   channelId: "your-custom-channel-id", // (optional) custom channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
 
+  actions: '["Yes", "No"]', // (Android only) See the doc for notification actions to know more
+
   /* iOS only properties */
   alertAction: "view", // (optional) default: view
   category: "", // (optional) default: empty string
@@ -310,7 +312,6 @@ PushNotification.localNotification({
   soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
   number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
   repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
-  actions: '["Yes", "No"]', // (Android only) See the doc for notification actions to know more
 });
 ```
 
