@@ -31,6 +31,7 @@ public class RNPushNotificationAttributes {
     private static final String SOUND = "sound";
     private static final String COLOR = "color";
     private static final String GROUP = "group";
+    private static final String GROUP_SUMMARY = "groupSummary";
     private static final String USER_INTERACTION = "userInteraction";
     private static final String PLAY_SOUND = "playSound";
     private static final String VIBRATE = "vibrate";
@@ -61,6 +62,7 @@ public class RNPushNotificationAttributes {
     private final String sound;
     private final String color;
     private final String group;
+    private final boolean groupSummary;
     private final boolean userInteraction;
     private final boolean playSound;
     private final boolean vibrate;
@@ -92,6 +94,7 @@ public class RNPushNotificationAttributes {
         sound = bundle.getString(SOUND);
         color = bundle.getString(COLOR);
         group = bundle.getString(GROUP);
+        groupSummary = bundle.getBoolean(GROUP_SUMMARY);
         userInteraction = bundle.getBoolean(USER_INTERACTION);
         playSound = bundle.getBoolean(PLAY_SOUND);
         vibrate = bundle.getBoolean(VIBRATE);
@@ -125,6 +128,7 @@ public class RNPushNotificationAttributes {
             sound = jsonObject.has(SOUND) ? jsonObject.getString(SOUND) : null;
             color = jsonObject.has(COLOR) ? jsonObject.getString(COLOR) : null;
             group = jsonObject.has(GROUP) ? jsonObject.getString(GROUP) : null;
+            groupSummary = jsonObject.has(GROUP_SUMMARY) ? jsonObject.getBoolean(GROUP_SUMMARY) : false;
             userInteraction = jsonObject.has(USER_INTERACTION) ? jsonObject.getBoolean(USER_INTERACTION) : false;
             playSound = jsonObject.has(PLAY_SOUND) ? jsonObject.getBoolean(PLAY_SOUND) : true;
             vibrate = jsonObject.has(VIBRATE) ? jsonObject.getBoolean(VIBRATE) : true;
@@ -215,6 +219,7 @@ public class RNPushNotificationAttributes {
         bundle.putString(SOUND, sound);
         bundle.putString(COLOR, color);
         bundle.putString(GROUP, group);
+        bundle.putBoolean(GROUP_SUMMARY, groupSummary);
         bundle.putBoolean(USER_INTERACTION, userInteraction);
         bundle.putBoolean(PLAY_SOUND, playSound);
         bundle.putBoolean(VIBRATE, vibrate);
@@ -250,6 +255,7 @@ public class RNPushNotificationAttributes {
             jsonObject.put(SOUND, sound);
             jsonObject.put(COLOR, color);
             jsonObject.put(GROUP, group);
+            jsonObject.put(GROUP_SUMMARY, groupSummary);
             jsonObject.put(USER_INTERACTION, userInteraction);
             jsonObject.put(PLAY_SOUND, playSound);
             jsonObject.put(VIBRATE, vibrate);
@@ -291,6 +297,7 @@ public class RNPushNotificationAttributes {
                 ", sound='" + sound + '\'' +
                 ", color='" + color + '\'' +
                 ", group='" + group + '\'' +
+                ", groupSummary='" + groupSummary + '\'' +
                 ", userInteraction=" + userInteraction +
                 ", playSound=" + playSound +
                 ", vibrate=" + vibrate +

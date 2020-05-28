@@ -291,13 +291,20 @@ public class RNPushNotificationHelper {
                 notification.setDefaults(Notification.DEFAULT_LIGHTS);
             }
       
-            String group = bundle.getString("group");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) { // API 20 and higher
+              String group = bundle.getString("group");
 
-            if (group != null) {
-                notification.setGroup(group);
+              if (group != null) {
+                  notification.setGroup(group);
+              }
+
+              if (bundle.containsKey("groupSummary") || bundle.getBoolean("groupSummary")) {
+                  notification.setGroupSummary(bundle.getBoolean("groupSummary"));
+              }
             }
 
             String numberString = bundle.getString("number");
+
             if (numberString != null) {
                 notification.setNumber(Integer.parseInt(numberString));
             }
