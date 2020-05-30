@@ -29,7 +29,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         handler.post(new Runnable() {
             public void run() {
                 // Construct and load our normal React JS code bundle
-                ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplication()).getReactNativeHost().getReactInstanceManager();
+                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplication()).getReactNativeHost().getReactInstanceManager();
                 ReactContext context = mReactInstanceManager.getCurrentReactContext();
                 // If it's constructed, send a notification
                 if (context != null) {
@@ -39,6 +39,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
                             handleNewToken((ReactApplicationContext) context, deviceToken);
+                            mReactInstanceManager.removeReactInstanceEventListener(this);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {

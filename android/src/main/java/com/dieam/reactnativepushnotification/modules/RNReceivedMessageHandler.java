@@ -91,7 +91,7 @@ public class RNReceivedMessageHandler {
         handler.post(new Runnable() {
             public void run() {
                 // Construct and load our normal React JS code bundle
-                ReactInstanceManager mReactInstanceManager = ((ReactApplication) mFirebaseMessagingService.getApplication()).getReactNativeHost().getReactInstanceManager();
+                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) mFirebaseMessagingService.getApplication()).getReactNativeHost().getReactInstanceManager();
                 ReactContext context = mReactInstanceManager.getCurrentReactContext();
                 // If it's constructed, send a notificationre
                 if (context != null) {
@@ -101,6 +101,7 @@ public class RNReceivedMessageHandler {
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
                             handleRemotePushNotification((ReactApplicationContext) context, bundle);
+                            mReactInstanceManager.removeReactInstanceEventListener(this);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {

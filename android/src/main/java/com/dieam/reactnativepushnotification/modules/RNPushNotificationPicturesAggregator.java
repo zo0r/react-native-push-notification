@@ -30,13 +30,9 @@ public class RNPushNotificationPicturesAggregator {
   private Bitmap largeIconImage;
   private Bitmap bigPictureImage;
 
-  private ImagePipeline imagePipeline;
-
   private Callback callback;
 
   public RNPushNotificationPicturesAggregator(Callback callback) {
-    this.imagePipeline = Fresco.getImagePipeline();
-
     this.callback = callback;
   }
 
@@ -119,7 +115,11 @@ public class RNPushNotificationPicturesAggregator {
       .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
       .build();
 
-    DataSource<CloseableReference<CloseableImage>> dataSource = this.imagePipeline.fetchDecodedImage(imageRequest, context);
+    if(!Fresco.hasBeenInitialized()) {
+      Fresco.initialize(context);
+    }
+
+    DataSource<CloseableReference<CloseableImage>> dataSource = Fresco.getImagePipeline().fetchDecodedImage(imageRequest, context);
 
     dataSource.subscribe(subscriber, CallerThreadExecutor.getInstance());
   }
