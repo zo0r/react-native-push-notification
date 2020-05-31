@@ -17,6 +17,14 @@ class NotificationHandler {
     }
   }
 
+  onAction(notification) {
+    console.log ('Notification action received:');
+    console.log(notification.action);
+    console.log(notification);
+
+    PushNotification.invokeApp(notification);
+  }
+
   attachRegister(handler) {
     this._onRegister = handler;
   }
@@ -34,6 +42,9 @@ PushNotification.configure({
 
   // (required) Called when a remote or local notification is opened or received
   onNotification: handler.onNotification.bind(handler),
+
+  // (optional) Called when Action is pressed (Android)
+  onAction: handler.onAction.bind(handler),
 
   // IOS ONLY (optional): default: all - Permissions to register.
   permissions: {

@@ -7,8 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Breaking changes
+
+- Now local scheduled notifications trigger `onNotification`.
+- `RNPushNotificationRegistrationService` has been remove, old reference in AndroidManifest must be removed.
+- `Notifications.registerNotificationActions()` has been removed and is not required for `actions`.
+- `DeviceEventEmitter.addListener('notificationActionReceived', callback)` is replaced by `onAction`.
+
 ### Features
 
+- (Android) `actions` accept an array of strings.
+- (Android) `invokeApp` allow you to handle actions in background without invoking the application.
+- (Android) `onAction` has been added to `.configure()` to handle action in background.
+- (Android) `PushNotification.invokeApp(notification)` allow you to invoke the application when in background (notification for initial notification).
+- (Android) `PushNotification.getChannels(callback)` allow you to get the list of channels.
+- (Android) `PushNotification.channelExists(channel_id, callback)` allow you to check of a channel exists.
+- (Android) `PushNotification.deleteChannel(channel_id)` allow you to delete a channel.
 - (Android) Add `largeIconUrl` to load a largeIcon based on Url. Based on [#1444](https://github.com/zo0r/react-native-push-notification/pull/1444)
 - (Android) Add `bigPictureUrl` to load a picture based on Url. Based on [#1444](https://github.com/zo0r/react-native-push-notification/pull/1444)
 - (Android) Add `shortcutId` for better badges management.
@@ -20,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - (Android) Some options were ignored on scheduled/repeating notifications (allowWhileIdle, ignoreInForeground).
+- (Android/iOS) popInitialInotification might be ignored in `.configure()`
 
 ## [3.5.2] - 2020-05-25
 

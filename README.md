@@ -86,6 +86,9 @@ In your `android/app/src/main/AndroidManifest.xml`
         <!-- Change the value to true to enable pop-up for in foreground (remote-only, for local use ignoreInForeground) -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                     android:value="false"/>
+        <!-- Change the value to false if you don't want the creation of the default channel -->
+        <meta-data  android:name="com.dieam.reactnativepushnotification.channel_create_default"
+                    android:value="true"/>
         <!-- Change the resource name to your App's accent color - or any other color you want -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                     android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
@@ -224,6 +227,14 @@ PushNotification.configure({
     notification.finish(PushNotificationIOS.FetchResult.NoData);
   },
 
+  // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
+  onAction: function (notification) {
+    console.log("ACTION:", notification.action);
+    console.log("NOTIFICATION:", notification);
+
+    // process the action
+  },
+
   // IOS ONLY (optional): default: all - Permissions to register.
   permissions: {
     alert: true,
@@ -302,6 +313,7 @@ PushNotification.localNotification({
   channelId: "your-custom-channel-id", // (optional) custom channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
 
   actions: '["Yes", "No"]', // (Android only) See the doc for notification actions to know more
+  invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
   /* iOS only properties */
   alertAction: "view", // (optional) default: view
@@ -349,13 +361,21 @@ This library doesn't include a full Channel Management at the moment. Channels a
 The pattern of `channel_id` is:
 
 ```
-rn-push-notification-channel-id(-soundname, default if playSound "-default")-(importance: default "4")-(vibration, default "300")
+rn-push-notification-channel-id-(importance: default "4")(-soundname, default if playSound "-default")-(vibration, default "300")
 ```
 
-By default, 2 channels are created:
+By default, 1 channel is created:
 
-- rn-push-notification-channel-id-default-4-300 (used for remote notification if none already exist).
-- rn-push-notification-channel-id-4-300 (previously used for remote notification but without sounds).
+- rn-push-notification-channel-id-4-default-300 (used for remote notification if none already exist).
+
+you can avoid the default creation by using this:
+
+```xml
+  <meta-data  android:name="com.dieam.reactnativepushnotification.channel_create_default"
+          android:value="false"/>
+```
+
+**NOTE: Without channel, remote notifications don't work**
 
 In the notifications options, you can provide a custom channel id with `channelId: "your-custom-channel-id"`, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your `channelId` is different if you change these options. If you have created a custom channel in another way, it will apply options of the channel.
 
@@ -385,6 +405,37 @@ If you want to use a different default channel for remote notification, refer to
   <meta-data
       android:name="com.google.firebase.messaging.default_notification_channel_id"
       android:value="@string/default_notification_channel_id" />
+```
+
+### List channels
+
+You can list available channels with:
+
+```js
+PushNotification.getChannels(function(channel_ids) {
+  console.log(channel_ids); // ['channel_id_1']
+});
+
+```
+
+### Channel exists
+
+You can check if a channel exists with:
+
+```js
+PushNotification.channelExists(function(exists) {
+  console.log(exists); // true/false
+});
+
+```
+
+### List channels
+
+You can list available channels with:
+
+```js
+PushNotification.deleteChannel(channel_id);
+
 ```
 
 ## Cancelling notifications
@@ -539,38 +590,11 @@ Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, 
 
 (Android only) [Refer](https://github.com/zo0r/react-native-push-notification/issues/151) to this issue to see an example of a notification action.
 
-Two things are required to setup notification actions.
-
-### 1) Specify notification actions for a notification
-
 This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notification action that will be presented with the notification.
 
-For e.g. `actions: '["Accept", "Reject"]' // Must be in string format`
+For e.g. `actions: ['Accept', 'Reject']`
 
-The array itself is specified in string format to circumvent some problems because of the way JSON arrays are handled by react-native android bridge.
-
-### 2) Specify handlers for the notification actions
-
-For each action specified in the `actions` field, we need to add a handler that is called when the user clicks on the action. This can be done in the `componentWillMount` of your main app file or in a separate file which is imported in your main app file. Notification actions handlers can be configured as below:
-
-```
-import PushNotificationAndroid from 'react-native-push-notification'
-
-(function() {
-  // Register all the valid actions for notifications here and add the action handler for each action
-  PushNotificationAndroid.registerNotificationActions(['Accept','Reject','Yes','No']);
-  DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-    console.log ('Notification action received: ' + action);
-    const info = JSON.parse(action.dataJSON);
-    if (info.action == 'Accept') {
-      // Do work pertaining to Accept action here
-    } else if (info.action == 'Reject') {
-      // Do work pertaining to Reject action here
-    }
-    // Add all the required actions handlers
-  });
-})();
-```
+When you handle actions in background (`invokeApp: false`), you can open the application and pass the initial notification by using use `PushNotification.invokeApp(notification)`. 
 
 For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
 

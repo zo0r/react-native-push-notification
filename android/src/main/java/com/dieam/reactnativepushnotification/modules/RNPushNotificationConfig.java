@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 class RNPushNotificationConfig {
+    private static final String KEY_CHANNEL_CREATE_DEFAULT = "com.dieam.reactnativepushnotification.channel_create_default";
     private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
     private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
     private static final String KEY_NOTIFICATION_FOREGROUND = "com.dieam.reactnativepushnotification.notification_foreground";
@@ -76,5 +77,15 @@ class RNPushNotificationConfig {
         }
         // Default
         return false;
+    }
+
+    public boolean getChannelCreateDefault() {
+        try {
+            return metadata.getBoolean(KEY_CHANNEL_CREATE_DEFAULT, true);
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_CREATE_DEFAULT + " in manifest. Falling back to default");
+        }
+        // Default
+        return true;
     }
 }

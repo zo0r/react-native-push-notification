@@ -4,9 +4,10 @@
 
 'use strict';
 
+import { AppState } from "react-native";
+
 var RNNotificationsComponent = require( './component' );
 
-var AppState = RNNotificationsComponent.state;
 var RNNotifications = RNNotificationsComponent.component;
 
 var Platform = require('react-native').Platform;
@@ -16,6 +17,7 @@ var Notifications = {
   onRegister: false,
   onError: false,
   onNotification: false,
+  onAction: false,
   onRemoteFetch: false,
   isLoaded: false,
   idInitialNotification: null,
@@ -47,6 +49,7 @@ Notifications.callNative = function(name, params) {
  * @param {Object}    options
  * @param {function}  options.onRegister - Fired when the user registers for remote notifications.
  * @param {function}  options.onNotification - Fired when a remote notification is received.
+ * @param {function}  options.onAction - Fired when a remote notification is received.
  * @param {function}   options.onError - None
  * @param {Object}    options.permissions - Permissions list
  * @param {Boolean}    options.requestPermissions - Check permissions when register
@@ -64,6 +67,10 @@ Notifications.configure = function(options) {
     this.onNotification = options.onNotification;
   }
 
+  if ( typeof options.onAction !== 'undefined' ) {
+    this.onAction = options.onAction;
+  }
+
   if ( typeof options.permissions !== 'undefined' ) {
     this.permissions = options.permissions;
   }
@@ -76,31 +83,41 @@ Notifications.configure = function(options) {
     this._onRegister = this._onRegister.bind(this);
     this._onNotification = this._onNotification.bind(this);
     this._onRemoteFetch = this._onRemoteFetch.bind(this);
+    this._onAction = this._onAction.bind(this);
     this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
     this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
     this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
+    this.callNative( 'addEventListener', [ 'action', this._onAction ] );
     Platform.OS === 'android' ? this.callNative( 'addEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
 
     this.isLoaded = true;
   }
 
-  if (options.popInitialNotification === undefined || options.popInitialNotification === true) {
-    this.popInitialNotification(function(firstNotification) {
-      if ( firstNotification !== null ) {
-        if(this.idInitialNotification === firstNotification.id) {
-          return;
+  const handlePopInitialNotification = function(state) {
+    if('active' !== state) {
+      return;
+    }
+
+    if (options.popInitialNotification === undefined || options.popInitialNotification === true) {
+      this.popInitialNotification(function(firstNotification) {
+        if ( firstNotification !== null ) {
+          if(false === firstNotification.userInteraction || this.idInitialNotification === firstNotification.id) {
+            return;
+          }
+          
+          this.idInitialNotification = firstNotification.id;
+          this._onNotification(firstNotification, true);
         }
-        
-        this.idInitialNotification = firstNotification.id;
-        this._onNotification(firstNotification, true);
-      }
-    }.bind(this));
+      }.bind(this));
+    }
   }
+
+  AppState.addEventListener('change', handlePopInitialNotification.bind(this));
+  handlePopInitialNotification();
 
   if ( options.requestPermissions !== false ) {
     this._requestPermissions();
   }
-
 };
 
 /* Unregister */
@@ -108,6 +125,7 @@ Notifications.unregister = function() {
   this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
   this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
   this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification ] )
+  this.callNative( 'removeEventListener', [ 'action', this._onAction ] )
   Platform.OS === 'android' ? this.callNative( 'removeEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
   this.isLoaded = false;
 };
@@ -171,6 +189,10 @@ Notifications.localNotification = function(details) {
       else {
         details.shortcutId = '' + details.shortcutId;
       }
+    }
+
+    if(details && Array.isArray(details.actions)) {
+      details.actions = JSON.stringify(details.actions);
     }
   
     this.handler.presentLocalNotification(details);
@@ -241,6 +263,10 @@ Notifications.localNotificationSchedule = function(details) {
       }
     }
   
+    if(details && Array.isArray(details.actions)) {
+      details.actions = JSON.stringify(details.actions);
+    }
+
     details.fireDate = details.date.getTime();
     delete details.date;
     // ignore iOS only repeatType
@@ -266,6 +292,18 @@ Notifications._onRemoteFetch = function(notificationData) {
     this.onRemoteFetch(notificationData)
   }
 };
+
+Notifications._onAction = function(notification) {
+  if ( typeof notification.data === 'string' ) {
+    try {
+      notification.data = JSON.parse(notificationData.data);
+    } catch(e) {
+      /* void */
+    }
+  }
+
+  this.onAction(notification);
+}
 
 Notifications._onNotification = function(data, isFromBackground = null) {
   if ( isFromBackground === null ) {
@@ -388,10 +426,6 @@ Notifications.abandonPermissions = function() {
   return this.callNative('abandonPermissions', arguments);
 }
 
-Notifications.registerNotificationActions = function() {
-  return this.callNative('registerNotificationActions', arguments)
-}
-
 Notifications.clearAllNotifications = function() {
   // Only available for Android
   return this.callNative('clearAllNotifications', arguments)
@@ -408,5 +442,21 @@ Notifications.getDeliveredNotifications = function() {
 Notifications.removeDeliveredNotifications = function() {
   return this.callNative('removeDeliveredNotifications', arguments);
 }
+
+Notifications.invokeApp = function() {
+  return this.callNative('invokeApp', arguments);
+};
+
+Notifications.getChannels = function() {
+  return this.callNative('getChannels', arguments);
+};
+
+Notifications.channelExists = function() {
+  return this.callNative('channelExists', arguments);
+};
+
+Notifications.deleteChannel = function() {
+  return this.callNative('deleteChannel', arguments);
+};
 
 module.exports = Notifications;

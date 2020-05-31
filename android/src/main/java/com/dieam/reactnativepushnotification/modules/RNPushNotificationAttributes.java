@@ -38,6 +38,7 @@ public class RNPushNotificationAttributes {
     private static final String VIBRATE = "vibrate";
     private static final String VIBRATION = "vibration";
     private static final String ACTIONS = "actions";
+    private static final String INVOKE_APP = "invokeApp";
     private static final String TAG = "tag";
     private static final String REPEAT_TYPE = "repeatType";
     private static final String REPEAT_TIME = "repeatTime";
@@ -70,6 +71,7 @@ public class RNPushNotificationAttributes {
     private final boolean vibrate;
     private final double vibration;
     private final String actions;
+    private final boolean invokeApp;
     private final String tag;
     private final String repeatType;
     private final double repeatTime;
@@ -103,6 +105,7 @@ public class RNPushNotificationAttributes {
         vibrate = bundle.getBoolean(VIBRATE);
         vibration = bundle.getDouble(VIBRATION);
         actions = bundle.getString(ACTIONS);
+        invokeApp = bundle.getBoolean(INVOKE_APP);
         tag = bundle.getString(TAG);
         repeatType = bundle.getString(REPEAT_TYPE);
         repeatTime = bundle.getDouble(REPEAT_TIME);
@@ -138,6 +141,7 @@ public class RNPushNotificationAttributes {
             vibrate = jsonObject.has(VIBRATE) ? jsonObject.getBoolean(VIBRATE) : true;
             vibration = jsonObject.has(VIBRATION) ? jsonObject.getDouble(VIBRATION) : 1000;
             actions = jsonObject.has(ACTIONS) ? jsonObject.getString(ACTIONS) : null;
+            invokeApp = jsonObject.has(INVOKE_APP) ? jsonObject.getBoolean(INVOKE_APP) : true;
             tag = jsonObject.has(TAG) ? jsonObject.getString(TAG) : null;
             repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
             repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
@@ -230,6 +234,7 @@ public class RNPushNotificationAttributes {
         bundle.putBoolean(VIBRATE, vibrate);
         bundle.putDouble(VIBRATION, vibration);
         bundle.putString(ACTIONS, actions);
+        bundle.putBoolean(INVOKE_APP, invokeApp);
         bundle.putString(TAG, tag);
         bundle.putString(REPEAT_TYPE, repeatType);
         bundle.putDouble(REPEAT_TIME, repeatTime);
@@ -267,6 +272,7 @@ public class RNPushNotificationAttributes {
             jsonObject.put(VIBRATE, vibrate);
             jsonObject.put(VIBRATION, vibration);
             jsonObject.put(ACTIONS, actions);
+            jsonObject.put(INVOKE_APP, invokeApp);
             jsonObject.put(TAG, tag);
             jsonObject.put(REPEAT_TYPE, repeatType);
             jsonObject.put(REPEAT_TIME, repeatTime);
@@ -310,6 +316,7 @@ public class RNPushNotificationAttributes {
                 ", vibrate=" + vibrate +
                 ", vibration=" + vibration +
                 ", actions='" + actions + '\'' +
+                ", invokeApp=" + invokeApp +
                 ", tag='" + tag + '\'' +
                 ", repeatType='" + repeatType + '\'' +
                 ", repeatTime=" + repeatTime +

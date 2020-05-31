@@ -44,6 +44,8 @@
           </intent-filter>
       </service>
 
+      <meta-data  android:name="com.dieam.reactnativepushnotification.channel_create_default"
+                  android:value="true"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                   android:value="false"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"

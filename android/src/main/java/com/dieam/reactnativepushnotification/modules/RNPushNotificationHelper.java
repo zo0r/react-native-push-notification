@@ -8,6 +8,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +37,7 @@ import com.facebook.react.bridge.WritableMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -519,18 +521,24 @@ public class RNPushNotificationHelper {
                         continue;
                     }
 
-                    Intent actionIntent = new Intent(context, intentClass);
+
+                    Intent actionIntent = new Intent(packageName + ".ACTION_" + i);
+
                     actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    actionIntent.setAction(packageName + "." + action);
 
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
                     actionIntent.setPackage(packageName);
 
-                    PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
+                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
-                    notification.addAction(icon, action, pendingActionIntent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                      notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());
+                    } else {
+                      notification.addAction(icon, action, pendingActionIntent);
+                    }
                 }
             }
 
@@ -648,11 +656,15 @@ public class RNPushNotificationHelper {
         notificationManager.cancelAll();
     }
 
-    public void clearNotification(int notificationID) {
+    public void clearNotification(String tag, int notificationID) {
         Log.i(LOG_TAG, "Clearing notification: " + notificationID);
 
         NotificationManager notificationManager = notificationManager();
-        notificationManager.cancel(notificationID);
+        if(tag != null) {
+          notificationManager.cancel(tag, notificationID);
+        } else {
+          notificationManager.cancel(notificationID);
+        }
     }
 
     public void clearDeliveredNotifications(ReadableArray identifiers) {
@@ -690,6 +702,7 @@ public class RNPushNotificationHelper {
       return result;
 
     }
+
     public void cancelAllScheduledNotifications() {
         Log.i(LOG_TAG, "Cancelling all notifications");
 
@@ -750,6 +763,10 @@ public class RNPushNotificationHelper {
     }
 
     public void checkOrCreateDefaultChannel() {
+      if(!this.config.getChannelCreateDefault()) {
+        return;
+      }
+
       NotificationManager manager = notificationManager();
 
       int importance = 4; // Default value of HIGH for lower version
@@ -761,12 +778,54 @@ public class RNPushNotificationHelper {
       Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
       
       // Instanciate a default channel with default sound.
-      String channel_id_sound = NOTIFICATION_CHANNEL_ID + "-default-" + importance + "-" + DEFAULT_VIBRATION;
+      String channel_id_sound = NOTIFICATION_CHANNEL_ID + "-" + importance + "-default-" + DEFAULT_VIBRATION;
       checkOrCreateChannel(manager, channel_id_sound, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
+    }
 
-      // Instanciate a default channel without sound defined for backward compatibility.
-      String channel_id_no_sound = NOTIFICATION_CHANNEL_ID + "-" + importance + "-" + DEFAULT_VIBRATION;
-      checkOrCreateChannel(manager, channel_id_no_sound, null, importance, new long[] {0, DEFAULT_VIBRATION});
+    public List<String> listChannels() {
+      List<String> channels = new ArrayList<>();
+      
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+          return channels;
+      
+      NotificationManager manager = notificationManager();
+
+      if (manager == null)
+        return channels;
+
+      List<NotificationChannel> listChannels = manager.getNotificationChannels();
+
+      for(NotificationChannel channel : listChannels) {
+        channels.add(channel.getId());
+      }
+
+      return channels;
+    }
+
+    public boolean channelExists(String channel_id) {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+          return false;
+      
+      NotificationManager manager = notificationManager();
+
+      if (manager == null)
+          return false;
+
+      NotificationChannel channel = manager.getNotificationChannel(channel_id);
+
+      return channel != null;
+    }
+
+    public void deleteChannel(String channel_id) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+        
+        NotificationManager manager = notificationManager();
+
+        if (manager == null)
+            return;
+
+        manager.deleteNotificationChannel(channel_id);
     }
 
     private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri, int importance, long[] vibratePattern) {
@@ -800,7 +859,7 @@ public class RNPushNotificationHelper {
         }
     }
     
-    private boolean isApplicationInForeground(Context context) {
+    public boolean isApplicationInForeground(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         if (processInfos != null) {
