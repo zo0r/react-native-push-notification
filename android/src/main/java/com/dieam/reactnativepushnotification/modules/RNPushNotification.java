@@ -59,8 +59,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         mJsDelivery = new RNPushNotificationJsDelivery(reactContext);
 
         mRNPushNotificationHelper.checkOrCreateDefaultChannel();
-
-        registerNotificationsReceiveNotificationActions();
     }
 
     @Override
@@ -94,70 +92,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             mJsDelivery.notifyNotification(bundle);
         }
     }
-
-    private void registerNotificationsReceiveNotificationActions() {
-        IntentFilter intentFilter = new IntentFilter();
-        
-        for(int i = 0; i < 10; i++) {
-            intentFilter.addAction(getReactApplicationContext().getPackageName() + ".ACTION_" + i);
-        }
-        
-        final RNPushNotification self = this;
-
-        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getBundleExtra("notification");
-
-                // Dismiss the notification popup.
-                NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-                int notificationID = Integer.parseInt(bundle.getString("id"));
-
-                boolean autoCancel = bundle.getBoolean("autoCancel", true);
-
-                if(autoCancel) {
-                  if (bundle.containsKey("tag")) {
-                      String tag = bundle.getString("tag");
-                      manager.cancel(tag, notificationID);
-                  } else {
-                      manager.cancel(notificationID);
-                  }
-                }
-
-                boolean invokeApp = bundle.getBoolean("invokeApp", true);
-
-                // Notify the action.
-                if(invokeApp) {
-                  self.invokeApp(bundle);
-                } else {
-                  mJsDelivery.notifyNotificationAction(bundle);
-                }
-            }
-        }, intentFilter);
-    }
-
-    private void invokeApp(Bundle bundle) {
-        ReactContext reactContext = getReactApplicationContext();
-        String packageName = reactContext.getPackageName();
-        Intent launchIntent = reactContext.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
-
-        try {
-            Class<?> activityClass = Class.forName(className);
-            Intent activityIntent = new Intent(reactContext, activityClass);
-
-            if(bundle != null) {
-              activityIntent.putExtra("notification", bundle);
-            }
-
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            reactContext.startActivity(activityIntent);
-        } catch(Exception e) {
-            Log.e(LOG_TAG, "Class not found", e);
-            return;
-        }
-    }
     
     @ReactMethod
     public void invokeApp(ReadableMap data) {
@@ -167,7 +101,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             bundle = Arguments.toBundle(data);
         }
 
-        invokeApp(bundle);
+        mRNPushNotificationHelper.invokeApp(bundle);
     }
 
     @ReactMethod

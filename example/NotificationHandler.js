@@ -22,7 +22,9 @@ class NotificationHandler {
     console.log(notification.action);
     console.log(notification);
 
-    PushNotification.invokeApp(notification);
+    if(notification.action === 'Yes') {
+      PushNotification.invokeApp(notification);
+    }
   }
 
   attachRegister(handler) {

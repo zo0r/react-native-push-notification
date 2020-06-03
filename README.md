@@ -93,6 +93,7 @@ In your `android/app/src/main/AndroidManifest.xml`
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                     android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
 
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
             <intent-filter>
@@ -595,6 +596,11 @@ This is done by specifying an `actions` parameters while configuring the local n
 For e.g. `actions: ['Accept', 'Reject']`
 
 When you handle actions in background (`invokeApp: false`), you can open the application and pass the initial notification by using use `PushNotification.invokeApp(notification)`. 
+
+Make sure you have the receiver in `AndroidManifest.xml`:
+```xml
+  <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
+```
 
 For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
 

@@ -8,7 +8,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +28,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
@@ -79,6 +79,28 @@ public class RNPushNotificationHelper {
 
     private AlarmManager getAlarmManager() {
         return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    public void invokeApp(Bundle bundle) {
+        String packageName = context.getPackageName();
+        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+        String className = launchIntent.getComponent().getClassName();
+
+        try {
+            Class<?> activityClass = Class.forName(className);
+            Intent activityIntent = new Intent(context, activityClass);
+
+            if(bundle != null) {
+                activityIntent.putExtra("notification", bundle);
+            }
+
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            context.startActivity(activityIntent);
+        } catch(Exception e) {
+            Log.e(LOG_TAG, "Class not found", e);
+            return;
+        }
     }
 
     private PendingIntent toScheduleNotificationIntent(Bundle bundle) {
@@ -522,7 +544,7 @@ public class RNPushNotificationHelper {
                     }
 
 
-                    Intent actionIntent = new Intent(packageName + ".ACTION_" + i);
+                    Intent actionIntent = new Intent(context, RNPushNotificationActions.class);
 
                     actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 

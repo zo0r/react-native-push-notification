@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `RNPushNotificationRegistrationService` has been removed, old reference in AndroidManifest must be removed.
 - `Notifications.registerNotificationActions()` has been removed and is not required for `actions`.
 - `DeviceEventEmitter.addListener('notificationActionReceived', callback)` is replaced by `onAction`.
+- Extra receiver must be added to manage actions.
+  ```xml
+      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
+  ```
 
 ### Features
 
