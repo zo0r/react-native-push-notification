@@ -21,7 +21,11 @@ public class RNPushNotificationActions extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
       String intentActionPrefix = context.getPackageName() + ".ACTION_";
 
-      Log.i(LOG_TAG, "RNPushNotificationActions loading action");
+      Log.i(LOG_TAG, "RNPushNotificationBootEventReceiver loading scheduled notifications");
+
+      if (null == intent.getAction() || !intent.getAction().startsWith(intentActionPrefix)) {
+        return;
+      }
 
       final Bundle bundle = intent.getBundleExtra("notification");
 

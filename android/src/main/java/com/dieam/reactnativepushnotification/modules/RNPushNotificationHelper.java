@@ -545,6 +545,7 @@ public class RNPushNotificationHelper {
 
 
                     Intent actionIntent = new Intent(context, RNPushNotificationActions.class);
+                    actionIntent.setAction(packageName + ".ACTION_" + i);
 
                     actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
