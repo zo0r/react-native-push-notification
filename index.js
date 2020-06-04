@@ -87,7 +87,7 @@ Notifications.configure = function(options) {
     this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
     this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
     this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
-    this.callNative( 'addEventListener', [ 'action', this._onAction ] );
+    Platform.OS === 'android' ? this.callNative( 'addEventListener', [ 'action', this._onAction ] ) : null
     Platform.OS === 'android' ? this.callNative( 'addEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
 
     this.isLoaded = true;
@@ -125,7 +125,7 @@ Notifications.unregister = function() {
   this.callNative( 'removeEventListener', [ 'register', this._onRegister ] )
   this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
   this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification ] )
-  this.callNative( 'removeEventListener', [ 'action', this._onAction ] )
+  Platform.OS === 'android' ? this.callNative( 'removeEventListener', [ 'action', this._onAction ] ) : null
   Platform.OS === 'android' ? this.callNative( 'removeEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
   this.isLoaded = false;
 };
