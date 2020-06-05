@@ -1,18 +1,18 @@
 'use strict';
 
-var {
+let {
   NativeModules,
   DeviceEventEmitter,
 } = require('react-native');
 
-var RNPushNotification = NativeModules.RNPushNotification;
-var _notifHandlers = new Map();
+let RNPushNotification = NativeModules.RNPushNotification;
+let _notifHandlers = new Map();
 
-var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
-var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
-var REMOTE_FETCH_EVENT = 'remoteFetch';
+let DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
+let NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
+let REMOTE_FETCH_EVENT = 'remoteFetch';
 
-var NotificationsComponent = function() {
+let NotificationsComponent = function() {
 
 };
 
@@ -66,13 +66,13 @@ NotificationsComponent.prototype.checkPermissions = function(callback) {
 };
 
 NotificationsComponent.prototype.addEventListener = function(type, handler) {
-	var listener;
+	let listener;
 	if (type === 'notification') {
 		listener =  DeviceEventEmitter.addListener(
 			DEVICE_NOTIF_EVENT,
 			function(notifData) {
 				if (notifData && notifData.dataJSON) {
-					var data = JSON.parse(notifData.dataJSON);
+					let data = JSON.parse(notifData.dataJSON);
 					handler(data);
 				}
 			}
@@ -89,7 +89,7 @@ NotificationsComponent.prototype.addEventListener = function(type, handler) {
 			REMOTE_FETCH_EVENT,
 			function(notifData) {
 				if (notifData && notifData.dataJSON) {
-					var notificationData = JSON.parse(notifData.dataJSON)
+					let notificationData = JSON.parse(notifData.dataJSON)
 					handler(notificationData);
 				}
 			}
@@ -100,7 +100,7 @@ NotificationsComponent.prototype.addEventListener = function(type, handler) {
 };
 
 NotificationsComponent.prototype.removeEventListener = function(type, handler) {
-	var listener = _notifHandlers.get(type);
+	let listener = _notifHandlers.get(type);
 	if (!listener) {
 		return;
 	}
@@ -122,6 +122,9 @@ NotificationsComponent.prototype.removeAllDeliveredNotifications = function() {
 
 NotificationsComponent.prototype.getDeliveredNotifications = function(callback) {
   RNPushNotification.getDeliveredNotifications(callback);
+}
+NotificationsComponent.prototype.getScheduledLocalNotifications = function(callback) {
+  RNPushNotification.getScheduledLocalNotifications(callback);
 }
 NotificationsComponent.prototype.removeDeliveredNotifications = function(identifiers) {
   RNPushNotification.removeDeliveredNotifications(identifiers);

@@ -4,14 +4,14 @@
 
 'use strict';
 
-var RNNotificationsComponent = require( './component' );
+let RNNotificationsComponent = require( './component' );
 
-var AppState = RNNotificationsComponent.state;
-var RNNotifications = RNNotificationsComponent.component;
+let AppState = RNNotificationsComponent.state;
+let RNNotifications = RNNotificationsComponent.component;
 
-var Platform = require('react-native').Platform;
+let Platform = require('react-native').Platform;
 
-var Notifications = {
+let Notifications = {
 	handler: RNNotifications,
 	onRegister: false,
 	onError: false,
@@ -269,7 +269,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
   			finish: (res) => data.finish(res)
 			});
 		} else {
-			var notificationData = {
+			let notificationData = {
 				foreground: ! isFromBackground,
   			finish: () => {},
 				...data
@@ -383,6 +383,10 @@ Notifications.removeAllDeliveredNotifications = function() {
 
 Notifications.getDeliveredNotifications = function() {
 	return this.callNative('getDeliveredNotifications', arguments);
+}
+
+Notifications.getScheduledLocalNotifications = function() {
+	return this.callNative('getScheduledLocalNotifications', arguments);
 }
 
 Notifications.removeDeliveredNotifications = function() {
