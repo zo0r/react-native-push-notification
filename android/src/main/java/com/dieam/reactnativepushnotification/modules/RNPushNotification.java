@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
@@ -91,29 +92,16 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             mJsDelivery.notifyNotification(bundle);
         }
     }
+    
+    @ReactMethod
+    public void invokeApp(ReadableMap data) {
+        Bundle bundle = null;
 
-    private void registerNotificationsReceiveNotificationActions(ReadableArray actions) {
-        IntentFilter intentFilter = new IntentFilter();
-        // Add filter for each actions.
-        for (int i = 0; i < actions.size(); i++) {
-            String action = actions.getString(i);
-            intentFilter.addAction(getReactApplicationContext().getPackageName() + "." + action);
+        if (data != null) {
+            bundle = Arguments.toBundle(data);
         }
-        
-        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getBundleExtra("notification");
 
-                // Notify the action.
-                mJsDelivery.notifyNotificationAction(bundle);
-
-                // Dismiss the notification popup.
-                NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-                int notificationID = Integer.parseInt(bundle.getString("id"));
-                manager.cancel(notificationID);
-            }
-        }, intentFilter);
+        mRNPushNotificationHelper.invokeApp(bundle);
     }
 
     @ReactMethod
@@ -227,13 +215,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     /**
      * Clear notification from the notification centre.
      */
-    public void clearLocalNotification(int notificationID) {
-        mRNPushNotificationHelper.clearNotification(notificationID);
-    }
-
-    @ReactMethod
-    public void registerNotificationActions(ReadableArray actions) {
-        registerNotificationsReceiveNotificationActions(actions);
+    public void clearLocalNotification(String tag, int notificationID) {
+        mRNPushNotificationHelper.clearNotification(tag, notificationID);
     }
 
     @ReactMethod
@@ -286,5 +269,37 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
               }
           }
       }).start();
+    }
+
+    @ReactMethod
+    /**
+     * List all channels id
+     */
+    public void getChannels(Callback callback) {
+      WritableArray array = Arguments.fromList(mRNPushNotificationHelper.listChannels());
+      
+      if(callback != null) {
+        callback.invoke(array);
+      }
+    }
+
+    @ReactMethod
+    /**
+     * Check if channel exists with a given id
+     */
+    public void channelExists(String channel_id, Callback callback) {
+      boolean exists = mRNPushNotificationHelper.channelExists(channel_id);
+
+      if(callback != null) {
+        callback.invoke(exists);
+      }
+    }
+
+    @ReactMethod
+    /**
+     * Delete channel with a given id
+     */
+    public void deleteChannel(String channel_id) {
+      mRNPushNotificationHelper.deleteChannel(channel_id);
     }
 }

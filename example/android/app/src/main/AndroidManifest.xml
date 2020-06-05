@@ -29,6 +29,7 @@
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
+      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
           <intent-filter>
@@ -44,6 +45,8 @@
           </intent-filter>
       </service>
 
+      <meta-data  android:name="com.dieam.reactnativepushnotification.channel_create_default"
+                  android:value="true"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                   android:value="false"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
@@ -52,6 +55,13 @@
                   android:value="Super channel description"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                   android:resource="@android:color/white"/>
+
+
+
+      <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name.rn-push-notification-channel-id-4-300"
+                  android:value="Example-Channel silent"/>
+      <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description.rn-push-notification-channel-id-4-300"
+                  android:value="Super channel description for silent channel"/>
     </application>
 
 </manifest>

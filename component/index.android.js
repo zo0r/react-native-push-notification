@@ -1,16 +1,14 @@
 'use strict';
 
-let {
-  NativeModules,
-  DeviceEventEmitter,
-} = require('react-native');
+import { NativeModules, DeviceEventEmitter } from "react-native";
 
 let RNPushNotification = NativeModules.RNPushNotification;
 let _notifHandlers = new Map();
 
-let DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
-let NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
-let REMOTE_FETCH_EVENT = 'remoteFetch';
+var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
+var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
+var NOTIF_ACTION_EVENT = 'notificationActionReceived';
+var REMOTE_FETCH_EVENT = 'remoteFetch';
 
 let NotificationsComponent = function() {
 
@@ -38,8 +36,8 @@ NotificationsComponent.prototype.cancelLocalNotifications = function(details) {
 	RNPushNotification.cancelLocalNotifications(details);
 };
 
-NotificationsComponent.prototype.clearLocalNotification = function(details) {
-	RNPushNotification.clearLocalNotification(details);
+NotificationsComponent.prototype.clearLocalNotification = function(details, tag) {
+	RNPushNotification.clearLocalNotification(details, tag);
 };
 
 NotificationsComponent.prototype.cancelAllLocalNotifications = function() {
@@ -94,7 +92,17 @@ NotificationsComponent.prototype.addEventListener = function(type, handler) {
 				}
 			}
 		);
-	}
+	} else if (type === 'action') {
+		listener = DeviceEventEmitter.addListener(
+			NOTIF_ACTION_EVENT,
+			function(actionData) {
+				if (actionData && actionData.dataJSON) {
+					var action = JSON.parse(actionData.dataJSON)
+					handler(action);
+				}
+			}
+		);
+  }
 
 	_notifHandlers.set(type, listener);
 };
@@ -134,7 +142,22 @@ NotificationsComponent.prototype.abandonPermissions = function() {
 	RNPushNotification.abandonPermissions();
 }
 
+NotificationsComponent.prototype.invokeApp = function(data) {
+	RNPushNotification.invokeApp(data);
+}
+
+NotificationsComponent.prototype.getChannels = function(callback) {
+	RNPushNotification.getChannels(callback);
+}
+
+NotificationsComponent.prototype.channelExists = function(channel_id, callback) {
+	RNPushNotification.channelExists(channel_id, callback);
+}
+
+NotificationsComponent.prototype.deleteChannel = function(channel_id) {
+	RNPushNotification.deleteChannel(channel_id);
+}
+
 module.exports = {
-	state: false,
 	component: new NotificationsComponent()
 };

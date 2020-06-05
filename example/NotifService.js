@@ -9,10 +9,14 @@ export default class NotifService {
     NotificationHandler.attachNotification(onNotification);
 
     // Clear badge number at start
-    PushNotification.getApplicationIconBadgeNumber(function(number) {
-      if(number > 0) {
+    PushNotification.getApplicationIconBadgeNumber(function (number) {
+      if (number > 0) {
         PushNotification.setApplicationIconBadgeNumber(0);
       }
+    });
+
+    PushNotification.getChannels(function(channels) {
+      console.log(channels);
     });
   }
 
@@ -33,6 +37,8 @@ export default class NotifService {
       tag: 'some_tag', // (optional) add tag to message
       group: 'group', // (optional) add group to message
       ongoing: false, // (optional) set whether this is an "ongoing" notification
+      actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
+      invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
       /* iOS only properties */
       alertAction: 'view', // (optional) default: view
@@ -45,7 +51,6 @@ export default class NotifService {
       playSound: !!soundName, // (optional) default: true
       soundName: soundName ? soundName : 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
       number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-      actions: '["Yes", "No"]', // (Android only) See the doc for notification actions to know more
     });
   }
 
@@ -68,6 +73,8 @@ export default class NotifService {
       tag: 'some_tag', // (optional) add tag to message
       group: 'group', // (optional) add group to message
       ongoing: false, // (optional) set whether this is an "ongoing" notification
+      actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
+      invokeApp: false, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
       /* iOS only properties */
       alertAction: 'view', // (optional) default: view

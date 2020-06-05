@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 class RNPushNotificationConfig {
+    private static final String KEY_CHANNEL_CREATE_DEFAULT = "com.dieam.reactnativepushnotification.channel_create_default";
     private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
     private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
     private static final String KEY_NOTIFICATION_FOREGROUND = "com.dieam.reactnativepushnotification.notification_foreground";
@@ -30,29 +31,31 @@ class RNPushNotificationConfig {
         }
     }
 
-    public String getChannelName() {
+    private String getStringValue(String key, String defaultValue) {
         try {
-            final String name = metadata.getString(KEY_CHANNEL_NAME);
-            if (name != null && name.length() > 0) {
-                return name;
+            final String value = metadata.getString(key);
+
+            if (value != null && value.length() > 0) {
+                return value;
             }
         } catch (Exception e) {
-            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_NAME + " in manifest. Falling back to default");
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + key + " in manifest. Falling back to default");
         }
+
         // Default
-        return "rn-push-notification-channel";
+        return defaultValue;
     }
-    public String getChannelDescription() {
-        try {
-            final String description = metadata.getString(KEY_CHANNEL_DESCRIPTION);
-            if (description != null) {
-                return description;
-            }
-        } catch (Exception e) {
-            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_DESCRIPTION + " in manifest. Falling back to default");
-        }
-        // Default
-        return "";
+
+    public String getChannelName(String channel_id) {
+        String overrided = this.getStringValue(KEY_CHANNEL_NAME, "rn-push-notification-channel");  
+
+        return this.getStringValue(KEY_CHANNEL_NAME + "." + channel_id, overrided);
+    }
+    
+    public String getChannelDescription(String channel_id) {
+        String overrided = this.getStringValue(KEY_CHANNEL_DESCRIPTION, "");  
+        
+        return this.getStringValue(KEY_CHANNEL_DESCRIPTION + "." + channel_id, overrided);
     }
 
     public int getNotificationColor() {
@@ -74,5 +77,15 @@ class RNPushNotificationConfig {
         }
         // Default
         return false;
+    }
+
+    public boolean getChannelCreateDefault() {
+        try {
+            return metadata.getBoolean(KEY_CHANNEL_CREATE_DEFAULT, true);
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_CREATE_DEFAULT + " in manifest. Falling back to default");
+        }
+        // Default
+        return true;
     }
 }
