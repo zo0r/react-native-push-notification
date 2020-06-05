@@ -692,8 +692,8 @@ public class RNPushNotificationHelper {
     }
 
     public void clearDeliveredNotifications(ReadableArray identifiers) {
-        NotificationManager notificationManager = notificationManager();
-        for (int index = 0; index < identifiers.size(); index++) {
+      NotificationManager notificationManager = notificationManager();
+      for (int index = 0; index < identifiers.size(); index++) {
             String id = identifiers.getString(index);
             Log.i(LOG_TAG, "Removing notification with id " + id);
             notificationManager.cancel(Integer.parseInt(id));
@@ -702,26 +702,26 @@ public class RNPushNotificationHelper {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public WritableArray getDeliveredNotifications() {
-        NotificationManager notificationManager = notificationManager();
-        StatusBarNotification delivered[] = notificationManager.getActiveNotifications();
-        Log.i(LOG_TAG, "Found " + delivered.length + " delivered notifications");
-        WritableArray result = Arguments.createArray();
-        /*
-         * stay consistent to the return structure in
-         * https://facebook.github.io/react-native/docs/pushnotificationios.html#getdeliverednotifications
-         * but there is no such thing as a 'userInfo'
-         */
-        for (StatusBarNotification notification : delivered) {
-            Notification original = notification.getNotification();
-            Bundle extras = original.extras;
-            WritableMap notif = Arguments.createMap();
-            notif.putString("identifier", "" + notification.getId());
-            notif.putString("title", extras.getString(Notification.EXTRA_TITLE));
-            notif.putString("body", extras.getString(Notification.EXTRA_TEXT));
-            notif.putString("tag", notification.getTag());
-            notif.putString("group", original.getGroup());
-            result.pushMap(notif);
-        }
+      NotificationManager notificationManager = notificationManager();
+      StatusBarNotification delivered[] = notificationManager.getActiveNotifications();
+      Log.i(LOG_TAG, "Found " + delivered.length + " delivered notifications");
+      WritableArray result = Arguments.createArray();
+      /*
+        * stay consistent to the return structure in
+        * https://facebook.github.io/react-native/docs/pushnotificationios.html#getdeliverednotifications
+        * but there is no such thing as a 'userInfo'
+        */
+      for (StatusBarNotification notification : delivered) {
+        Notification original = notification.getNotification();
+        Bundle extras = original.extras;
+        WritableMap notif = Arguments.createMap();
+        notif.putString("identifier", "" + notification.getId());
+        notif.putString("title", extras.getString(Notification.EXTRA_TITLE));
+        notif.putString("body", extras.getString(Notification.EXTRA_TEXT));
+        notif.putString("tag", notification.getTag());
+        notif.putString("group", original.getGroup());
+        result.pushMap(notif);
+      }
 
         return result;
 
