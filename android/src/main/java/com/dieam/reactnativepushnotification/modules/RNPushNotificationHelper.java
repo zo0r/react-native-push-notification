@@ -694,10 +694,10 @@ public class RNPushNotificationHelper {
     public void clearDeliveredNotifications(ReadableArray identifiers) {
       NotificationManager notificationManager = notificationManager();
       for (int index = 0; index < identifiers.size(); index++) {
-            String id = identifiers.getString(index);
-            Log.i(LOG_TAG, "Removing notification with id " + id);
-            notificationManager.cancel(Integer.parseInt(id));
-        }
+        String id = identifiers.getString(index);
+        Log.i(LOG_TAG, "Removing notification with id " + id);
+        notificationManager.cancel(Integer.parseInt(id));
+      }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -723,7 +723,7 @@ public class RNPushNotificationHelper {
         result.pushMap(notif);
       }
 
-        return result;
+      return result;
 
     }
 
