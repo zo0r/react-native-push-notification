@@ -23,8 +23,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
+import androidx.core.text.HtmlCompat;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -42,6 +46,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
+import static android.text.Html.FROM_HTML_MODE_LEGACY;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
 
@@ -286,7 +291,9 @@ public class RNPushNotificationHelper {
                 notification.setGroup(group);
             }
 
-            notification.setContentText(bundle.getString("message"));
+            Spanned styledText = HtmlCompat.fromHtml(bundle.getString("message"), HtmlCompat.FROM_HTML_MODE_LEGACY);
+
+            notification.setContentText(styledText);
 
             String largeIcon = bundle.getString("largeIcon");
 
@@ -333,10 +340,14 @@ public class RNPushNotificationHelper {
             }
 
             notification.setSmallIcon(smallIconResId);
-            String bigText = bundle.getString("bigText");
 
-            if (bigText == null) {
-                bigText = bundle.getString("message");
+            Spanned bigText = null;
+            String bigTextString = bundle.getString("bigText");
+
+            if(bigTextString == null) {
+                bigText = styledText;
+            } else {
+                bigText = HtmlCompat.fromHtml(bigTextString, HtmlCompat.FROM_HTML_MODE_LEGACY);
             }
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
