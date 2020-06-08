@@ -36,7 +36,6 @@ import com.facebook.react.bridge.WritableMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -731,22 +730,16 @@ public class RNPushNotificationHelper {
         WritableArray scheduled = Arguments.createArray();
 
         Map<String, ?> scheduledNotifications = scheduledNotificationsPersistence.getAll();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
 
         for (Map.Entry<String, ?> entry : scheduledNotifications.entrySet()) {
             try {
                 RNPushNotificationAttributes notification = fromJson(entry.getValue().toString());
                 WritableMap notificationMap = Arguments.createMap();
 
-                long fireDateTimestamp = (long) notification.getFireDate();
-                Date date = new java.util.Date(fireDateTimestamp);
-                String fireDate = formatter.format(date);
-
-                notificationMap.putString("alertTitle", notification.getTitle());
-                notificationMap.putString("alertBody", notification.getMessage());
-                notificationMap.putString("alertAction", notification.getActions());
-                notificationMap.putString("applicationIconBadgeNumber", notification.getNumber());
-                notificationMap.putString("fireDate", fireDate);
+                notificationMap.putString("title", notification.getTitle());
+                notificationMap.putString("message", notification.getMessage());
+                notificationMap.putString("number", notification.getNumber());
+                notificationMap.putString("date", notification.getFireDate());
                 notificationMap.putString("id", notification.getId());
                 notificationMap.putBoolean("remote", false);
                 notificationMap.putString("repeatInterval", notification.getRepeatType());
