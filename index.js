@@ -439,8 +439,42 @@ Notifications.getDeliveredNotifications = function() {
   return this.callNative('getDeliveredNotifications', arguments);
 }
 
-Notifications.getScheduledLocalNotifications = function() {
-	return this.callNative('getScheduledLocalNotifications', arguments);
+Notifications.getScheduledLocalNotifications = function(callback) {
+	const mapNotifications = (notifications) => {
+		let mappedNotifications = [];
+		if(notifications?.length > 0) {
+			if(Platform.OS === 'ios'){
+				mappedNotifications = notifications.map(notif => {
+					return ({
+						soundName: notif.soundName,
+						repeatInterval: notif.repeatInterval,
+						remote: notif.remote,
+						id: notif.userInfo?.id,
+						date: notif.fireDate,
+						number: notif?.applicationIconBadgeNumber,
+						message: notif?.alertBody,
+						title: notif?.alertTitle,
+					})
+				})
+			} else if(Platform.OS === 'android') {
+				mappedNotifications = notifications.map(notif => {
+					return ({
+						soundName: notif.soundName,
+						repeatInterval: notif.repeatInterval,
+						remote: notif.remote,
+						id: notif.id,
+						date: notif.date,
+						number: notif.number,
+						message: notif.message,
+						title: notif.title,
+					})
+				})
+			}
+		}
+		callback(mappedNotifications);
+	}
+
+	return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
 }
 
 Notifications.removeDeliveredNotifications = function() {
