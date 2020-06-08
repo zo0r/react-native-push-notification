@@ -741,7 +741,6 @@ public class RNPushNotificationHelper {
                 notificationMap.putString("number", notification.getNumber());
                 notificationMap.putDouble("date", notification.getFireDate());
                 notificationMap.putString("id", notification.getId());
-                notificationMap.putBoolean("remote", false);
                 notificationMap.putString("repeatInterval", notification.getRepeatType());
                 notificationMap.putString("soundName", notification.getSound());
 

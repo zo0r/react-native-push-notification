@@ -524,6 +524,32 @@ Removes the specified notifications from Notification Center
 | ----------- | ----- | -------- | ---------------------------------- |
 | identifiers | array | Yes      | Array of notification identifiers. |
 
+### 6) getScheduledLocalNotifications
+
+```javascript
+PushNotificationIOS.getScheduledLocalNotifications(callback);
+```
+
+Provides you with a list of the app’s scheduled local notifications that are yet to be displayed
+
+**Parameters:**
+
+| Name     | Type     | Required | Description                                                 |
+| -------- | -------- | -------- | ----------------------------------------------------------- |
+| callback | function | Yes      | Function which receive an array of delivered notifications. |
+
+Returns an array of local scheduled notification objects containing:
+
+| Name     | Type     | Description                                                 |
+| -------- | -------- | -------- | ----------------------------------------------------------- |
+| id | number | The identifier of this notification. |
+| date | Date | The fire date of this notification. |
+| title | string | The title of this notification. |
+| message | string | The message body of this notification. |
+| soundName | string | The sound name of this notification. |
+| repeatInterval | number | The repeat interval of this notification. |
+| number | number | App notification badge count number. |
+
 ## Abandon Permissions
 
 `PushNotification.abandonPermissions()` Revokes the current token and unregister for all remote notifications received via APNS or FCM.

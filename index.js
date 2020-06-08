@@ -448,7 +448,6 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 					return ({
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
-						remote: notif.remote,
 						id: notif.userInfo?.id,
 						date: new Date(notif.fireDate),
 						number: notif?.applicationIconBadgeNumber,
@@ -461,7 +460,6 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 					return ({
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
-						remote: notif.remote,
 						id: notif.id,
 						date: new Date(notif.date),
 						number: notif.number,
