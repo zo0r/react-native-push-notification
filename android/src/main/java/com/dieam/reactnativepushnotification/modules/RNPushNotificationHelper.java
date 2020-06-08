@@ -739,12 +739,11 @@ public class RNPushNotificationHelper {
                 notificationMap.putString("title", notification.getTitle());
                 notificationMap.putString("message", notification.getMessage());
                 notificationMap.putString("number", notification.getNumber());
-                notificationMap.putString("date", notification.getFireDate());
+                notificationMap.putDouble("date", notification.getFireDate());
                 notificationMap.putString("id", notification.getId());
                 notificationMap.putBoolean("remote", false);
                 notificationMap.putString("repeatInterval", notification.getRepeatType());
                 notificationMap.putString("soundName", notification.getSound());
-
 
                 scheduled.pushMap(notificationMap);
             } catch (JSONException e) {

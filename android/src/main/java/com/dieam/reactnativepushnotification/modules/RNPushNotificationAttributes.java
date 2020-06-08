@@ -330,6 +330,26 @@ public class RNPushNotificationAttributes {
         return id;
     }
 
+    public String getSound() {
+        return sound;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getRepeatType() {
+        return repeatType;
+    }
+
     public double getFireDate() {
         return fireDate;
     }
