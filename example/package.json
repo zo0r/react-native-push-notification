@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "pod-install": "cd ios && pod install"
   },
   "dependencies": {
     "@react-native-community/push-notification-ios": "^1.1.1",
