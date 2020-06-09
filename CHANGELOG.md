@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   ```xml
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
   ```
+- (iOS) `userInfo` is now populated with id by default to allow operation based on `id`.
 
 ### Features
 
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - (Android) Add `groupSummary` to allow grouping notifications. Based on [#1253](https://github.com/zo0r/react-native-push-notification/pull/1253)
 - (Android) Add `channelId`, custom channel_id in android. Based on [#1159](https://github.com/zo0r/react-native-push-notification/pull/1159)
 - (iOS) Add fire date in notification response, NOTE: `push-notification-ios` in version `> 1.2.0` [#1345](https://github.com/zo0r/react-native-push-notification/pull/1345)
+- (Android/iOS) Add method getScheduledLocalNotifications()[#1466](https://github.com/zo0r/react-native-push-notification/pull/1466)
 
 ### Fixed
 

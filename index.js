@@ -139,13 +139,27 @@ Notifications.unregister = function() {
  * @param {Object}    details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
 Notifications.localNotification = function(details) {
-  if ( Platform.OS === 'ios' ) {
+  if (details && typeof details.id === 'number') {
+    if (isNaN(details.id)) {
+      console.warn('NaN value has been passed as id');
+      delete details.id;
+    }
+    else {
+      details.id = '' + details.id;
+    }
+  }
+
+  if (Platform.OS === 'ios') {
     // https://developer.apple.com/reference/uikit/uilocalnotification
 
     let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
+    }
+
+    if (details.userInfo) {
+      details.userInfo.id = details.userInfo.id || details.id;
     }
 
     // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
@@ -161,17 +175,7 @@ Notifications.localNotification = function(details) {
       userInfo: details.userInfo
     });
   } else {
-    if(details && typeof details.id === 'number') {
-      if(isNaN(details.id)) {
-        console.warn('NaN value has been passed as id');
-        delete details.id;
-      }
-      else {
-        details.id = '' + details.id;
-      }
-    }
-
-    if(details && typeof details.number === 'number') {
+    if (details && typeof details.number === 'number') {
       if(isNaN(details.number)) {
         console.warn('NaN value has been passed as number');
         delete details.number;
@@ -181,7 +185,7 @@ Notifications.localNotification = function(details) {
       }
     }
 
-    if(details && typeof details.shortcutId === 'number') {
+    if (details && typeof details.shortcutId === 'number') {
       if(isNaN(details.shortcutId)) {
         console.warn('NaN value has been passed as shortcutId');
         delete details.shortcutId;
@@ -205,11 +209,25 @@ Notifications.localNotification = function(details) {
  * @param {Date}    details.date - The date and time when the system should deliver the notification
  */
 Notifications.localNotificationSchedule = function(details) {
-  if ( Platform.OS === 'ios' ) {
+  if (details && typeof details.id === 'number') {
+    if(isNaN(details.id)) {
+      console.warn('NaN value has been passed as id');
+      delete details.id;
+    }
+    else {
+      details.id = '' + details.id;
+    }
+  }
+
+  if (Platform.OS === 'ios') {
     let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
+    }
+
+    if (details.userInfo) {
+      details.userInfo.id = details.userInfo.id || details.id;
     }
 
     const iosDetails = {
@@ -223,7 +241,7 @@ Notifications.localNotificationSchedule = function(details) {
       category: details.category,
     };
 
-    if(details.number) {
+    if (details.number) {
       iosDetails.applicationIconBadgeNumber = parseInt(details.number, 10);
     }
 
@@ -233,18 +251,8 @@ Notifications.localNotificationSchedule = function(details) {
     }
     this.handler.scheduleLocalNotification(iosDetails);
   } else {
-    if(details && typeof details.id === 'number') {
-      if(isNaN(details.id)) {
-        console.warn('NaN value has been passed as id');
-        delete details.id;
-      }
-      else {
-        details.id = '' + details.id;
-      }
-    }
-
-    if(details && typeof details.number === 'number') {
-      if(isNaN(details.number)) {
+    if (details && typeof details.number === 'number') {
+      if (isNaN(details.number)) {
         console.warn('NaN value has been passed as number');
         delete details.number;
       }
@@ -253,8 +261,8 @@ Notifications.localNotificationSchedule = function(details) {
       }
     }
 
-    if(details && typeof details.shortcutId === 'number') {
-      if(isNaN(details.shortcutId)) {
+    if (details && typeof details.shortcutId === 'number') {
+      if (isNaN(details.shortcutId)) {
         console.warn('NaN value has been passed as shortcutId');
         delete details.shortcutId;
       }
@@ -316,6 +324,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
   if ( this.onNotification !== false ) {
     if ( Platform.OS === 'ios' ) {
       this.onNotification({
+        id: notif.userInfo?.id,
         foreground: ! isFromBackground,
         userInteraction: isFromBackground,
         message: data.getMessage(),
