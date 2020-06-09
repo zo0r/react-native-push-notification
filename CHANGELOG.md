@@ -46,7 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - (Android) Sounds are playing even in Do Not Disturb [#1432](https://github.com/zo0r/react-native-push-notification/issues/1432#issuecomment-633367111)
 - (Android) onNotification fires every time when the app goes from background to foreground [#1455](https://github.com/zo0r/react-native-push-notification/issues/1455)
-- (Android) Cannot send to notification centre because there is no 'message' field in: Bundle [#1452](https://github.com/zo0r/react-native-push-notification/issues/1452)
+- (Android) java.lang.NullPointerException: Attempt to invoke virtual method 'void com.dieam.reactnativepushnotification.modules.d.c(android.os.Bundle)' on a null object reference [#1431](https://github.com/zo0r/react-native-push-notification/issues/1431#issuecomment-633315150)
 
 ## [3.5.1] - 2020-05-20
 

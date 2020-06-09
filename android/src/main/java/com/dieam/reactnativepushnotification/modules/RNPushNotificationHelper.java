@@ -28,7 +28,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
@@ -43,6 +42,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -167,14 +167,14 @@ public class RNPushNotificationHelper {
         // notification to the user
         PendingIntent pendingIntent = toScheduleNotificationIntent(bundle);
 
-        if(pendingIntent == null) {
+        if (pendingIntent == null) {
             return;
         }
 
         Log.d(LOG_TAG, String.format("Setting a notification with id %s at time %s",
                 bundle.getString("id"), Long.toString(fireDate)));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if(allowWhileIdle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (allowWhileIdle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
             } else {
                 getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
@@ -294,7 +294,7 @@ public class RNPushNotificationHelper {
             final String visibilityString = bundle.getString("visibility");
 
             if (visibilityString != null) {
-                switch(visibilityString.toLowerCase()) {
+                switch (visibilityString.toLowerCase()) {
                     case "private":
                         visibility = NotificationCompat.VISIBILITY_PRIVATE;
                         break;
@@ -429,9 +429,9 @@ public class RNPushNotificationHelper {
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                
+
                 String soundName = bundle.getString("soundName");
-                
+
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
 
@@ -493,7 +493,7 @@ public class RNPushNotificationHelper {
                 long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
                 if (vibration == 0)
                     vibration = DEFAULT_VIBRATION;
-                
+
                 channel_id = channel_id + "-" + vibration;
 
                 vibratePattern = new long[]{0, vibration};
@@ -582,7 +582,7 @@ public class RNPushNotificationHelper {
             if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
                 Notification info = notification.build();
                 info.defaults |= Notification.DEFAULT_LIGHTS;
-                
+
                 if (bundle.containsKey("tag")) {
                     String tag = bundle.getString("tag");
                     notificationManager.notify(tag, notificationID, info);
@@ -726,6 +726,33 @@ public class RNPushNotificationHelper {
 
     }
 
+    public WritableArray getScheduledLocalNotifications() {
+        WritableArray scheduled = Arguments.createArray();
+
+        Map<String, ?> scheduledNotifications = scheduledNotificationsPersistence.getAll();
+
+        for (Map.Entry<String, ?> entry : scheduledNotifications.entrySet()) {
+            try {
+                RNPushNotificationAttributes notification = fromJson(entry.getValue().toString());
+                WritableMap notificationMap = Arguments.createMap();
+
+                notificationMap.putString("title", notification.getTitle());
+                notificationMap.putString("message", notification.getMessage());
+                notificationMap.putString("number", notification.getNumber());
+                notificationMap.putDouble("date", notification.getFireDate());
+                notificationMap.putString("id", notification.getId());
+                notificationMap.putString("repeatInterval", notification.getRepeatType());
+                notificationMap.putString("soundName", notification.getSound());
+
+                scheduled.pushMap(notificationMap);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage());
+            }
+        }
+
+        return scheduled;
+    }
+
     public void cancelAllScheduledNotifications() {
         Log.i(LOG_TAG, "Cancelling all notifications");
 
@@ -758,7 +785,7 @@ public class RNPushNotificationHelper {
         b.putString("id", notificationIDString);
         PendingIntent pendingIntent = toScheduleNotificationIntent(b);
 
-        if(pendingIntent != null) {
+        if (pendingIntent != null) {
             getAlarmManager().cancel(pendingIntent);
         }
 
@@ -888,8 +915,8 @@ public class RNPushNotificationHelper {
         if (processInfos != null) {
             for (RunningAppProcessInfo processInfo : processInfos) {
                 if (processInfo.processName.equals(context.getPackageName())
-                    && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                    && processInfo.pkgList.length > 0) {
+                        && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                        && processInfo.pkgList.length > 0) {
                     return true;
                 }
             }

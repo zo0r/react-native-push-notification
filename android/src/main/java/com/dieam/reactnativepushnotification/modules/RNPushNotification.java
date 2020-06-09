@@ -233,7 +233,15 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      * Returns a list of all notifications currently in the Notification Center
      */
     public void getDeliveredNotifications(Callback callback) {
-      callback.invoke(mRNPushNotificationHelper.getDeliveredNotifications());
+        callback.invoke(mRNPushNotificationHelper.getDeliveredNotifications());
+    }
+
+    @ReactMethod
+    /**
+     * Returns a list of all currently scheduled notifications
+     */
+    public void getScheduledLocalNotifications(Callback callback) {
+        callback.invoke(mRNPushNotificationHelper.getScheduledLocalNotifications());
     }
 
     @ReactMethod
