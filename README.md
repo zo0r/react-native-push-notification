@@ -451,7 +451,7 @@ PushNotification.localNotification({
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
 
-**iOS: `userInfo` is populated `id` if not defined this allow the pervious method**
+**iOS: `userInfo` is populated `id` if not defined this allow the previous method**
 
 ### 2) cancelAllLocalNotifications
 
