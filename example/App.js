@@ -108,7 +108,7 @@ export default class App extends Component {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            this.notif.getScheduledLocalNotifications(notifs => console.log(notifs));
+            this.notif.getScheduledLocalNotifications().then(notifs => console.log(notifs));
           }}>
           <Text>Console.Log Scheduled Local Notifications</Text>
         </TouchableOpacity>

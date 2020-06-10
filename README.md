@@ -413,10 +413,9 @@ If you want to use a different default channel for remote notification, refer to
 You can list available channels with:
 
 ```js
-PushNotification.getChannels(function(channel_ids) {
+PushNotification.getChannels(function (channel_ids) {
   console.log(channel_ids); // ['channel_id_1']
 });
-
 ```
 
 ### Channel exists
@@ -424,10 +423,9 @@ PushNotification.getChannels(function(channel_ids) {
 You can check if a channel exists with:
 
 ```js
-PushNotification.channelExists(function(exists) {
+PushNotification.channelExists(function (exists) {
   console.log(exists); // true/false
 });
-
 ```
 
 ### List channels
@@ -436,19 +434,15 @@ You can list available channels with:
 
 ```js
 PushNotification.deleteChannel(channel_id);
-
 ```
 
 ## Cancelling notifications
 
 ### 1) cancelLocalNotifications
 
-#### Android
-
 The `id` parameter for `PushNotification.localNotification` is required for this operation. The id supplied will then be used for the cancel operation.
 
 ```javascript
-// Android
 PushNotification.localNotification({
     ...
     id: '123'
@@ -457,19 +451,7 @@ PushNotification.localNotification({
 PushNotification.cancelLocalNotifications({id: '123'});
 ```
 
-#### IOS
-
-The `userInfo` parameter for `PushNotification.localNotification` is required for this operation and must contain an `id` parameter. The id supplied will then be used for the cancel operation.
-
-```javascript
-// IOS
-PushNotification.localNotification({
-    ...
-    userInfo: { id: '123' }
-    ...
-});
-PushNotification.cancelLocalNotifications({id: '123'});
-```
+**iOS: `userInfo` is populated `id` if not defined this allow the pervious method**
 
 ### 2) cancelAllLocalNotifications
 
@@ -540,15 +522,15 @@ Provides you with a list of the app’s scheduled local notifications that are y
 
 Returns an array of local scheduled notification objects containing:
 
-| Name     | Type     | Description                                                 |
-| -------- | -------- | -------- | ----------------------------------------------------------- |
-| id | number | The identifier of this notification. |
-| date | Date | The fire date of this notification. |
-| title | string | The title of this notification. |
-| message | string | The message body of this notification. |
-| soundName | string | The sound name of this notification. |
+| Name           | Type   | Description                               |
+| -------------- | ------ | ----------------------------------------- |
+| id             | number | The identifier of this notification.      |
+| date           | Date   | The fire date of this notification.       |
+| title          | string | The title of this notification.           |
+| message        | string | The message body of this notification.    |
+| soundName      | string | The sound name of this notification.      |
 | repeatInterval | number | The repeat interval of this notification. |
-| number | number | App notification badge count number. |
+| number         | number | App notification badge count number.      |
 
 ## Abandon Permissions
 
@@ -621,9 +603,10 @@ This is done by specifying an `actions` parameters while configuring the local n
 
 For e.g. `actions: ['Accept', 'Reject']`
 
-When you handle actions in background (`invokeApp: false`), you can open the application and pass the initial notification by using use `PushNotification.invokeApp(notification)`. 
+When you handle actions in background (`invokeApp: false`), you can open the application and pass the initial notification by using use `PushNotification.invokeApp(notification)`.
 
 Make sure you have the receiver in `AndroidManifest.xml`:
+
 ```xml
   <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
 ```
