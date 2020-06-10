@@ -452,40 +452,46 @@ Notifications.getDeliveredNotifications = function() {
   return this.callNative('getDeliveredNotifications', arguments);
 }
 
-Notifications.getScheduledLocalNotifications = function(callback) {
-	const mapNotifications = (notifications) => {
-		let mappedNotifications = [];
-		if(notifications?.length > 0) {
-			if(Platform.OS === 'ios'){
-				mappedNotifications = notifications.map(notif => {
-					return ({
-						soundName: notif.soundName,
-						repeatInterval: notif.repeatInterval,
-						id: notif.userInfo?.id,
-						date: new Date(notif.fireDate),
-						number: notif?.applicationIconBadgeNumber,
-						message: notif?.alertBody,
-						title: notif?.alertTitle,
-					})
-				})
-			} else if(Platform.OS === 'android') {
-				mappedNotifications = notifications.map(notif => {
-					return ({
-						soundName: notif.soundName,
-						repeatInterval: notif.repeatInterval,
-						id: notif.id,
-						date: new Date(notif.date),
-						number: notif.number,
-						message: notif.message,
-						title: notif.title,
-					})
-				})
-			}
-		}
-		callback(mappedNotifications);
-	}
-
-	return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+Notifications.getScheduledLocalNotifications = function() {
+  return new Promise((resolve, reject) => {
+    const mapNotifications = (notifications) => {
+      let mappedNotifications = [];
+      if(notifications?.length > 0) {
+        if(Platform.OS === 'ios'){
+          mappedNotifications = notifications.map(notif => {
+            console.tron.log(notif);
+            return ({
+              soundName: notif.soundName,
+              repeatInterval: notif.repeatInterval,
+              id: notif.userInfo?.id,
+              date: new Date(notif.fireDate),
+              number: notif?.applicationIconBadgeNumber,
+              message: notif?.alertBody,
+              title: notif?.alertTitle,
+            })
+          })
+        } else if(Platform.OS === 'android') {
+          mappedNotifications = notifications.map(notif => {
+            return ({
+              soundName: notif.soundName,
+              repeatInterval: notif.repeatInterval,
+              id: notif.id,
+              date: new Date(notif.date),
+              number: notif.number,
+              message: notif.message,
+              title: notif.title,
+            })
+          })
+        }
+      }
+      resolve(mappedNotifications);
+    }
+    try{
+      this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+    } catch(e) {
+      reject(e);
+    }
+  })
 }
 
 Notifications.removeDeliveredNotifications = function() {
