@@ -160,6 +160,8 @@ Notifications.localNotification = function(details) {
 
     if (details.userInfo) {
       details.userInfo.id = details.userInfo.id || details.id;
+    } else {
+      details.userInfo = {id: details.id};
     }
 
     // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
@@ -228,6 +230,8 @@ Notifications.localNotificationSchedule = function(details) {
 
     if (details.userInfo) {
       details.userInfo.id = details.userInfo.id || details.id;
+    } else {
+      details.userInfo = {id: details.id};
     }
 
     const iosDetails = {
