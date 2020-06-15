@@ -328,7 +328,7 @@ Notifications._onNotification = function(data, isFromBackground = null) {
   if ( this.onNotification !== false ) {
     if ( Platform.OS === 'ios' ) {
       this.onNotification({
-        id: notif.userInfo?.id,
+        id: data?.userInfo?.id,
         foreground: ! isFromBackground,
         userInteraction: isFromBackground,
         message: data.getMessage(),
