@@ -14,7 +14,7 @@ export default class NotifService {
         PushNotification.setApplicationIconBadgeNumber(0);
       }
     });
-
+    
     PushNotification.getChannels(function(channels) {
       console.log(channels);
     });
@@ -37,7 +37,7 @@ export default class NotifService {
       tag: 'some_tag', // (optional) add tag to message
       group: 'group', // (optional) add group to message
       ongoing: false, // (optional) set whether this is an "ongoing" notification
-      actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
+      actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
       invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
       /* iOS only properties */
@@ -73,7 +73,7 @@ export default class NotifService {
       tag: 'some_tag', // (optional) add tag to message
       group: 'group', // (optional) add group to message
       ongoing: false, // (optional) set whether this is an "ongoing" notification
-      actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
+      actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
       invokeApp: false, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
       /* iOS only properties */

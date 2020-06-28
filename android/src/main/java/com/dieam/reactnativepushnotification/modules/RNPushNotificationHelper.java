@@ -517,7 +517,11 @@ public class RNPushNotificationHelper {
               channel_id = customChannelId;
             }
 
-            checkOrCreateChannel(notificationManager, channel_id, soundUri, importance, vibratePattern);
+            // Override channel_name, channel_description if there is one provided
+            String channel_name = bundle.getString("channelName");
+            String channel_description = bundle.getString("channelDescription");
+            
+            checkOrCreateChannel(notificationManager, channel_id, channel_name, channel_description, soundUri, importance, vibratePattern);
 
             notification.setChannelId(channel_id);
             notification.setContentIntent(pendingIntent);
@@ -829,7 +833,7 @@ public class RNPushNotificationHelper {
       
       // Instanciate a default channel with default sound.
       String channel_id_sound = NOTIFICATION_CHANNEL_ID + "-" + importance + "-default-" + DEFAULT_VIBRATION;
-      checkOrCreateChannel(manager, channel_id_sound, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
+      checkOrCreateChannel(manager, channel_id_sound, null, null, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
     }
 
     public List<String> listChannels() {
@@ -850,6 +854,23 @@ public class RNPushNotificationHelper {
       }
 
       return channels;
+    }
+
+    public boolean channelBlocked(String channel_id) {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+          return false;
+      
+      NotificationManager manager = notificationManager();
+
+      if (manager == null)
+          return false;
+
+      NotificationChannel channel = manager.getNotificationChannel(channel_id);
+
+      if(channel == null)
+          return false;
+
+      return NotificationManager.IMPORTANCE_NONE == channel.getImportance();
     }
 
     public boolean channelExists(String channel_id) {
@@ -878,7 +899,7 @@ public class RNPushNotificationHelper {
         manager.deleteNotificationChannel(channel_id);
     }
 
-    private void checkOrCreateChannel(NotificationManager manager, String channel_id, Uri soundUri, int importance, long[] vibratePattern) {
+    private void checkOrCreateChannel(NotificationManager manager, String channel_id, String channel_name, String channel_description, Uri soundUri, int importance, long[] vibratePattern) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
         if (manager == null)
@@ -887,9 +908,17 @@ public class RNPushNotificationHelper {
         NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
         if (channel == null) {
-            channel = new NotificationChannel(channel_id, this.config.getChannelName(channel_id), importance);
+            if(channel_name == null) {
+              channel_name = this.config.getChannelName(channel_id);
+            }
 
-            channel.setDescription(this.config.getChannelDescription(channel_id));
+            if(channel_description == null) {
+              channel_description = this.config.getChannelDescription(channel_id);
+            }
+
+            channel = new NotificationChannel(channel_id, channel_name, importance);
+
+            channel.setDescription(channel_description);
             channel.enableLights(true);
             channel.enableVibration(true);
             channel.setVibrationPattern(vibratePattern);

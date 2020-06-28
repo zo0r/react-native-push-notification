@@ -297,6 +297,18 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     /**
+     * Check if channel is blocked with a given id
+     */
+    public void channelBlocked(String channel_id, Callback callback) {
+      boolean blocked = mRNPushNotificationHelper.channelBlocked(channel_id);
+
+      if(callback != null) {
+        callback.invoke(blocked);
+      }
+    }
+
+    @ReactMethod
+    /**
      * Delete channel with a given id
      */
     public void deleteChannel(String channel_id) {

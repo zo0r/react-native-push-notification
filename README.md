@@ -381,6 +381,7 @@ you can avoid the default creation by using this:
 In the notifications options, you can provide a custom channel id with `channelId: "your-custom-channel-id"`, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your `channelId` is different if you change these options. If you have created a custom channel in another way, it will apply options of the channel.
 
 Custom and generated channels can have custom name and description in the `AndroidManifest.xml`, only if the library is responsible of the creation of the channel.
+You can also use `channelName` and `channelDescription` when you use to override the name or description. Once the channel is created, you won't be able to update them.
 
 ```xml
   <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name.[CHANNEL_ID]"
@@ -423,8 +424,18 @@ PushNotification.getChannels(function (channel_ids) {
 You can check if a channel exists with:
 
 ```js
-PushNotification.channelExists(function (exists) {
+PushNotification.channelExists(channel_id, function (exists) {
   console.log(exists); // true/false
+});
+```
+
+### Channel blocked
+
+You can check if a channel blocked with:
+
+```js
+PushNotification.channelBlocked(channel_id, function (blocked) {
+  console.log(blocked); // true/false
 });
 ```
 

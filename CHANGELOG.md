@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - (Android) `PushNotification.invokeApp(notification)` allow you to invoke the application when in background (notification for initial notification).
 - (Android) `PushNotification.getChannels(callback)` allow you to get the list of channels.
 - (Android) `PushNotification.channelExists(channel_id, callback)` allow you to check of a channel exists.
+- (Android) `PushNotification.channelBlocked(channel_id, callback)` allow you to check of a channel is blocked. Based on [#1249](https://github.com/zo0r/react-native-push-notification/pull/1249)
 - (Android) `PushNotification.deleteChannel(channel_id)` allow you to delete a channel.
 - (Android) Add `largeIconUrl` to load a largeIcon based on Url. Based on [#1444](https://github.com/zo0r/react-native-push-notification/pull/1444)
 - (Android) Add `bigPictureUrl` to load a picture based on Url. Based on [#1444](https://github.com/zo0r/react-native-push-notification/pull/1444)
@@ -34,6 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - (Android) Add `showWhen` to display "when" it was published, default: true.
 - (Android) Add `groupSummary` to allow grouping notifications. Based on [#1253](https://github.com/zo0r/react-native-push-notification/pull/1253)
 - (Android) Add `channelId`, custom channel_id in android. Based on [#1159](https://github.com/zo0r/react-native-push-notification/pull/1159)
+- (Android) Add `channelName`, custom channel_name in android.
+- (Android) Add `channelDescription`, custom channel_description in android.
 - (iOS) Add fire date in notification response, NOTE: `push-notification-ios` in version `> 1.2.0` [#1345](https://github.com/zo0r/react-native-push-notification/pull/1345)
 - (Android/iOS) Add method getScheduledLocalNotifications()[#1466](https://github.com/zo0r/react-native-push-notification/pull/1466)
 
