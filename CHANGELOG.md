@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - (Android) Add `channelName`, custom channel_name in android.
 - (Android) Add `channelDescription`, custom channel_description in android.
 - (iOS) Add fire date in notification response, NOTE: `push-notification-ios` in version `> 1.2.0` [#1345](https://github.com/zo0r/react-native-push-notification/pull/1345)
+- (iOS) `onRegistrationError` has been added to `.configure()` to handle `registrationError` events.
 - (Android/iOS) Add method getScheduledLocalNotifications()[#1466](https://github.com/zo0r/react-native-push-notification/pull/1466)
 
 ### Fixed

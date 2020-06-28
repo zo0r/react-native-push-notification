@@ -236,6 +236,11 @@ PushNotification.configure({
     // process the action
   },
 
+  // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
+  onRegistrationError: function(err) {
+    console.error(err.message, err);
+  }
+
   // IOS ONLY (optional): default: all - Permissions to register.
   permissions: {
     alert: true,
