@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- (Android) WAKE_LOCK permission removed from documentation. [#1494](https://github.com/zo0r/react-native-push-notification/issues/1494)
 - (Android) Some options were ignored on scheduled/repeating notifications (allowWhileIdle, ignoreInForeground).
 - (Android/iOS) popInitialInotification might be ignored in `.configure()`
 

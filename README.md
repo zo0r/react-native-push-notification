@@ -72,8 +72,6 @@ In your `android/app/src/main/AndroidManifest.xml`
 
 ```xml
     .....
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
