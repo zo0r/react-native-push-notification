@@ -27,9 +27,9 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import android.util.Log;
 
@@ -43,7 +43,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
 
     private RNPushNotificationHelper mRNPushNotificationHelper;
-    private final Random mRandomNumberGenerator = new Random(System.currentTimeMillis());
+    private final SecureRandom mRandomNumberGenerator = new SecureRandom();
     private RNPushNotificationJsDelivery mJsDelivery;
 
     public RNPushNotification(ReactApplicationContext reactContext) {
@@ -60,6 +60,8 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
         mRNPushNotificationHelper.checkOrCreateDefaultChannel();
     }
+
+
 
     @Override
     public String getName() {
