@@ -5,6 +5,14 @@
 
 React Native Local and Remote Notifications for iOS and Android
 
+
+## 🎉 Version 4.0.0 is live ! 🎉
+
+Check out for changes in the CHANGELOG:
+
+[Changelog](https://github.com/zo0r/react-native-push-notification/blob/master/CHANGELOG.md)
+
+
 ## Supported React Native Versions
 
 | Component Version | RN Versions          | README                                                                                                                 |

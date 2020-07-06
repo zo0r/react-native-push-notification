@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Breaking changes
 
+### Features
+
+### Fixed
+
+
+## [4.4.0] 2020-07-06
+
+### Breaking changes
+
 - `RNPushNotificationRegistrationService` has been removed, old reference in AndroidManifest must be removed.
 - `Notifications.registerNotificationActions()` has been removed and is not required for `actions`.
 - `DeviceEventEmitter.addListener('notificationActionReceived', callback)` is replaced by `onAction`.
