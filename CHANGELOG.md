@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Breaking changes
 
-- Now local scheduled notifications trigger `onNotification` before display [#574](https://github.com/zo0r/react-native-push-notification/pull/574).
 - `RNPushNotificationRegistrationService` has been removed, old reference in AndroidManifest must be removed.
 - `Notifications.registerNotificationActions()` has been removed and is not required for `actions`.
 - `DeviceEventEmitter.addListener('notificationActionReceived', callback)` is replaced by `onAction`.
