@@ -105,6 +105,13 @@ export default class App extends Component {
           }}>
           <Text>Abandon Permissions</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            this.notif.getScheduledLocalNotifications(notifs => console.log(notifs));
+          }}>
+          <Text>Console.Log Scheduled Local Notifications</Text>
+        </TouchableOpacity>
 
         <View style={styles.spacer}></View>
 

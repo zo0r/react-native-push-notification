@@ -15,16 +15,14 @@ import androidx.annotation.NonNull;
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.WritableMap;
 
 import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
@@ -93,7 +91,7 @@ public class RNReceivedMessageHandler {
         handler.post(new Runnable() {
             public void run() {
                 // Construct and load our normal React JS code bundle
-                ReactInstanceManager mReactInstanceManager = ((ReactApplication) mFirebaseMessagingService.getApplication()).getReactNativeHost().getReactInstanceManager();
+                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) mFirebaseMessagingService.getApplication()).getReactNativeHost().getReactInstanceManager();
                 ReactContext context = mReactInstanceManager.getCurrentReactContext();
                 // If it's constructed, send a notificationre
                 if (context != null) {
@@ -103,6 +101,7 @@ public class RNReceivedMessageHandler {
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
                             handleRemotePushNotification((ReactApplicationContext) context, bundle);
+                            mReactInstanceManager.removeReactInstanceEventListener(this);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
@@ -126,13 +125,13 @@ public class RNReceivedMessageHandler {
 
         // If notification ID is not provided by the user for push notification, generate one at random
         if (bundle.getString("id") == null) {
-            Random randomNumberGenerator = new Random(System.currentTimeMillis());
+            SecureRandom randomNumberGenerator = new SecureRandom();
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
         RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());
 
-        Boolean isForeground = isApplicationInForeground();
+        boolean isForeground = isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
         bundle.putBoolean("foreground", isForeground);
@@ -144,9 +143,9 @@ public class RNReceivedMessageHandler {
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        Log.v(LOG_TAG, "sendNotification: " + bundle);
-
         if (config.getNotificationForeground() || !isForeground) {
+            Log.v(LOG_TAG, "sendNotification: " + bundle);
+
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
