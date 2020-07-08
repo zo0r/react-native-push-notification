@@ -45,7 +45,7 @@ android {
 dependencies {
     def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
     def googlePlayServicesVersion = safeExtGet('googlePlayServicesVersion', '+')
-    def firebaseVersion = safeExtGet('firebaseVersion', '+')
+    def firebaseVersion = safeExtGet('firebaseVersion', '20.2.1')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
