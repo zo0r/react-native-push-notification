@@ -152,6 +152,12 @@ Notifications.localNotification = function(details) {
     }
   }
 
+  if (details.userInfo) {
+    details.userInfo.id = details.userInfo.id || details.id;
+  } else {
+    details.userInfo = {id: details.id};
+  }
+
   if (Platform.OS === 'ios') {
     // https://developer.apple.com/reference/uikit/uilocalnotification
 
@@ -159,12 +165,6 @@ Notifications.localNotification = function(details) {
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
-    }
-
-    if (details.userInfo) {
-      details.userInfo.id = details.userInfo.id || details.id;
-    } else {
-      details.userInfo = {id: details.id};
     }
 
     // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
@@ -228,17 +228,17 @@ Notifications.localNotificationSchedule = function(details) {
     }
   }
 
+  if (details.userInfo) {
+    details.userInfo.id = details.userInfo.id || details.id;
+  } else {
+    details.userInfo = {id: details.id};
+  }
+
   if (Platform.OS === 'ios') {
     let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
-    }
-
-    if (details.userInfo) {
-      details.userInfo.id = details.userInfo.id || details.id;
-    } else {
-      details.userInfo = {id: details.id};
     }
 
     const iosDetails = {
