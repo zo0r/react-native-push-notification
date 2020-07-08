@@ -344,12 +344,13 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 
   if ( this.onNotification !== false ) {
     if ( Platform.OS === 'ios' ) {
+      const notifData = data.getData();
       this.onNotification({
-        id: data?.userInfo?.id,
+        id: notifData?.id,
         foreground: ! isFromBackground,
         userInteraction: isFromBackground,
         message: data.getMessage(),
-        data: data.getData(),
+        data: notifData,
         badge: data.getBadgeCount(),
         alert: data.getAlert(),
         sound: data.getSound(),
