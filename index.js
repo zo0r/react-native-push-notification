@@ -190,6 +190,10 @@ Notifications.localNotification = function(details) {
       }
     }
 
+    if(!details.data && details.userInfo){
+      details.data = details.userInfo;
+    }
+
     if (details && typeof details.shortcutId === 'number') {
       if(isNaN(details.shortcutId)) {
         console.warn('NaN value has been passed as shortcutId');
@@ -276,6 +280,10 @@ Notifications.localNotificationSchedule = function(details) {
       else {
         details.shortcutId = '' + details.shortcutId;
       }
+    }
+
+    if(!details.data && details.userInfo){
+      details.data = details.userInfo;
     }
   
     if(details && Array.isArray(details.actions)) {
