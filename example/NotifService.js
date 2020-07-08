@@ -79,9 +79,9 @@ export default class NotifService {
       /* iOS only properties */
       alertAction: 'view', // (optional) default: view
       category: '', // (optional) default: empty string
-      userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
-
+      
       /* iOS and Android properties */
+      userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
       title: 'Scheduled Notification', // (optional)
       message: 'My Notification Message', // (required)
       playSound: !!soundName, // (optional) default: true
