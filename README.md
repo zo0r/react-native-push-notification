@@ -114,6 +114,17 @@ In your `android/app/src/main/AndroidManifest.xml`
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!-- 
+          Change the value to true to enable Firebase auto init (in case you do not need to control 
+          initialization with PushNotification.requestPermissions)
+        -->
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
      .....
 ```
 
