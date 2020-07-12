@@ -410,7 +410,7 @@ public class RNPushNotificationHelper {
                 bigText = HtmlCompat.fromHtml(bigTextString, HtmlCompat.FROM_HTML_MODE_LEGACY);
             }
 
-            String message = null;
+            Spanned message = null;
             String messageString = bundle.getString("message");
 
             if(messageString == null) {
