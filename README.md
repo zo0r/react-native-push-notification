@@ -303,9 +303,9 @@ PushNotification.localNotification({
   ticker: "My Notification Ticker", // (optional)
   showWhen: true, // (optional) default: true
   autoCancel: true, // (optional) default: true
-  largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+  largeIcon: "ic_launcher", // (optional) default: "ic_launcher". Use "" for no large icon.
   largeIconUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
-  smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+  smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher". Use "" for default small icon.
   bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
   subText: "This is a subText", // (optional) default: none
   bigPictureUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
