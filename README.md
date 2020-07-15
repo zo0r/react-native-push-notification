@@ -619,7 +619,7 @@ Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, 
 
 ## Notification Actions
 
-(Android only) [Refer](https://github.com/zo0r/react-native-push-notification/issues/151) to this issue to see an example of a notification action.
+(Android Only)
 
 This is done by specifying an `actions` parameters while configuring the local notification. This is an array of strings where each string is a notification action that will be presented with the notification.
 
