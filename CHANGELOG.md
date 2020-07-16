@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Features
 
+- Add function `createChannel` for custom Android channel support [#1509](https://github.com/zo0r/react-native-push-notification/pull/1509)
+- Add Android `messageId` to enable integration with `react-native-firebase/messaging` [#1510](https://github.com/zo0r/react-native-push-notification/pull/1510)
+- Add support for `onlyAlertOnce` property [#1519](https://github.com/zo0r/react-native-push-notification/pull/1519)
+
 ### Fixed
 
 
