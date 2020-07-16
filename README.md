@@ -368,7 +368,23 @@ In the location notification json specify the full file name:
 
 ## Channel Management (Android)
 
-This library doesn't include a full Channel Management at the moment. Channels are generated on the fly when you pass options to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
+To use custom channels, create them at startup and pass the matching `channelId` through to `PushNotification.localNotification`
+
+```javascript
+  PushNotification.createChannel(
+    {
+      channelId: "custom-channel-id", // (required)
+      channelName: "Custom channel", // (required)
+      channelDesc: "A custom channel to categorise your custom notifications", // (optional) default: undefined.
+      soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
+      importance: 4, // (optional) default: 4. Int value of the Android notification importance
+      vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+    },
+    (created: any) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+  );
+```
+
+Channels with ids that do not exist are generated on the fly when you pass options to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
 
 The pattern of `channel_id` is:
 

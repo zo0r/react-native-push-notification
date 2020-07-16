@@ -513,6 +513,10 @@ Notifications.channelExists = function() {
   return this.callNative('channelExists', arguments);
 };
 
+Notifications.createChannel = function() {
+  return this.callNative('createChannel', arguments);
+};
+
 Notifications.channelBlocked = function() {
   return this.callNative('channelBlocked', arguments);
 };

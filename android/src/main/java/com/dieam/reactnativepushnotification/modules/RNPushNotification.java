@@ -299,6 +299,18 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     /**
+     * Creates a channel if it does not already exist. Returns whether the channel was created.
+     */
+    public void createChannel(ReadableMap channelInfo, Callback callback) {
+      boolean created = mRNPushNotificationHelper.createChannel(channelInfo);
+
+      if(callback != null) {
+        callback.invoke(created);
+      }
+    }
+
+    @ReactMethod
+    /**
      * Check if channel is blocked with a given id
      */
     public void channelBlocked(String channel_id, Callback callback) {
