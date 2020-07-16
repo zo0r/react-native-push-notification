@@ -376,7 +376,7 @@ To use custom channels, create them at startup and pass the matching `channelId`
     {
       channelId: "custom-channel-id", // (required)
       channelName: "Custom channel", // (required)
-      channelDesc: "A custom channel to categorise your custom notifications", // (optional) default: undefined.
+      channelDescription: "A custom channel to categorise your custom notifications", // (optional) default: undefined.
       soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
       importance: 4, // (optional) default: 4. Int value of the Android notification importance
       vibrate: true, // (optional) default: true. Creates the default vibration patten if true.

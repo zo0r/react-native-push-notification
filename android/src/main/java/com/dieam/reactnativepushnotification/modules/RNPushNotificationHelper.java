@@ -958,7 +958,7 @@ public class RNPushNotificationHelper {
 
         String channelId = channelInfo.getString("channelId");
         String channelName = channelInfo.getString("channelName");
-        String channelDesc = channelInfo.hasKey("channelDesc") ? channelInfo.getString("channelDesc") : null;
+        String channelDescription = channelInfo.hasKey("channelDescription") ? channelInfo.getString("channelDescription") : null;
         String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
         boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
@@ -968,7 +968,7 @@ public class RNPushNotificationHelper {
 
         Uri soundUri = getSoundUri(soundName);
 
-        return checkOrCreateChannel(manager, channelId, channelName, channelDesc, soundUri, importance, vibratePattern);
+        return checkOrCreateChannel(manager, channelId, channelName, channelDescription, soundUri, importance, vibratePattern);
     }
     
     public boolean isApplicationInForeground(Context context) {
