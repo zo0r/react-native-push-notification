@@ -190,10 +190,6 @@ Notifications.localNotification = function(details) {
       }
     }
 
-    if(!details.data && details.userInfo){
-      details.data = details.userInfo;
-    }
-
     if (details && typeof details.shortcutId === 'number') {
       if(isNaN(details.shortcutId)) {
         console.warn('NaN value has been passed as shortcutId');
@@ -281,10 +277,6 @@ Notifications.localNotificationSchedule = function(details) {
         details.shortcutId = '' + details.shortcutId;
       }
     }
-
-    if(!details.data && details.userInfo){
-      details.data = details.userInfo;
-    }
   
     if(details && Array.isArray(details.actions)) {
       details.actions = JSON.stringify(details.actions);
@@ -352,25 +344,20 @@ Notifications._onNotification = function(data, isFromBackground = null) {
         message: data.getMessage(),
         data: notifData,
         badge: data.getBadgeCount(),
-        alert: data.getAlert(),
-        sound: data.getSound(),
-        fireDate: data._fireDate,
+        title: data.getTitle(),
+        soundName: data.getSound(),
+        fireDate: Date.parse(data._fireDate),
         finish: (res) => data.finish(res)
       });
     } else {
       var notificationData = {
         foreground: ! isFromBackground,
         finish: () => {},
-        ...data
+        ...data,
+        data: data?.userInfo,
       };
-
-      if ( typeof notificationData.data === 'string' ) {
-        try {
-          notificationData.data = JSON.parse(notificationData.data);
-        } catch(e) {
-          /* void */
-        }
-      }
+      delete notificationData.userInfo;
+      delete notificationData.notificationId;
 
       this.onNotification(notificationData);
     }
@@ -480,7 +467,7 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
 						id: notif.userInfo?.id,
-						date: new Date(notif.fireDate),
+            date: new Date(notif.fireDate),
 						number: notif?.applicationIconBadgeNumber,
 						message: notif?.alertBody,
 						title: notif?.alertTitle,
