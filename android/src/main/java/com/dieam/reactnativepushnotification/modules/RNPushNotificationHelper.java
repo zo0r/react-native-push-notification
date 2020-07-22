@@ -919,15 +919,17 @@ public class RNPushNotificationHelper {
 
         NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
-        if (channel == null) {
-            if(channel_name == null) {
-              channel_name = this.config.getChannelName(channel_id);
-            }
+        if(channel_name == null) {
+          channel_name = this.config.getChannelName(channel_id);
+        }
 
-            if(channel_description == null) {
-              channel_description = this.config.getChannelDescription(channel_id);
-            }
+        if(channel_description == null) {
+          channel_description = this.config.getChannelDescription(channel_id);
+        }
 
+        if (channel == null || channel.getName() != channel_name || channel.getDescription() != channel_description) {
+            // If channel doesn't exist create a new one.
+            // If channel name or description is updated then update the existing channel.
             channel = new NotificationChannel(channel_id, channel_name, importance);
 
             channel.setDescription(channel_description);
