@@ -352,10 +352,10 @@ public class RNPushNotificationHelper {
 
             String smallIcon = bundle.getString("smallIcon");
 
-            if (smallIcon != null) {
-                smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
-            } else if (!smallIcon.isEmpty()) {
-                smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
+            if (smallIcon != null && !smallIcon.isEmpty()) {
+              smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
+            } else if(smallIcon == null) {
+              smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
             }
 
             if (smallIconResId == 0) {
@@ -374,10 +374,10 @@ public class RNPushNotificationHelper {
 
                 String largeIcon = bundle.getString("largeIcon");
 
-                if (largeIcon != null) {
-                    largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-                } else if (!largeIcon.isEmpty()) {
-                    largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                if (largeIcon != null && !largeIcon.isEmpty()) {
+                  largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                } else if(largeIcon == null) {
+                  largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
                 }
 
                 // Before Lolipop there was no large icon for notifications.
