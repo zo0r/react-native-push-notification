@@ -214,10 +214,13 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Usage
 
+**DO NOT USE `.configure()` INSIDE A COMPONENT, EVEN `App` **
+
 ```javascript
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 var PushNotification = require("react-native-push-notification");
 
+// Must be outside of any component LifeCycle.
 PushNotification.configure({
   // (optional) Called when Token is generated (iOS and Android)
   onRegister: function (token) {
