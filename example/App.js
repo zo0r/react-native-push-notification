@@ -112,6 +112,13 @@ export default class App extends Component {
           }}>
           <Text>Console.Log Scheduled Local Notifications</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            this.notif.createOrUpdateChannel();
+          }}>
+          <Text>Create or update a channel</Text>
+        </TouchableOpacity>
 
         <View style={styles.spacer}></View>
 

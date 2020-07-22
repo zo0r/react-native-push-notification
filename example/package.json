@@ -14,7 +14,7 @@
     "@react-native-community/push-notification-ios": "^1.2.2",
     "react": "16.11.0",
     "react-native": "0.62.2",
-    "react-native-push-notification": "git+https://git@github.com/zo0r/react-native-push-notification.git"
+    "react-native-push-notification": "zo0r/react-native-push-notification#dev"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

@@ -927,7 +927,7 @@ public class RNPushNotificationHelper {
           channel_description = this.config.getChannelDescription(channel_id);
         }
 
-        if (channel == null || channel.getName() != channel_name || channel.getDescription() != channel_description) {
+        if (channel == null || !channel.getName().equals(channel_name) || !channel.getDescription().equals(channel_description)) {
             // If channel doesn't exist create a new one.
             // If channel name or description is updated then update the existing channel.
             channel = new NotificationChannel(channel_id, channel_name, importance);
