@@ -95,27 +95,30 @@ Notifications.configure = function(options) {
     this.isLoaded = true;
   }
 
-  const handlePopInitialNotification = function(state) {
+  const handlePopInitialNotification = (state) => {
     if('active' !== state) {
       return;
     }
 
     if (options.popInitialNotification === undefined || options.popInitialNotification === true) {
       this.popInitialNotification(function(firstNotification) {
-        if ( firstNotification !== null ) {
-          if(false === firstNotification.userInteraction || this.idInitialNotification === firstNotification.id) {
-            return;
-          }
-          
-          this.idInitialNotification = firstNotification.id;
-          this._onNotification(firstNotification, true);
+        if (!firstNotification) {
+          return;
         }
+
+        if(false === firstNotification.userInteraction || this.idInitialNotification === firstNotification.id) {
+          return;
+        }
+        
+        this.idInitialNotification = firstNotification.id;
+        this._onNotification(firstNotification, true);
       }.bind(this));
     }
   }
 
   AppState.addEventListener('change', handlePopInitialNotification.bind(this));
-  handlePopInitialNotification();
+
+  handlePopInitialNotification(AppState.currentState);
 
   if ( options.requestPermissions !== false ) {
     this._requestPermissions();
@@ -499,7 +502,7 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
 						id: notif.userInfo?.id,
-						date: new Date(notif.fireDate),
+            date: new Date(notif.fireDate),
 						number: notif?.applicationIconBadgeNumber,
 						message: notif?.alertBody,
 						title: notif?.alertTitle,
