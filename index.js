@@ -326,7 +326,11 @@ Notifications._onAction = function(notification) {
   this.onAction(notification);
 }
 
-Notifications._onNotification = function(data, isFromBackground = null) {
+Notifications._transformNotificationObject = function(data, isFromBackground = null) {
+  if(!data) {
+    return;
+  }
+
   if ( isFromBackground === null ) {
     isFromBackground = (
       data.foreground === false ||
@@ -334,45 +338,59 @@ Notifications._onNotification = function(data, isFromBackground = null) {
     );
   }
 
-  if ( this.onNotification !== false ) {
-    if ( Platform.OS === 'ios' ) {
-      const notifData = data.getData();
-      this.onNotification({
-        id: notifData?.id,
-        foreground: ! isFromBackground,
-        userInteraction: isFromBackground,
-        message: data.getMessage(),
-        data: notifData,
-        badge: data.getBadgeCount(),
-        title: data.getTitle(),
-        soundName: data.getSound(),
-        fireDate: Date.parse(data._fireDate),
-        finish: (res) => data.finish(res)
-      });
-    } else {
-      var notificationData = {
-        foreground: ! isFromBackground,
-        finish: () => {},
-        ...data,
-      };
+  let _notification;
 
-      if ( typeof notificationData.data === 'string' ) {
-        try {
-          notificationData.data = JSON.parse(notificationData.data);
-        } catch(e) {
-          /* void */
-        }
+  if ( Platform.OS === 'ios' ) {
+    const notifData = data.getData();
+
+    _notification = {
+      id: notifData?.id,
+      foreground: !isFromBackground,
+      userInteraction: isFromBackground,
+      message: data.getMessage(),
+      data: notifData,
+      badge: data.getBadgeCount(),
+      title: data.getTitle(),
+      soundName: data.getSound(),
+      fireDate: Date.parse(data._fireDate),
+      finish: (res) => data.finish(res)
+    };
+  } else {
+    _notification = {
+      foreground: ! isFromBackground,
+      finish: () => {},
+      ...data,
+    };
+
+    if ( typeof _notification.data === 'string' ) {
+      try {
+        _notification.data = JSON.parse(_notification.data);
+      } catch(e) {
+        /* void */
       }
-
-      notificationData.data = {
-        ...(typeof notificationData.data === 'object' ? notificationData.data : {}), 
-        ...(typeof notificationData.userInfo === 'object' ? notificationData.userInfo : {})
-      };
-      delete notificationData.userInfo;
-      delete notificationData.notificationId;
-
-      this.onNotification(notificationData);
     }
+
+    _notification.data = {
+      ...(typeof _notification.userInfo === 'object' ? _notification.userInfo : {}),
+      ...(typeof _notification.data === 'object' ? _notification.data : {}),
+    };
+
+    delete _notification.userInfo;
+    delete _notification.notificationId;
+  }
+
+  return _notification;
+}
+
+Notifications._onNotification = function(data, initialNotification = false) {
+  if ( this.onNotification !== false ) {
+    let notification = data;
+
+    if(!initialNotification) {
+      notification = this._transformNotificationObject(data);
+    }
+
+    this.onNotification(notification);
   }
 };
 
@@ -442,8 +460,10 @@ Notifications.getApplicationIconBadgeNumber = function() {
 };
 
 Notifications.popInitialNotification = function(handler) {
-  this.callNative('getInitialNotification').then(function(result){
-    handler(result);
+  this.callNative('getInitialNotification').then((result) => {
+    handler(
+      this._transformNotificationObject(result, true)
+    );
   });
 };
 
@@ -479,7 +499,7 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
 						id: notif.userInfo?.id,
-            date: new Date(notif.fireDate),
+						date: new Date(notif.fireDate),
 						number: notif?.applicationIconBadgeNumber,
 						message: notif?.alertBody,
 						title: notif?.alertTitle,
