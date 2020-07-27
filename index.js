@@ -354,7 +354,19 @@ Notifications._onNotification = function(data, isFromBackground = null) {
         foreground: ! isFromBackground,
         finish: () => {},
         ...data,
-        data: data?.userInfo,
+      };
+
+      if ( typeof notificationData.data === 'string' ) {
+        try {
+          notificationData.data = JSON.parse(notificationData.data);
+        } catch(e) {
+          /* void */
+        }
+      }
+
+      notificationData.data = {
+        ...(notificationData.data ? notificationData.data : {}), 
+        ...(notificationData.data ? notificationData.userInfo : {})
       };
       delete notificationData.userInfo;
       delete notificationData.notificationId;
