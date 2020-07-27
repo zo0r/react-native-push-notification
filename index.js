@@ -365,8 +365,8 @@ Notifications._onNotification = function(data, isFromBackground = null) {
       }
 
       notificationData.data = {
-        ...(notificationData.data ? notificationData.data : {}), 
-        ...(notificationData.data ? notificationData.userInfo : {})
+        ...(typeof notificationData.data === 'object' ? notificationData.data : {}), 
+        ...(typeof notificationData.userInfo === 'object' ? notificationData.userInfo : {})
       };
       delete notificationData.userInfo;
       delete notificationData.notificationId;
