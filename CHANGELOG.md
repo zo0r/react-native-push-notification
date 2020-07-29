@@ -7,9 +7,80 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Breaking changes
+
 ### Features
 
 ### Fixed
+
+
+## [4.0.0] 2020-07-06
+
+### Breaking changes
+
+- `RNPushNotificationRegistrationService` has been removed, old reference in AndroidManifest must be removed.
+- `Notifications.registerNotificationActions()` has been removed and is not required for `actions`.
+- `DeviceEventEmitter.addListener('notificationActionReceived', callback)` is replaced by `onAction`.
+- Extra receiver must be added to manage actions.
+  ```xml
+      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
+  ```
+- (iOS) `userInfo` is now populated with id by default to allow operation based on `id`.
+
+### Features
+
+- (Android) `actions` accept an array of strings.
+- (Android) `invokeApp` allow you to handle actions in background without invoking the application.
+- (Android) `onAction` has been added to `.configure()` to handle action in background.
+- (Android) `PushNotification.invokeApp(notification)` allow you to invoke the application when in background (notification for initial notification).
+- (Android) `PushNotification.getChannels(callback)` allow you to get the list of channels.
+- (Android) `PushNotification.channelExists(channel_id, callback)` allow you to check of a channel exists.
+- (Android) `PushNotification.channelBlocked(channel_id, callback)` allow you to check of a channel is blocked. Based on [#1249](https://github.com/zo0r/react-native-push-notification/pull/1249)
+- (Android) `PushNotification.deleteChannel(channel_id)` allow you to delete a channel.
+- (Android) Add `largeIconUrl` to load a largeIcon based on Url. Based on [#1444](https://github.com/zo0r/react-native-push-notification/pull/1444)
+- (Android) Add `bigPictureUrl` to load a picture based on Url. Based on [#1444](https://github.com/zo0r/react-native-push-notification/pull/1444)
+- (Android) Add `shortcutId` for better badges management.
+- (Android) Add `showWhen` to display "when" it was published, default: true.
+- (Android) Add `groupSummary` to allow grouping notifications. Based on [#1253](https://github.com/zo0r/react-native-push-notification/pull/1253)
+- (Android) Add `channelId`, custom channel_id in android. Based on [#1159](https://github.com/zo0r/react-native-push-notification/pull/1159)
+- (Android) Add `channelName`, custom channel_name in android.
+- (Android) Add `channelDescription`, custom channel_description in android.
+- (iOS) Add fire date in notification response, NOTE: `push-notification-ios` in version `> 1.2.0` [#1345](https://github.com/zo0r/react-native-push-notification/pull/1345)
+- (iOS) `onRegistrationError` has been added to `.configure()` to handle `registrationError` events.
+- (Android/iOS) Add method getScheduledLocalNotifications()[#1466](https://github.com/zo0r/react-native-push-notification/pull/1466)
+
+### Fixed
+
+- (Android) Replace java.util.Random with java.security.SecureRandom [#1497](https://github.com/zo0r/react-native-push-notification/pull/1497)
+- (Android) WAKE_LOCK permission removed from documentation. [#1494](https://github.com/zo0r/react-native-push-notification/issues/1494)
+- (Android) Some options were ignored on scheduled/repeating notifications (allowWhileIdle, ignoreInForeground).
+- (Android/iOS) popInitialInotification might be ignored in `.configure()`
+
+## [3.5.2] - 2020-05-25
+
+### Fixed
+
+- (Android) Sounds are playing even in Do Not Disturb [#1432](https://github.com/zo0r/react-native-push-notification/issues/1432#issuecomment-633367111)
+- (Android) onNotification fires every time when the app goes from background to foreground [#1455](https://github.com/zo0r/react-native-push-notification/issues/1455)
+- (Android) java.lang.NullPointerException: Attempt to invoke virtual method 'void com.dieam.reactnativepushnotification.modules.d.c(android.os.Bundle)' on a null object reference [#1431](https://github.com/zo0r/react-native-push-notification/issues/1431#issuecomment-633315150)
+
+## [3.5.1] - 2020-05-20
+
+### Fixed
+
+- (Android) When updating 3.4 to 3.5, unable to compile Android [#1449](https://github.com/zo0r/react-native-push-notification/pull/1449)
+
+## [3.5.0] - 2020-05-20
+
+### Features
+
+- (Android) Enables the ability to support multiple push providers [#1445](https://github.com/zo0r/react-native-push-notification/pull/1445)
+
+### Fixed
+
+- (Android) No sound on notifications [#1432](https://github.com/zo0r/react-native-push-notification/issues/1432)
+- (Android) onNotification is not calling when app is in background [#1446](https://github.com/zo0r/react-native-push-notification/pull/1446)
+- (Android) `number` and `id` do not crash if NaN is passed in Android.
 
 ## [3.4.0] - 2020-05-08
 

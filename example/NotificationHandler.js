@@ -17,6 +17,21 @@ class NotificationHandler {
     }
   }
 
+  onAction(notification) {
+    console.log ('Notification action received:');
+    console.log(notification.action);
+    console.log(notification);
+
+    if(notification.action === 'Yes') {
+      PushNotification.invokeApp(notification);
+    }
+  }
+
+  // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
+  onRegistrationError(err) {
+    console.log(err);
+  }
+  
   attachRegister(handler) {
     this._onRegister = handler;
   }
@@ -34,6 +49,12 @@ PushNotification.configure({
 
   // (required) Called when a remote or local notification is opened or received
   onNotification: handler.onNotification.bind(handler),
+
+  // (optional) Called when Action is pressed (Android)
+  onAction: handler.onAction.bind(handler),
+
+  // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
+  onRegistrationError: handler.onRegistrationError.bind(handler),
 
   // IOS ONLY (optional): default: all - Permissions to register.
   permissions: {
