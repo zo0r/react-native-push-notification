@@ -422,6 +422,7 @@ public class RNPushNotificationHelper {
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            bundle.putBoolean("foreground", this.isApplicationInForeground());
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
 
@@ -583,7 +584,7 @@ public class RNPushNotificationHelper {
                 editor.apply();
             }
 
-            if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
+            if (!(this.isApplicationInForeground() && bundle.getBoolean("ignoreInForeground"))) {
                 Notification info = notification.build();
                 info.defaults |= Notification.DEFAULT_LIGHTS;
 
@@ -938,7 +939,7 @@ public class RNPushNotificationHelper {
         }
     }
     
-    public boolean isApplicationInForeground(Context context) {
+    public boolean isApplicationInForeground() {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         if (processInfos != null) {

@@ -20,7 +20,7 @@ var Notifications = {
   onAction: false,
   onRemoteFetch: false,
   isLoaded: false,
-  idInitialNotification: null,
+  isPopInitialNotification: false,
 
   isPermissionsRequestPending: false,
 
@@ -102,15 +102,16 @@ Notifications.configure = function(options) {
 
     if (options.popInitialNotification === undefined || options.popInitialNotification === true) {
       this.popInitialNotification(function(firstNotification) {
-        if (!firstNotification) {
-          return;
-        }
-
-        if(false === firstNotification.userInteraction || this.idInitialNotification === firstNotification.id) {
+        if(this.isPopInitialNotification) {
           return;
         }
         
-        this.idInitialNotification = firstNotification.id;
+        this.isPopInitialNotification = true;
+        
+        if (!firstNotification || false === firstNotification.userInteraction) {
+          return;
+        }
+        
         this._onNotification(firstNotification, true);
       }.bind(this));
     }

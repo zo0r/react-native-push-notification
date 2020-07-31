@@ -40,7 +40,7 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
         Application applicationContext = (Application) context.getApplicationContext();
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
 
-        boolean isForeground = pushNotificationHelper.isApplicationInForeground(applicationContext);
+        boolean isForeground = pushNotificationHelper.isApplicationInForeground();
         
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
