@@ -60,8 +60,7 @@ public class RNPushNotificationHelper {
     private SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private boolean isActiveETA, isActiveCriticalAlerts, isTestNotificationAlert = false;
-    private boolean isUserGold = true; //SIMULATOR USER GOLD
-    private String quakeID;
+    private boolean isUserGold = false; //SIMULATOR USER GOLD
 
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
@@ -948,7 +947,7 @@ public class RNPushNotificationHelper {
     private String readableTimeFormat(String unit, int time){
         if(unit.equals("minutes")){
             int idSourceTextMin = getResourceId("plural_time_minutes", "plurals");
-            return time >= 1 && time < 2 ? context.getResources().getQuantityString(idSourceTextMin, time, time) + ", " : "";
+            return time >= 1 ? context.getResources().getQuantityString(idSourceTextMin, time, time) + ", " : "";
         }else if(unit.equals("seconds")){
             int idSourceTextSec = getResourceId("plural_time_seconds", "plurals");
             return context.getResources().getQuantityString(idSourceTextSec, time, time);
