@@ -35,6 +35,7 @@ import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -43,6 +44,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -58,6 +61,7 @@ public class RNPushNotificationHelper {
 
     private boolean isActiveETA, isActiveCriticalAlerts, isTestNotificationAlert = false;
     private boolean isUserGold = true; //SIMULATOR USER GOLD
+    private String quakeID;
 
     private final SharedPreferences scheduledNotificationsPersistence;
     private static final int ONE_MINUTE = 60 * 1000;
@@ -226,13 +230,15 @@ public class RNPushNotificationHelper {
             }
 
             //NOTIFICATION ALERT
-            String typeNotification = bundle.getString("type");
-            Log.d(LOG_TAG, "type notification bundle "+typeNotification);
+            //String typeNotification = bundle.getString("local");
+            //Log.d(LOG_TAG, "type notification bundle "+typeNotification);
+            /*
             if(typeNotification != null){
                 userDataAsyncStorage();
             }
+            */
 
-           isTestNotificationAlert = Boolean.parseBoolean(bundle.getString("isTestSystem", "false"));
+           //isTestNotificationAlert = Boolean.parseBoolean(bundle.getString("isTestSystem", "false"));
 
             Uri soundUri = null;
             String soundName = null;
@@ -351,6 +357,63 @@ public class RNPushNotificationHelper {
                 }
             }
 
+            String localAlert = bundle.getString("local");
+            if(localAlert != null){
+                final Pattern pattern = Pattern.compile("Intensidad esperada en (.+)[,:]");
+
+                JSONObject localJson = new JSONObject(localAlert);
+                String intensity = localJson.getString("intensity");
+                String impactAt = localJson.getString("impactAt");
+                String nameIntensity = getNameIntensity(Integer.parseInt(intensity));
+
+                //Time ETA
+                Date dateNow = new Date(System.currentTimeMillis());
+                Date dateImpact = formatDate.parse(impactAt);
+                long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
+
+                int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
+                int seconds = (int) (diffTimeImpact / 1000) % 60 ;
+
+                String textTime = readableTimeFormat("minutes", minutes) + readableTimeFormat("seconds", seconds);
+                Log.d(LOG_TAG, ">> ETA parce :"+ textTime);
+                //Location ETA
+                JSONObject notificationJson = new JSONObject(bundle.getString("notification"));
+                String rawMessage = notificationJson.getString("message");
+                Matcher matcher = pattern.matcher(rawMessage);
+
+                String location, message;
+                if (matcher.find()) {
+                    location = matcher.group(1);
+                }else{
+                    location = "DESCONOCIDO";
+                }
+                Log.d(LOG_TAG, ">> ETA Location :"+ location);
+                if(seconds > 0){
+                    message = context.getString(getResourceId("notification_body_incoming", "string"), nameIntensity, textTime, location);
+                    Log.d(LOG_TAG, ">> Notification msg :"+ message);
+                    notification.setContentText(message);
+                    notification.setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(message));
+                }else if( seconds > -30){
+                    message = context.getString(getResourceId("notification_body_now", "string"), nameIntensity, location);
+                    notification.setContentText(message);
+
+                    notification.setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(message));
+                    Log.d(LOG_TAG, ">> Notification msg :"+ message);
+                }else{
+                    String titleFinish = context.getString(getResourceId("notification_title_finish", "string"));
+                    notification.setContentTitle(titleFinish);
+
+                    message = context.getString(getResourceId("notification_body_finish", "string"), nameIntensity, location);
+                    notification.setContentText(message);
+
+                    notification.setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(message));
+                    Log.d(LOG_TAG, ">> Notification msg :"+ message);
+                }
+            }
+
             int notificationID = Integer.parseInt(notificationIdString);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
@@ -421,27 +484,28 @@ public class RNPushNotificationHelper {
             info.defaults |= Notification.DEFAULT_LIGHTS;
 
             //IF USER IS GOLD
-            if(isUserGold && typeNotification != null){
+/*            if(isUserGold && localKey != null){
                 // IF CRITICAL ALERT is active in local storage
                 // active > strong (3)
-                String intensity = bundle.getString("intensity");
-                Log.d(LOG_TAG, "user critical alerts " + isActiveCriticalAlerts);
+                JSONObject localJson = new JSONObject(localKey);
+                String intensity = localJson.getString("intensity");
+                String impactAt = localJson.getString("impactAt");
+
                 if(intensity != null && isActiveCriticalAlerts){
                     alertsFilterDND(notificationManager, intensity);
                 }
 
                 // IF ETA is active in local storage
                 Log.d(LOG_TAG, "user ETA " + isActiveETA);
-                if(bundle.getString("impactAt") != null && isActiveETA){
+                if(impactAt != null && isActiveETA){
                     notificationWithETA(notificationManager, notification, notificationID, bundle);
-                }
-            }else{
-                if (bundle.containsKey("tag")) {
-                    String tag = bundle.getString("tag");
-                    notificationManager.notify(tag, notificationID, info);
-                } else {
-                    notificationManager.notify(notificationID, info);
-                }
+                }*/
+
+            if (bundle.containsKey("tag")) {
+                String tag = bundle.getString("tag");
+                notificationManager.notify(tag, notificationID, info);
+            } else {
+                notificationManager.notify(notificationID, info);
             }
 
             // Can't use setRepeating for recurring notifications because setRepeating
@@ -675,7 +739,7 @@ public class RNPushNotificationHelper {
         try{
             RNAsyncStorage RNStorage = new RNAsyncStorage(context);
             isActiveETA = true; //RNStorage.getUserETA();
-            isActiveCriticalAlerts = RNStorage.getUserDisplayCriticalAlerts();
+            isActiveCriticalAlerts = false; //RNStorage.getUserDisplayCriticalAlerts();
         }catch (Exception e){
             Log.e(LOG_TAG, "NO GET ASYNC STORAGE " + e);
         }
@@ -708,21 +772,33 @@ public class RNPushNotificationHelper {
         try {
             final Timer timer;
             final Date dateImpact;
-            final String message, groupBySegment;
+            final String message;
             final int level;
 
-            if(isTestNotificationAlert){
-                message = bundle.getString("message").replace("<<System test>> ","");
+            final String locationRegex = "Intensidad esperada en (.+)[,:]";
+
+            JSONObject notificationJson = new JSONObject(bundle.getString("notification"));
+            String rawMessage = notificationJson.getString("message");
+
+            final Pattern pattern = Pattern.compile(locationRegex);
+            final Matcher matcher = pattern.matcher(rawMessage);
+
+            if (matcher.find()) {
+                message = matcher.group(1);
             }else{
-                message = bundle.getString("message");
+                message = "DESCONOCIDO";
             }
 
-            //groupBySegment =  bundle.getString("segment");
-            dateImpact = formatDate.parse(bundle.getString("impactAt"));
-            level = Integer.parseInt(bundle.getString("intensity"));
+            JSONObject localJson = new JSONObject(bundle.getString("local"));
+            String intensity = localJson.getString("intensity");
+            String impactAt = localJson.getString("impactAt");
+
+            dateImpact = formatDate.parse(impactAt);
+            level = Integer.parseInt(intensity);
+
+            JSONObject quakeJson = new JSONObject(bundle.getString("quake"));
 
             Log.d(LOG_TAG, ">>> Init Timer <<<");
-
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
@@ -745,15 +821,15 @@ public class RNPushNotificationHelper {
                     String messageExpand = context.getString(idStringExpanded, message, textTime);
 
                     notification.setContentText(messageCollapsed);
-                    notification.setColor(getColorIntensity(level));
+                    //notification.setColor(getColorIntensity(level));
                     notification.setStyle(new NotificationCompat.BigTextStyle()
-                            //.setSummaryText("Alerta v4")
+                            .setSummaryText("Alerta v4")
                             .bigText(messageExpand));
 
                     //Change sound depending seconds remaining
-                    if(seconds % 10 == 0){
+/*                    if(seconds % 10 == 0){
                         setNewSoundNotification(seconds, notificationID);
-                    }
+                    }*/
 
                     //Group notifications
                     //notification.setGroup(groupBySegment);
@@ -862,6 +938,11 @@ public class RNPushNotificationHelper {
     private int getColorIntensity(int level){
         int idColorLevel = getResourceId("intensity_"+level, "color");
         return context.getResources().getColor(idColorLevel);
+    }
+
+    private String getNameIntensity(int level){
+        int idColorLevel = getResourceId("intensity_name_"+level, "string");
+        return context.getString(idColorLevel);
     }
 
     private String readableTimeFormat(String unit, int time){
