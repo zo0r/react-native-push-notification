@@ -359,9 +359,14 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
       fireDate: Date.parse(data._fireDate),
       finish: (res) => data.finish(res)
     };
+
+    if(isNaN(_notification.fireDate)) {
+      delete _notification.fireDate;
+    }
+
   } else {
     _notification = {
-      foreground: ! isFromBackground,
+      foreground: !isFromBackground,
       finish: () => {},
       ...data,
     };

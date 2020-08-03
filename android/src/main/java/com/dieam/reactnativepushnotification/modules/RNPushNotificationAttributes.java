@@ -36,7 +36,6 @@ public class RNPushNotificationAttributes {
     private static final String GROUP = "group";
     private static final String GROUP_SUMMARY = "groupSummary";
     private static final String MESSAGE_ID = "messageId";
-    private static final String USER_INTERACTION = "userInteraction";
     private static final String PLAY_SOUND = "playSound";
     private static final String VIBRATE = "vibrate";
     private static final String VIBRATION = "vibration";
@@ -111,7 +110,6 @@ public class RNPushNotificationAttributes {
         group = bundle.getString(GROUP);
         groupSummary = bundle.getBoolean(GROUP_SUMMARY);
         messageId = bundle.getString(MESSAGE_ID);
-        userInteraction = bundle.getBoolean(USER_INTERACTION);
         playSound = bundle.getBoolean(PLAY_SOUND);
         vibrate = bundle.getBoolean(VIBRATE);
         vibration = bundle.getDouble(VIBRATION);
@@ -151,7 +149,6 @@ public class RNPushNotificationAttributes {
             group = jsonObject.has(GROUP) ? jsonObject.getString(GROUP) : null;
             groupSummary = jsonObject.has(GROUP_SUMMARY) ? jsonObject.getBoolean(GROUP_SUMMARY) : false;
             messageId = jsonObject.has(MESSAGE_ID) ? jsonObject.getString(MESSAGE_ID) : null;
-            userInteraction = jsonObject.has(USER_INTERACTION) ? jsonObject.getBoolean(USER_INTERACTION) : false;
             playSound = jsonObject.has(PLAY_SOUND) ? jsonObject.getBoolean(PLAY_SOUND) : true;
             vibrate = jsonObject.has(VIBRATE) ? jsonObject.getBoolean(VIBRATE) : true;
             vibration = jsonObject.has(VIBRATION) ? jsonObject.getDouble(VIBRATION) : 1000;
@@ -248,7 +245,6 @@ public class RNPushNotificationAttributes {
         bundle.putString(GROUP, group);
         bundle.putBoolean(GROUP_SUMMARY, groupSummary);
         bundle.putString(MESSAGE_ID, messageId);
-        bundle.putBoolean(USER_INTERACTION, userInteraction);
         bundle.putBoolean(PLAY_SOUND, playSound);
         bundle.putBoolean(VIBRATE, vibrate);
         bundle.putDouble(VIBRATION, vibration);
@@ -290,7 +286,6 @@ public class RNPushNotificationAttributes {
             jsonObject.put(GROUP, group);
             jsonObject.put(GROUP_SUMMARY, groupSummary);
             jsonObject.put(MESSAGE_ID, messageId);
-            jsonObject.put(USER_INTERACTION, userInteraction);
             jsonObject.put(PLAY_SOUND, playSound);
             jsonObject.put(VIBRATE, vibrate);
             jsonObject.put(VIBRATION, vibration);

@@ -36,6 +36,10 @@ export default class NotifService {
     );
   }
 
+  popInitialNotification() {
+    PushNotification.popInitialNotification((notification) => console.log('InitialNotication:', notification));
+  }
+
   localNotif(soundName) {
     this.lastId++;
     PushNotification.localNotification({

@@ -6,12 +6,17 @@
 React Native Local and Remote Notifications for iOS and Android
 
 
-## 🎉 Version 4.0.0 is live ! 🎉
+## 🎉 Version 5.0.0 is live ! 🎉
 
 Check out for changes in the CHANGELOG:
 
 [Changelog](https://github.com/zo0r/react-native-push-notification/blob/master/CHANGELOG.md)
 
+# Supporting the project
+
+Maintaining this project takes time. To help allocate time, you can Buy Me a Coffee :wink:
+
+<a href="https://www.buymeacoffee.com/Dallas62" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
 ## Supported React Native Versions
 
@@ -357,6 +362,18 @@ PushNotification.localNotificationSchedule({
 });
 ```
 
+## Get the initial notification
+
+`PushNotification.popInitialNotification(callback)`
+
+EXAMPLE:
+
+```javascript
+PushNotification.popInitialNotification((notification) => {
+  console.log('Initial Notification', notification);
+});
+```
+
 ## Custom sounds
 
 In android, add your custom sound file to `[project_root]/android/app/src/main/res/raw`
@@ -659,10 +676,6 @@ For iOS, you can use this [package](https://github.com/holmesal/react-native-ios
 Works natively in iOS.
 
 Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on Android, and as such will not work on all Android devices.
-
-## Sending Notification Data From Server
-
-Same parameters as `PushNotification.localNotification()`
 
 ## Android Only Methods
 
