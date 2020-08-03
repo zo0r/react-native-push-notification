@@ -387,13 +387,13 @@ public class RNPushNotificationHelper {
                     location = "DESCONOCIDO";
                 }
                 Log.d(LOG_TAG, ">> ETA Location :"+ location);
-                if(seconds > 0){
+                if(diffTimeImpact > 0){
                     message = context.getString(getResourceId("notification_body_incoming", "string"), nameIntensity, textTime, location);
                     Log.d(LOG_TAG, ">> Notification msg :"+ message);
                     notification.setContentText(message);
                     notification.setStyle(new NotificationCompat.BigTextStyle()
                             .bigText(message));
-                }else if( seconds > -30){
+                }else if( diffTimeImpact > -30000){
                     message = context.getString(getResourceId("notification_body_now", "string"), nameIntensity, location);
                     notification.setContentText(message);
 
