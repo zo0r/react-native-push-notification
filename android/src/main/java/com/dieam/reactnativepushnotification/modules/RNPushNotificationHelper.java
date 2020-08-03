@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -367,13 +368,17 @@ public class RNPushNotificationHelper {
 
                 //Time ETA
                 Date dateNow = new Date(System.currentTimeMillis());
+                formatDate.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date dateImpact = formatDate.parse(impactAt);
-                long diffTimeImpact  =  dateImpact.getTime() - dateNow.getTime();
 
-                int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
-                int seconds = (int) (diffTimeImpact / 1000) % 60 ;
+                long dateNowTime = dateNow.getTime();
+                long dateImpactTime = dateImpact.getTime();
+                long diffTimeImpact  =  dateImpactTime - dateNowTime;
 
-                String textTime = readableTimeFormat("minutes", minutes) + readableTimeFormat("seconds", seconds);
+                //int minutes = (int) ((diffTimeImpact / (1000 * 60 )) % 60);
+                int seconds = (int) (diffTimeImpact / 1000);
+
+                String textTime = readableTimeFormat("seconds", seconds);
                 Log.d(LOG_TAG, ">> ETA parce :"+ textTime);
                 //Location ETA
                 JSONObject notificationJson = new JSONObject(bundle.getString("notification"));
