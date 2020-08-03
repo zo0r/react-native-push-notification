@@ -46,3 +46,5 @@ android/src/main/gen
 
 #Debug only
 google-services.json
+
+.vscode/

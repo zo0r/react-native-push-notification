@@ -154,6 +154,10 @@ NotificationsComponent.prototype.channelExists = function(channel_id, callback) 
 	RNPushNotification.channelExists(channel_id, callback);
 }
 
+NotificationsComponent.prototype.createChannel = function(channelInfo, callback) {
+	RNPushNotification.createChannel(channelInfo, callback);
+}
+
 NotificationsComponent.prototype.channelBlocked = function(channel_id, callback) {
 	RNPushNotification.channelBlocked(channel_id, callback);
 }

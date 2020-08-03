@@ -349,14 +349,14 @@ public class RNPushNotificationHelper {
             }
 
             // Small icon
-            int smallIconResId;
+            int smallIconResId = 0;
 
             String smallIcon = bundle.getString("smallIcon");
 
-            if (smallIcon != null) {
-                smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
-            } else {
-                smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
+            if (smallIcon != null && !smallIcon.isEmpty()) {
+              smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
+            } else if(smallIcon == null) {
+              smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
             }
 
             if (smallIconResId == 0) {
@@ -371,14 +371,14 @@ public class RNPushNotificationHelper {
 
             // Large icon
             if(largeIconBitmap == null) {
-                int largeIconResId;
+                int largeIconResId = 0;
 
                 String largeIcon = bundle.getString("largeIcon");
 
-                if (largeIcon != null) {
-                    largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-                } else {
-                    largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                if (largeIcon != null && !largeIcon.isEmpty()) {
+                  largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
+                } else if(largeIcon == null) {
+                  largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
                 }
 
                 // Before Lolipop there was no large icon for notifications.
@@ -423,36 +423,25 @@ public class RNPushNotificationHelper {
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            bundle.putBoolean("foreground", this.isApplicationInForeground());
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
+
+            // Add message_id to intent so react-native-firebase/messaging can identify it
+            String messageId = bundle.getString("messageId");
+            if (messageId != null) {
+                intent.putExtra("message_id", messageId);
+            }
 
             Uri soundUri = null;
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
-                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
                 String soundName = bundle.getString("soundName");
-
-                if (soundName != null) {
-                    if (!"default".equalsIgnoreCase(soundName)) {
-
-                        // sound name can be full filename, or just the resource name.
-                        // So the strings 'my_sound.mp3' AND 'my_sound' are accepted
-                        // The reason is to make the iOS and android javascript interfaces compatible
-
-                        int resId;
-                        if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
-                        } else {
-                            soundName = soundName.substring(0, soundName.lastIndexOf('.'));
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
-                        }
-
-                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
-                    }
-                } else {
+                if (soundName == null) {
                     soundName = "default";
                 }
+
+                soundUri = getSoundUri(soundName);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
                     channel_id = channel_id + "-" + soundName;
@@ -558,6 +547,9 @@ public class RNPushNotificationHelper {
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
                     actionIntent.setPackage(packageName);
+                    if (messageId != null) {
+                        intent.putExtra("message_id", messageId);
+                    }
 
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
@@ -584,7 +576,7 @@ public class RNPushNotificationHelper {
                 editor.apply();
             }
 
-            if (!(this.isApplicationInForeground(context) && bundle.getBoolean("ignoreInForeground"))) {
+            if (!(this.isApplicationInForeground() && bundle.getBoolean("ignoreInForeground"))) {
                 Notification info = notification.build();
                 info.defaults |= Notification.DEFAULT_LIGHTS;
 
@@ -674,6 +666,27 @@ public class RNPushNotificationHelper {
                 bundle.putDouble("fireDate", newFireDate);
                 this.sendNotificationScheduled(bundle);
             }
+        }
+    }
+
+    private Uri getSoundUri(String soundName) {
+        if (soundName == null || "default".equalsIgnoreCase(soundName)) {
+            return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        } else {
+
+            // sound name can be full filename, or just the resource name.
+            // So the strings 'my_sound.mp3' AND 'my_sound' are accepted
+            // The reason is to make the iOS and android javascript interfaces compatible
+
+            int resId;
+            if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
+                resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+            } else {
+                soundName = soundName.substring(0, soundName.lastIndexOf('.'));
+                resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+            }
+
+            return Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
         }
     }
 
@@ -900,28 +913,30 @@ public class RNPushNotificationHelper {
         manager.deleteNotificationChannel(channel_id);
     }
 
-    private void checkOrCreateChannel(NotificationManager manager, String channel_id, String channel_name, String channel_description, Uri soundUri, int importance, long[] vibratePattern) {
+    private boolean checkOrCreateChannel(NotificationManager manager, String channel_id, String channel_name, String channel_description, Uri soundUri, int importance, long[] vibratePattern) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return;
+            return false;
         if (manager == null)
-            return;
+            return false;
 
         NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
-        if (channel == null) {
-            if(channel_name == null) {
-              channel_name = this.config.getChannelName(channel_id);
-            }
+        if(channel_name == null) {
+          channel_name = this.config.getChannelName(channel_id);
+        }
 
-            if(channel_description == null) {
-              channel_description = this.config.getChannelDescription(channel_id);
-            }
+        if(channel_description == null) {
+          channel_description = this.config.getChannelDescription(channel_id);
+        }
 
+        if (channel == null || !channel.getName().equals(channel_name) || !channel.getDescription().equals(channel_description)) {
+            // If channel doesn't exist create a new one.
+            // If channel name or description is updated then update the existing channel.
             channel = new NotificationChannel(channel_id, channel_name, importance);
 
             channel.setDescription(channel_description);
             channel.enableLights(true);
-            channel.enableVibration(true);
+            channel.enableVibration(vibratePattern != null);
             channel.setVibrationPattern(vibratePattern);
 
             if (soundUri != null) {
@@ -936,10 +951,31 @@ public class RNPushNotificationHelper {
             }
 
             manager.createNotificationChannel(channel);
+            return true;
         }
+        return false;
+    }
+
+    public boolean createChannel(ReadableMap channelInfo) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return false;
+
+        String channelId = channelInfo.getString("channelId");
+        String channelName = channelInfo.getString("channelName");
+        String channelDescription = channelInfo.hasKey("channelDescription") ? channelInfo.getString("channelDescription") : null;
+        String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
+        int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
+        boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
+        long[] vibratePattern = vibrate ? new long[] { DEFAULT_VIBRATION } : null;
+
+        NotificationManager manager = notificationManager();
+
+        Uri soundUri = getSoundUri(soundName);
+
+        return checkOrCreateChannel(manager, channelId, channelName, channelDescription, soundUri, importance, vibratePattern);
     }
     
-    public boolean isApplicationInForeground(Context context) {
+    public boolean isApplicationInForeground() {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
         if (processInfos != null) {

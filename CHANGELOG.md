@@ -2,17 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Breaking changes
 
+- (Android/iOS) Unify returned values between iOS and Android [#1516](https://github.com/zo0r/react-native-push-notification/pull/1516).
+- (Android/iOS) `.popInitialNotification(callback)` now return the same format as `onNotification()`.
+- (Android) `popInitialNotification` in `configure()` now trigger only once on app startup, same as iOS.
+- (Android) `notification.foreground` now return the good value, before the value was `false` most of the time.
+
 ### Features
+
+- (Android) Add function `createChannel` for custom Android channel support [#1509](https://github.com/zo0r/react-native-push-notification/pull/1509)
+- (Android) Add Android `messageId` to enable integration with `react-native-firebase/messaging` [#1510](https://github.com/zo0r/react-native-push-notification/pull/1510)
+- (Android) Add support for `onlyAlertOnce` property [#1519](https://github.com/zo0r/react-native-push-notification/pull/1519)
+- (Android) Allow to change default notification channel name after it's creation [#1549](https://github.com/zo0r/react-native-push-notification/pull/1549)
 
 ### Fixed
 
+- (Android) `popInitialNotification` in `configure()` now trigger only once and do not trigger twice `onNotification()` when user press the notification, more details: [#1516](https://github.com/zo0r/react-native-push-notification/pull/1516).
+- (Android) `notification.foreground` now return the good value, before the value was `false` most of the time.
 
 ## [4.0.0] 2020-07-06
 

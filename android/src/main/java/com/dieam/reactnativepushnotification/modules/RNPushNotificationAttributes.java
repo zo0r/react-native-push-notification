@@ -35,7 +35,7 @@ public class RNPushNotificationAttributes {
     private static final String COLOR = "color";
     private static final String GROUP = "group";
     private static final String GROUP_SUMMARY = "groupSummary";
-    private static final String USER_INTERACTION = "userInteraction";
+    private static final String MESSAGE_ID = "messageId";
     private static final String PLAY_SOUND = "playSound";
     private static final String VIBRATE = "vibrate";
     private static final String VIBRATION = "vibration";
@@ -44,6 +44,7 @@ public class RNPushNotificationAttributes {
     private static final String TAG = "tag";
     private static final String REPEAT_TYPE = "repeatType";
     private static final String REPEAT_TIME = "repeatTime";
+    private static final String ONLY_ALERT_ONCE = "onlyAlertOnce";
     private static final String ONGOING = "ongoing";
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
     private static final String IGNORE_IN_FOREGROUND = "ignoreInForeground";
@@ -70,6 +71,7 @@ public class RNPushNotificationAttributes {
     private final String color;
     private final String group;
     private final boolean groupSummary;
+    private final String messageId;
     private final boolean userInteraction;
     private final boolean playSound;
     private final boolean vibrate;
@@ -79,6 +81,7 @@ public class RNPushNotificationAttributes {
     private final String tag;
     private final String repeatType;
     private final double repeatTime;
+    private final boolean onlyAlertOnce;
     private final boolean ongoing;
     private final boolean allowWhileIdle;
     private final boolean ignoreInForeground;
@@ -106,7 +109,7 @@ public class RNPushNotificationAttributes {
         color = bundle.getString(COLOR);
         group = bundle.getString(GROUP);
         groupSummary = bundle.getBoolean(GROUP_SUMMARY);
-        userInteraction = bundle.getBoolean(USER_INTERACTION);
+        messageId = bundle.getString(MESSAGE_ID);
         playSound = bundle.getBoolean(PLAY_SOUND);
         vibrate = bundle.getBoolean(VIBRATE);
         vibration = bundle.getDouble(VIBRATION);
@@ -115,6 +118,7 @@ public class RNPushNotificationAttributes {
         tag = bundle.getString(TAG);
         repeatType = bundle.getString(REPEAT_TYPE);
         repeatTime = bundle.getDouble(REPEAT_TIME);
+        onlyAlertOnce = bundle.getBoolean(ONLY_ALERT_ONCE);
         ongoing = bundle.getBoolean(ONGOING);
         allowWhileIdle = bundle.getBoolean(ALLOW_WHILE_IDLE);
         ignoreInForeground = bundle.getBoolean(IGNORE_IN_FOREGROUND);
@@ -144,7 +148,7 @@ public class RNPushNotificationAttributes {
             color = jsonObject.has(COLOR) ? jsonObject.getString(COLOR) : null;
             group = jsonObject.has(GROUP) ? jsonObject.getString(GROUP) : null;
             groupSummary = jsonObject.has(GROUP_SUMMARY) ? jsonObject.getBoolean(GROUP_SUMMARY) : false;
-            userInteraction = jsonObject.has(USER_INTERACTION) ? jsonObject.getBoolean(USER_INTERACTION) : false;
+            messageId = jsonObject.has(MESSAGE_ID) ? jsonObject.getString(MESSAGE_ID) : null;
             playSound = jsonObject.has(PLAY_SOUND) ? jsonObject.getBoolean(PLAY_SOUND) : true;
             vibrate = jsonObject.has(VIBRATE) ? jsonObject.getBoolean(VIBRATE) : true;
             vibration = jsonObject.has(VIBRATION) ? jsonObject.getDouble(VIBRATION) : 1000;
@@ -153,6 +157,7 @@ public class RNPushNotificationAttributes {
             tag = jsonObject.has(TAG) ? jsonObject.getString(TAG) : null;
             repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
             repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
+            onlyAlertOnce = jsonObject.has(ONLY_ALERT_ONCE) ? jsonObject.getBoolean(ONLY_ALERT_ONCE) : false;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
             allowWhileIdle = jsonObject.has(ALLOW_WHILE_IDLE) ? jsonObject.getBoolean(ALLOW_WHILE_IDLE) : false;
             ignoreInForeground = jsonObject.has(IGNORE_IN_FOREGROUND) ? jsonObject.getBoolean(IGNORE_IN_FOREGROUND) : false;
@@ -239,7 +244,7 @@ public class RNPushNotificationAttributes {
         bundle.putString(COLOR, color);
         bundle.putString(GROUP, group);
         bundle.putBoolean(GROUP_SUMMARY, groupSummary);
-        bundle.putBoolean(USER_INTERACTION, userInteraction);
+        bundle.putString(MESSAGE_ID, messageId);
         bundle.putBoolean(PLAY_SOUND, playSound);
         bundle.putBoolean(VIBRATE, vibrate);
         bundle.putDouble(VIBRATION, vibration);
@@ -248,6 +253,7 @@ public class RNPushNotificationAttributes {
         bundle.putString(TAG, tag);
         bundle.putString(REPEAT_TYPE, repeatType);
         bundle.putDouble(REPEAT_TIME, repeatTime);
+        bundle.putBoolean(ONLY_ALERT_ONCE, onlyAlertOnce);
         bundle.putBoolean(ONGOING, ongoing);
         bundle.putBoolean(ALLOW_WHILE_IDLE, allowWhileIdle);
         bundle.putBoolean(IGNORE_IN_FOREGROUND, ignoreInForeground);
@@ -279,7 +285,7 @@ public class RNPushNotificationAttributes {
             jsonObject.put(COLOR, color);
             jsonObject.put(GROUP, group);
             jsonObject.put(GROUP_SUMMARY, groupSummary);
-            jsonObject.put(USER_INTERACTION, userInteraction);
+            jsonObject.put(MESSAGE_ID, messageId);
             jsonObject.put(PLAY_SOUND, playSound);
             jsonObject.put(VIBRATE, vibrate);
             jsonObject.put(VIBRATION, vibration);
@@ -288,6 +294,7 @@ public class RNPushNotificationAttributes {
             jsonObject.put(TAG, tag);
             jsonObject.put(REPEAT_TYPE, repeatType);
             jsonObject.put(REPEAT_TIME, repeatTime);
+            jsonObject.put(ONLY_ALERT_ONCE, onlyAlertOnce);
             jsonObject.put(ONGOING, ongoing);
             jsonObject.put(ALLOW_WHILE_IDLE, allowWhileIdle);
             jsonObject.put(IGNORE_IN_FOREGROUND, ignoreInForeground);
@@ -325,6 +332,7 @@ public class RNPushNotificationAttributes {
                 ", color='" + color + '\'' +
                 ", group='" + group + '\'' +
                 ", groupSummary='" + groupSummary + '\'' +
+                ", messageId='" + messageId + '\'' +
                 ", userInteraction=" + userInteraction +
                 ", playSound=" + playSound +
                 ", vibrate=" + vibrate +
@@ -334,6 +342,7 @@ public class RNPushNotificationAttributes {
                 ", tag='" + tag + '\'' +
                 ", repeatType='" + repeatType + '\'' +
                 ", repeatTime=" + repeatTime +
+                ", onlyAlertOnce=" + onlyAlertOnce +
                 ", ongoing=" + ongoing +
                 ", allowWhileIdle=" + allowWhileIdle +
                 ", ignoreInForeground=" + ignoreInForeground +

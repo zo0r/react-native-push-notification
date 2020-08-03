@@ -89,8 +89,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     public void onNewIntent(Intent intent) {
         Bundle bundle = this.getBundleFromIntent(intent);
         if (bundle != null) {
-            bundle.putBoolean("foreground", false);
-            intent.putExtra("notification", bundle);
             mJsDelivery.notifyNotification(bundle);
         }
     }
@@ -294,6 +292,18 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
       if(callback != null) {
         callback.invoke(exists);
+      }
+    }
+
+    @ReactMethod
+    /**
+     * Creates a channel if it does not already exist. Returns whether the channel was created.
+     */
+    public void createChannel(ReadableMap channelInfo, Callback callback) {
+      boolean created = mRNPushNotificationHelper.createChannel(channelInfo);
+
+      if(callback != null) {
+        callback.invoke(created);
       }
     }
 

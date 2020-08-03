@@ -20,7 +20,7 @@ var Notifications = {
   onAction: false,
   onRemoteFetch: false,
   isLoaded: false,
-  idInitialNotification: null,
+  isPopInitialNotification: false,
 
   isPermissionsRequestPending: false,
 
@@ -95,27 +95,31 @@ Notifications.configure = function(options) {
     this.isLoaded = true;
   }
 
-  const handlePopInitialNotification = function(state) {
+  const handlePopInitialNotification = (state) => {
     if('active' !== state) {
       return;
     }
 
     if (options.popInitialNotification === undefined || options.popInitialNotification === true) {
       this.popInitialNotification(function(firstNotification) {
-        if ( firstNotification !== null ) {
-          if(false === firstNotification.userInteraction || this.idInitialNotification === firstNotification.id) {
-            return;
-          }
-          
-          this.idInitialNotification = firstNotification.id;
-          this._onNotification(firstNotification, true);
+        if(this.isPopInitialNotification) {
+          return;
         }
+        
+        this.isPopInitialNotification = true;
+        
+        if (!firstNotification || false === firstNotification.userInteraction) {
+          return;
+        }
+        
+        this._onNotification(firstNotification, true);
       }.bind(this));
     }
   }
 
   AppState.addEventListener('change', handlePopInitialNotification.bind(this));
-  handlePopInitialNotification();
+
+  handlePopInitialNotification(AppState.currentState);
 
   if ( options.requestPermissions !== false ) {
     this._requestPermissions();
@@ -152,6 +156,12 @@ Notifications.localNotification = function(details) {
     }
   }
 
+  if (details.userInfo) {
+    details.userInfo.id = details.userInfo.id || details.id;
+  } else {
+    details.userInfo = {id: details.id};
+  }
+
   if (Platform.OS === 'ios') {
     // https://developer.apple.com/reference/uikit/uilocalnotification
 
@@ -159,12 +169,6 @@ Notifications.localNotification = function(details) {
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
-    }
-
-    if (details.userInfo) {
-      details.userInfo.id = details.userInfo.id || details.id;
-    } else {
-      details.userInfo = {id: details.id};
     }
 
     // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
@@ -224,17 +228,17 @@ Notifications.localNotificationSchedule = function(details) {
     }
   }
 
+  if (details.userInfo) {
+    details.userInfo.id = details.userInfo.id || details.id;
+  } else {
+    details.userInfo = {id: details.id};
+  }
+
   if (Platform.OS === 'ios') {
     let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
-    }
-
-    if (details.userInfo) {
-      details.userInfo.id = details.userInfo.id || details.id;
-    } else {
-      details.userInfo = {id: details.id};
     }
 
     const iosDetails = {
@@ -326,7 +330,11 @@ Notifications._onAction = function(notification) {
   this.onAction(notification);
 }
 
-Notifications._onNotification = function(data, isFromBackground = null) {
+Notifications._transformNotificationObject = function(data, isFromBackground = null) {
+  if(!data) {
+    return;
+  }
+
   if ( isFromBackground === null ) {
     isFromBackground = (
       data.foreground === false ||
@@ -334,37 +342,64 @@ Notifications._onNotification = function(data, isFromBackground = null) {
     );
   }
 
-  if ( this.onNotification !== false ) {
-    if ( Platform.OS === 'ios' ) {
-      this.onNotification({
-        id: data?.userInfo?.id,
-        foreground: ! isFromBackground,
-        userInteraction: isFromBackground,
-        message: data.getMessage(),
-        data: data.getData(),
-        badge: data.getBadgeCount(),
-        alert: data.getAlert(),
-        sound: data.getSound(),
-        fireDate: data._fireDate,
-        finish: (res) => data.finish(res)
-      });
-    } else {
-      var notificationData = {
-        foreground: ! isFromBackground,
-        finish: () => {},
-        ...data
-      };
+  let _notification;
 
-      if ( typeof notificationData.data === 'string' ) {
-        try {
-          notificationData.data = JSON.parse(notificationData.data);
-        } catch(e) {
-          /* void */
-        }
-      }
+  if ( Platform.OS === 'ios' ) {
+    const notifData = data.getData();
 
-      this.onNotification(notificationData);
+    _notification = {
+      id: notifData?.id,
+      foreground: !isFromBackground,
+      userInteraction: isFromBackground,
+      message: data.getMessage(),
+      data: notifData,
+      badge: data.getBadgeCount(),
+      title: data.getTitle(),
+      soundName: data.getSound(),
+      fireDate: Date.parse(data._fireDate),
+      finish: (res) => data.finish(res)
+    };
+
+    if(isNaN(_notification.fireDate)) {
+      delete _notification.fireDate;
     }
+
+  } else {
+    _notification = {
+      foreground: !isFromBackground,
+      finish: () => {},
+      ...data,
+    };
+
+    if ( typeof _notification.data === 'string' ) {
+      try {
+        _notification.data = JSON.parse(_notification.data);
+      } catch(e) {
+        /* void */
+      }
+    }
+
+    _notification.data = {
+      ...(typeof _notification.userInfo === 'object' ? _notification.userInfo : {}),
+      ...(typeof _notification.data === 'object' ? _notification.data : {}),
+    };
+
+    delete _notification.userInfo;
+    delete _notification.notificationId;
+  }
+
+  return _notification;
+}
+
+Notifications._onNotification = function(data, initialNotification = false) {
+  if ( this.onNotification !== false ) {
+    let notification = data;
+
+    if(!initialNotification) {
+      notification = this._transformNotificationObject(data);
+    }
+
+    this.onNotification(notification);
   }
 };
 
@@ -434,8 +469,10 @@ Notifications.getApplicationIconBadgeNumber = function() {
 };
 
 Notifications.popInitialNotification = function(handler) {
-  this.callNative('getInitialNotification').then(function(result){
-    handler(result);
+  this.callNative('getInitialNotification').then((result) => {
+    handler(
+      this._transformNotificationObject(result, true)
+    );
   });
 };
 
@@ -471,7 +508,7 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
 						id: notif.userInfo?.id,
-						date: new Date(notif.fireDate),
+            date: new Date(notif.fireDate),
 						number: notif?.applicationIconBadgeNumber,
 						message: notif?.alertBody,
 						title: notif?.alertTitle,
@@ -511,6 +548,10 @@ Notifications.getChannels = function() {
 
 Notifications.channelExists = function() {
   return this.callNative('channelExists', arguments);
+};
+
+Notifications.createChannel = function() {
+  return this.callNative('createChannel', arguments);
 };
 
 Notifications.channelBlocked = function() {
