@@ -17,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
-- (Android) Fix change that make gradle build fail.
+- (Android) Fix change that make gradle build fail [#1578](https://github.com/zo0r/react-native-push-notification/pull/1578).
 
 ## [5.0.0] 2020-08-03
 
