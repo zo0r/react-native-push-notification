@@ -489,9 +489,9 @@ PushNotification.channelBlocked(channel_id, function (blocked) {
 });
 ```
 
-### List channels
+### Delete channel
 
-You can list available channels with:
+You can delete a channel with:
 
 ```js
 PushNotification.deleteChannel(channel_id);
