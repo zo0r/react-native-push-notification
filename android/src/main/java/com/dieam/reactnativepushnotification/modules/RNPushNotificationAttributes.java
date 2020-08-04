@@ -72,7 +72,6 @@ public class RNPushNotificationAttributes {
     private final String group;
     private final boolean groupSummary;
     private final String messageId;
-    private final boolean userInteraction;
     private final boolean playSound;
     private final boolean vibrate;
     private final double vibration;
@@ -333,7 +332,6 @@ public class RNPushNotificationAttributes {
                 ", group='" + group + '\'' +
                 ", groupSummary='" + groupSummary + '\'' +
                 ", messageId='" + messageId + '\'' +
-                ", userInteraction=" + userInteraction +
                 ", playSound=" + playSound +
                 ", vibrate=" + vibrate +
                 ", vibration=" + vibration +

@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Breaking changes
+
+### Features
+
+### Fixed
+
+
+## [5.0.1] 2020-08-04
+
+### Fixed
+
+- (Android) Fix change that make gradle build fail.
+
 ## [5.0.0] 2020-08-03
 
 ### Breaking changes
