@@ -6,7 +6,7 @@
 React Native Local and Remote Notifications for iOS and Android
 
 
-## 🎉 Version 5.0.0 is live ! 🎉
+## 🎉 Version 5.x is live ! 🎉
 
 Check out for changes in the CHANGELOG:
 
