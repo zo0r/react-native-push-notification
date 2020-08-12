@@ -50,4 +50,5 @@ Describe what you expected to happen:
 
 <!--
  Please add minimal runnable repro as explained above so that the bug can be tested in isolation.
+ Use the example project to reproduce it.
 -->

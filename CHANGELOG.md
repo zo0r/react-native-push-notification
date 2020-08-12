@@ -10,6 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Features
 
+- Add support for specifying a delegate FirebaseMessagingService [#1589](https://github.com/zo0r/react-native-push-notification/pull/1589)
+
 ### Fixed
 
 
