@@ -10,9 +10,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Features
 
-- Add support for specifying a delegate FirebaseMessagingService [#1589](https://github.com/zo0r/react-native-push-notification/pull/1589)
+- (Android) Add support for specifying a delegate FirebaseMessagingService [#1589](https://github.com/zo0r/react-native-push-notification/pull/1589)
 
 ### Fixed
+
+- (Android) Fix a bug where `userInteraction` is not set, notification when app in background pressed by user.
 
 
 ## [5.0.1] 2020-08-04
