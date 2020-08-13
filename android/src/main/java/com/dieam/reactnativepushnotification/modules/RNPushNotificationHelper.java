@@ -222,6 +222,7 @@ public class RNPushNotificationHelper {
             String channel_id = NOTIFICATION_CHANNEL_ID;
 
             String title = bundle.getString("title");
+            boolean headsUp = bundle.getBoolean("headsUp", false);
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
@@ -514,7 +515,8 @@ public class RNPushNotificationHelper {
             checkOrCreateChannel(notificationManager, channel_id, channel_name, channel_description, soundUri, importance, vibratePattern);
 
             notification.setChannelId(channel_id);
-            notification.setContentIntent(pendingIntent);
+            if (headsUp) notification.setFullScreenIntent(pendingIntent, true);
+            else notification.setContentIntent(pendingIntent);
 
             JSONArray actionsArray = null;
             try {
@@ -577,8 +579,12 @@ public class RNPushNotificationHelper {
             }
 
             if (!(this.isApplicationInForeground() && bundle.getBoolean("ignoreInForeground"))) {
+                notification.setCategory(Notification.CATEGORY_ALARM);
+                notification.setTimeoutAfter(2000000);
                 Notification info = notification.build();
-                info.defaults |= Notification.DEFAULT_LIGHTS;
+                info.defaults |= Notification.DEFAULT_ALL;
+                info.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+                //info.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
 
                 if (bundle.containsKey("tag")) {
                     String tag = bundle.getString("tag");
