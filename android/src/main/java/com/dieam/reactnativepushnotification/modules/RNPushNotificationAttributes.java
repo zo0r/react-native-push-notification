@@ -44,6 +44,9 @@ public class RNPushNotificationAttributes {
     private static final String TAG = "tag";
     private static final String REPEAT_TYPE = "repeatType";
     private static final String REPEAT_TIME = "repeatTime";
+    private static final String WHEN = "when";
+    private static final String USES_CHRONOMETER = "usesChronometer";
+    private static final String TIMEOUT_AFTER = "timeoutAfter";
     private static final String ONLY_ALERT_ONCE = "onlyAlertOnce";
     private static final String ONGOING = "ongoing";
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
@@ -80,6 +83,9 @@ public class RNPushNotificationAttributes {
     private final String tag;
     private final String repeatType;
     private final double repeatTime;
+    private final double when;
+    private final boolean usesChronometer;
+    private final double timeoutAfter;
     private final boolean onlyAlertOnce;
     private final boolean ongoing;
     private final boolean allowWhileIdle;
@@ -117,6 +123,9 @@ public class RNPushNotificationAttributes {
         tag = bundle.getString(TAG);
         repeatType = bundle.getString(REPEAT_TYPE);
         repeatTime = bundle.getDouble(REPEAT_TIME);
+        when = bundle.getDouble(WHEN);
+        usesChronometer = bundle.getBoolean(USES_CHRONOMETER);
+        timeoutAfter = bundle.getDouble(TIMEOUT_AFTER);
         onlyAlertOnce = bundle.getBoolean(ONLY_ALERT_ONCE);
         ongoing = bundle.getBoolean(ONGOING);
         allowWhileIdle = bundle.getBoolean(ALLOW_WHILE_IDLE);
@@ -156,6 +165,9 @@ public class RNPushNotificationAttributes {
             tag = jsonObject.has(TAG) ? jsonObject.getString(TAG) : null;
             repeatType = jsonObject.has(REPEAT_TYPE) ? jsonObject.getString(REPEAT_TYPE) : null;
             repeatTime = jsonObject.has(REPEAT_TIME) ? jsonObject.getDouble(REPEAT_TIME) : 0.0;
+            when = jsonObject.has(WHEN) ? jsonObject.getDouble(WHEN) : null;
+            usesChronometer = jsonObject.has(USES_CHRONOMETER) ? jsonObject.getBoolean(USES_CHRONOMETER) : false;
+            timeoutAfter = jsonObject.has(TIMEOUT_AFTER) ? jsonObject.getDouble(TIMEOUT_AFTER) : null;
             onlyAlertOnce = jsonObject.has(ONLY_ALERT_ONCE) ? jsonObject.getBoolean(ONLY_ALERT_ONCE) : false;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
             allowWhileIdle = jsonObject.has(ALLOW_WHILE_IDLE) ? jsonObject.getBoolean(ALLOW_WHILE_IDLE) : false;
@@ -252,6 +264,9 @@ public class RNPushNotificationAttributes {
         bundle.putString(TAG, tag);
         bundle.putString(REPEAT_TYPE, repeatType);
         bundle.putDouble(REPEAT_TIME, repeatTime);
+        bundle.putDouble(WHEN, when);
+        bundle.putBoolean(USES_CHRONOMETER, usesChronometer);
+        bundle.putDouble(TIMEOUT_AFTER, timeoutAfter);
         bundle.putBoolean(ONLY_ALERT_ONCE, onlyAlertOnce);
         bundle.putBoolean(ONGOING, ongoing);
         bundle.putBoolean(ALLOW_WHILE_IDLE, allowWhileIdle);
@@ -293,6 +308,9 @@ public class RNPushNotificationAttributes {
             jsonObject.put(TAG, tag);
             jsonObject.put(REPEAT_TYPE, repeatType);
             jsonObject.put(REPEAT_TIME, repeatTime);
+            jsonObject.put(WHEN, when);
+            jsonObject.put(USES_CHRONOMETER, usesChronometer);
+            jsonObject.put(TIMEOUT_AFTER, timeoutAfter);
             jsonObject.put(ONLY_ALERT_ONCE, onlyAlertOnce);
             jsonObject.put(ONGOING, ongoing);
             jsonObject.put(ALLOW_WHILE_IDLE, allowWhileIdle);
@@ -340,6 +358,9 @@ public class RNPushNotificationAttributes {
                 ", tag='" + tag + '\'' +
                 ", repeatType='" + repeatType + '\'' +
                 ", repeatTime=" + repeatTime +
+                ", when=" + when +
+                ", usesChronometer=" + usesChronometer +
+                ", timeoutAfter=" + timeoutAfter +
                 ", onlyAlertOnce=" + onlyAlertOnce +
                 ", ongoing=" + ongoing +
                 ", allowWhileIdle=" + allowWhileIdle +

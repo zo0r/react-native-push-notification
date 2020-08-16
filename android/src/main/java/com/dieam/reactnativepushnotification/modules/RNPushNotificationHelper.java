@@ -498,8 +498,22 @@ public class RNPushNotificationHelper {
               if (shortcutId != null) {
                 notification.setShortcutId(shortcutId);
               }
+ 
+              Long timeoutAfter = (long) bundle.getDouble("timeoutAfter");
+  
+              if (timeoutAfter != null) {
+                notification.setTimeoutAfter(timeoutAfter);
+              }
             }
 
+            Long when = (long) bundle.getDouble("when");
+  
+            if (when != null) {
+              notification.setWhen(when);
+            }
+
+            notification.setUsesChronometer(bundle.getBoolean("usesChronometer", false));
+                
             // Override channel_id if there is one provided
             String customChannelId = bundle.getString("channelId");
             
