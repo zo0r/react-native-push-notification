@@ -245,7 +245,7 @@ public class RNPushNotificationHelper {
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                soundName = isTestNotificationAlert ? "test" : bundle.getString("soundName");
+                soundName = bundle.getString("soundName");
                 Log.d(LOG_TAG, "set sound " + soundName);
                 if (soundName != null) {
                     if (!"default".equalsIgnoreCase(soundName)) {
@@ -359,6 +359,13 @@ public class RNPushNotificationHelper {
 
             String localAlert = bundle.getString("local");
             if(localAlert != null){
+                isTestNotificationAlert = Boolean.parseBoolean(bundle.getString("isTestSystem", "false"));
+
+                if(isTestNotificationAlert){
+                    String titleAlert = context.getString(getResourceId( "notification_drill_title", "string"));
+                    notification.setContentTitle(titleAlert);
+                }
+
                 final Pattern pattern = Pattern.compile("Intensidad esperada en (.+)[,:]");
 
                 JSONObject localJson = new JSONObject(localAlert);
@@ -380,6 +387,7 @@ public class RNPushNotificationHelper {
 
                 String textTime = readableTimeFormat("seconds", seconds);
                 Log.d(LOG_TAG, ">> ETA parce :"+ textTime);
+
                 //Location ETA
                 JSONObject notificationJson = new JSONObject(bundle.getString("notification"));
                 String rawMessage = notificationJson.getString("message");
@@ -389,33 +397,32 @@ public class RNPushNotificationHelper {
                 if (matcher.find()) {
                     location = matcher.group(1);
                 }else{
-                    location = "DESCONOCIDO";
+                    String textUnknown = context.getString(getResourceId("unknown", "string"));
+                    location = textUnknown;
                 }
                 Log.d(LOG_TAG, ">> ETA Location :"+ location);
+
                 if(diffTimeImpact > 0){
                     message = context.getString(getResourceId("notification_body_incoming", "string"), nameIntensity, textTime, location);
-                    Log.d(LOG_TAG, ">> Notification msg :"+ message);
-                    notification.setContentText(message);
-                    notification.setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(message));
+
                 }else if( diffTimeImpact > -30000){
                     message = context.getString(getResourceId("notification_body_now", "string"), nameIntensity, location);
-                    notification.setContentText(message);
-
-                    notification.setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(message));
-                    Log.d(LOG_TAG, ">> Notification msg :"+ message);
                 }else{
-                    String titleFinish = context.getString(getResourceId("notification_title_finish", "string"));
+                    String nameSourceTitle = isTestNotificationAlert ? "notification_drill_title_finish" : "notification_title_finish";
+                    String titleFinish = context.getString(getResourceId( nameSourceTitle, "string"));
                     notification.setContentTitle(titleFinish);
 
                     message = context.getString(getResourceId("notification_body_finish", "string"), nameIntensity, location);
-                    notification.setContentText(message);
-
-                    notification.setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(message));
-                    Log.d(LOG_TAG, ">> Notification msg :"+ message);
                 }
+
+                String messageDrill = isTestNotificationAlert ? context.getString(getResourceId( "notification_drill_body_start", "string")) + " ": "";
+                String newMessage = messageDrill + message;
+
+                Log.d(LOG_TAG, ">> Notification msg :"+ newMessage);
+
+                notification.setContentText(newMessage);
+                notification.setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(newMessage));
             }
 
             int notificationID = Integer.parseInt(notificationIdString);
