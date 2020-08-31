@@ -10,6 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Features
 
+### Fixed
+
+
+## [5.1.0] 2020-08-31
+
+### Features
+
 - (Android) Add support for specifying a delegate FirebaseMessagingService [#1589](https://github.com/zo0r/react-native-push-notification/pull/1589)
 - (Android) Add support of `when`, `usesChronometer` and `timeoutAfter`.
 
