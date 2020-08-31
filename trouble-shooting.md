@@ -7,6 +7,31 @@ Known bugs and issues:
  * (Android) Tapping an alert in the notification centre will sometimes not result in `onNotification` being called [issue 281](https://github.com/zo0r/react-native-push-notification/issues/281)
  * (Android) Not all local notification features are supported yet (PRs welcome)
  * (iOS) The OS can penalise your app for not calling the completion handler and will stop (or delay) sending notifications to your app. This will be supported from RN-0.38 [PR 227](https://github.com/zo0r/react-native-push-notification/pull/277)
+ * (Android and iOS) Don't use a string to get the date for schedule a local notification, it only works with remote debugger enabled, [explanation](https://stackoverflow.com/a/41881765/8519917).
+  
+
+  ```javascript
+  // It doesn't works with the javascript engine used by React Native 
+  const date = new Date("10-10-2020 12:30");
+  ```
+  A good practice to get valid date could be:
+
+  ```javascript
+  // Get date to schedule a local notification today at 12:30:00
+  const hour = 12;
+  const minute = 30;
+  const second = 0;
+
+  const now = new Date();
+  const date = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hour,
+    minute,
+    second
+  );
+  ```
  
 # Android tips
 
