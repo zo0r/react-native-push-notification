@@ -46,6 +46,12 @@ public class RNReceivedMessageHandler {
             bundle.putString("message", remoteNotification.getBody());
             bundle.putString("sound", remoteNotification.getSound());
             bundle.putString("color", remoteNotification.getColor());
+            Uri uri = remoteNotification.getImageUrl();
+            if(uri != null) {
+              String imageUrl = uri.toString();
+              bundle.putString("bigPictureUrl", imageUrl);
+              bundle.putString("largeIconUrl", imageUrl);
+            }
         }
 
         Map<String, String> notificationData = message.getData();
