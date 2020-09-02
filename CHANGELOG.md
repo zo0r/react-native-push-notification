@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Breaking changes
 
+- (Android) Fix a bug where notification data are not inside `data` property after been pressed by user. When sending notification + data and app in background.
+
 ### Features
 
 ### Fixed
