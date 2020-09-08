@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.ReactApplication;
+
 import java.util.List;
 import java.security.SecureRandom;
 
@@ -39,6 +43,17 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
 
         Application applicationContext = (Application) context.getApplicationContext();
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+
+        boolean isForeground = pushNotificationHelper.isApplicationInForeground();
+        bundle.putBoolean("foreground", isForeground);
+        bundle.putBoolean("userInteraction", false);
+
+        if (isForeground) {
+            final ReactInstanceManager mReactInstanceManager = ((ReactApplication) context.getApplicationContext()).getReactNativeHost().getReactInstanceManager();
+            ReactContext reactContext = mReactInstanceManager.getCurrentReactContext();
+            RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(reactContext);
+            jsDelivery.notifyNotification(bundle);
+        }
         
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
