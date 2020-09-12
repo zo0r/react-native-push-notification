@@ -350,7 +350,7 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
     _notification = {
       id: notifData?.id,
       foreground: !isFromBackground,
-      userInteraction: isFromBackground,
+      userInteraction: notifData?.userInteraction === 1 || false,
       message: data.getMessage(),
       data: notifData,
       badge: data.getBadgeCount(),

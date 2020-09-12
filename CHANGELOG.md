@@ -8,12 +8,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Breaking changes
 
+- `@react-native-community/push-notification-ios` is now a `peerDependency`, please make sure that you installed this library with NPM or YARN.
 - (Android) Fix a bug where notification data are not inside `data` property after been pressed by user. When sending notification + data and app in background.
 
 ### Features
 
 ### Fixed
 
+- (iOS) upgrade `@react-native-community/push-notification-ios`, fixe the value of `userInteraction` [@react-native-community/push-notification-ios#122](https://github.com/react-native-community/push-notification-ios/pull/122).
 
 ## [5.1.0] 2020-08-31
 
