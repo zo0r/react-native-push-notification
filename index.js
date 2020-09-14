@@ -346,11 +346,12 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
 
   if ( Platform.OS === 'ios' ) {
     const notifData = data.getData();
+    const userInteraction = data.getData().userInteraction === 1
 
     _notification = {
       id: notifData?.id,
       foreground: !isFromBackground,
-      userInteraction: isFromBackground,
+      userInteraction: userInteraction,
       message: data.getMessage(),
       data: notifData,
       badge: data.getBadgeCount(),
