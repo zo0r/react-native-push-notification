@@ -220,6 +220,8 @@ public class MainApplication extends Application implements ReactApplication {
 ## Usage
 
 **DO NOT USE `.configure()` INSIDE A COMPONENT, EVEN `App`**
+> If you do, notification handlers will not fire, because they are not loaded. Instead, use `.configure()` in the app's first file, usually `index.js`.
+
 
 ```javascript
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
