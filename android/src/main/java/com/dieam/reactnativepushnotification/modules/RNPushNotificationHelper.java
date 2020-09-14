@@ -501,14 +501,14 @@ public class RNPushNotificationHelper {
  
               Long timeoutAfter = (long) bundle.getDouble("timeoutAfter");
   
-              if (timeoutAfter != null) {
+              if (timeoutAfter != null && timeoutAfter >= 0) {
                 notification.setTimeoutAfter(timeoutAfter);
               }
             }
 
             Long when = (long) bundle.getDouble("when");
   
-            if (when != null) {
+            if (when != null && when >= 0) {
               notification.setWhen(when);
             }
 
