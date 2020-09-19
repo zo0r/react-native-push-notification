@@ -89,17 +89,9 @@ In your `android/app/src/main/AndroidManifest.xml`
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
-                android:value="YOUR NOTIFICATION CHANNEL NAME"/>
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
-                    android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
-
         <!-- Change the value to true to enable pop-up for in foreground (remote-only, for local use ignoreInForeground) -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                     android:value="false"/>
-        <!-- Change the value to false if you don't want the creation of the default channel -->
-        <meta-data  android:name="com.dieam.reactnativepushnotification.channel_create_default"
-                    android:value="true"/>
         <!-- Change the resource name to your App's accent color - or any other color you want -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
                     android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
@@ -109,6 +101,8 @@ In your `android/app/src/main/AndroidManifest.xml`
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
 
@@ -307,6 +301,7 @@ EXAMPLE:
 ```javascript
 PushNotification.localNotification({
   /* Android Only Properties */
+  channelId: "your-channel-id", // (required) channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
   ticker: "My Notification Ticker", // (optional)
   showWhen: true, // (optional) default: true
   autoCancel: true, // (optional) default: true
@@ -325,10 +320,8 @@ PushNotification.localNotification({
   ongoing: false, // (optional) set whether this is an "ongoing" notification
   priority: "high", // (optional) set notification priority, default: high
   visibility: "private", // (optional) set notification visibility, default: private
-  importance: "high", // (optional) set notification importance, default: high
   ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
   shortcutId: "shortcut-id", // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
-  channelId: "your-custom-channel-id", // (optional) custom channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
   onlyAlertOnce: false, // (optional) alert will open only once with sound and notify, default: false
   
   when: null, // (optionnal) Add a timestamp pertaining to the notification (usually the time the event occurred). For apps targeting Build.VERSION_CODES.N and above, this time is not shown anymore by default and must be opted into by using `showWhen`, default: null.
@@ -337,7 +330,7 @@ PushNotification.localNotification({
 
   messageId: "google:message_id", // (optional) added as `message_id` to intent extras so opening push notification can find data stored by @react-native-firebase/messaging module. 
 
-  actions: '["Yes", "No"]', // (Android only) See the doc for notification actions to know more
+  actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
   invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
   /* iOS only properties */
@@ -395,14 +388,14 @@ In the location notification json specify the full file name:
 
 ## Channel Management (Android)
 
-To use custom channels, create them at startup and pass the matching `channelId` through to `PushNotification.localNotification`
+To use channels, create them at startup and pass the matching `channelId` through to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
 
 ```javascript
   PushNotification.createChannel(
     {
-      channelId: "custom-channel-id", // (required)
-      channelName: "Custom channel", // (required)
-      channelDescription: "A custom channel to categorise your custom notifications", // (optional) default: undefined.
+      channelId: "channel-id", // (required)
+      channelName: "My channel", // (required)
+      channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
       soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
       importance: 4, // (optional) default: 4. Int value of the Android notification importance
       vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
@@ -411,47 +404,9 @@ To use custom channels, create them at startup and pass the matching `channelId`
   );
 ```
 
-Channels with ids that do not exist are generated on the fly when you pass options to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
-
-The pattern of `channel_id` is:
-
-```
-rn-push-notification-channel-id-(importance: default "4")(-soundname, default if playSound "-default")-(vibration, default "300")
-```
-
-By default, 1 channel is created:
-
-- rn-push-notification-channel-id-4-default-300 (used for remote notification if none already exist).
-
-you can avoid the default creation by using this:
-
-```xml
-  <meta-data  android:name="com.dieam.reactnativepushnotification.channel_create_default"
-          android:value="false"/>
-```
-
 **NOTE: Without channel, remote notifications don't work**
 
-In the notifications options, you can provide a custom channel id with `channelId: "your-custom-channel-id"`, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your `channelId` is different if you change these options. If you have created a custom channel in another way, it will apply options of the channel.
-
-Custom and generated channels can have custom name and description in the `AndroidManifest.xml`, only if the library is responsible of the creation of the channel.
-You can also use `channelName` and `channelDescription` when you use to override the name or description. Once the channel is created, you won't be able to update them.
-
-```xml
-  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name.[CHANNEL_ID]"
-          android:value="YOUR NOTIFICATION CHANNEL NAME FOR CHANNEL_ID"/>
-  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description.[CHANNEL_ID]"
-              android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION FOR CHANNEL_ID"/>
-```
-
-For example:
-
-```xml
-  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name.rn-push-notification-channel-id-4-300"
-          android:value="YOUR NOTIFICATION CHANNEL NAME FOR SILENT CHANNEL"/>
-  <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description.rn-push-notification-channel-id-4-300"
-              android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION FOR SILENT CHANNEL"/>
-```
+In the notifications options, you must provide a channel id with `channelId: "your-channel-id"`, if the channel doesn't exist the notification might not e triggered. Once the channel is created, the channel cannot be update. Make sure your `channelId` is different if you change these options. If you have created a channel in another way, it will apply options of the channel.
 
 If you want to use a different default channel for remote notification, refer to the documentation of Firebase:
 

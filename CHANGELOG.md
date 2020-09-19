@@ -8,10 +8,37 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Breaking changes
 
+- (Android) Channel Management: In order to limit the scope of responsability of this library, developers are now responsible of the creation of the channels. You can find the documentation at https://github.com/zo0r/react-native-push-notification#channel-management-android. These changes are also made to allow improvements in the future of the library. Here the list of impacts:
+  - You must create your channels before triggering a notification.
+  - These entries in `AndroidManifest` are deprecated:
+  ```xml
+        <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_name" android:value="..."/>
+        <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_description" android:value="..."/>
+        <meta-data android:name="com.dieam.reactnativepushnotification.channel_create_default" android:value="..."/>
+  ```
+  -  Followings options changed on Android in `localNotification` and `localNotificationSchedule`:
+     - `channelId` becomes mandatory (warning if not provided)
+     - `channelName` is deprecated
+     - `channelDescription` is deprecated
+     - `importance` is deprecated
+  - These changes help to avoid an issue [#1649](https://github.com/zo0r/react-native-push-notification/issues/1649)
+- (Android) Remove check for the intent `BOOT_COMPLETED`, this should allow more intent action such as `QUICKBOOT_POWERON`. It's recommended to update `AndroidManifest`, the `RNPushNotificationBootEventReceiver` to:
+  ```xml
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+  ```
 - `@react-native-community/push-notification-ios` is now a `peerDependency`, please make sure that you installed this library with NPM or YARN.
 - (Android) Fix a bug where notification data are not inside `data` property after been pressed by user. When sending notification + data and app in background.
-
-### Features
+- (Android) Add more fields from the firebase notification part. (Thanks to @fattomhk with this PR [#1626](https://github.com/zo0r/react-native-push-notification/pull/1626))
+  - `notificationPriority`
+  - `image`
+  - `tag`
+  - `visibility`
 
 ### Fixed
 

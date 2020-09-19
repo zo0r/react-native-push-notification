@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.net.Uri;
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
@@ -46,6 +48,55 @@ public class RNReceivedMessageHandler {
             bundle.putString("message", remoteNotification.getBody());
             bundle.putString("sound", remoteNotification.getSound());
             bundle.putString("color", remoteNotification.getColor());
+            bundle.putString("tag", remoteNotification.getTag());
+            bundle.putString("channelId", remoteNotification.getChannelId());
+
+            Integer visibilty = remoteNotification.getVisibility();
+            String visibilityString = "private";
+
+            if (visibilty != null) {
+                switch (visibilty) {
+                    case NotificationCompat.VISIBILITY_PUBLIC:
+                        visibilityString = "public";
+                        break;
+                    case NotificationCompat.VISIBILITY_SECRET:
+                        visibilityString = "secret";
+                        break;
+                }
+            }
+          
+            bundle.putString("visibility", visibilityString);
+
+            Integer priority = remoteNotification.getNotificationPriority();
+            String priorityString = "high";
+            
+            if (priority != null) {
+              switch (priority) {
+                  case NotificationCompat.PRIORITY_MAX:
+                      priorityString = "max";
+                      break;
+                  case NotificationCompat.PRIORITY_LOW:
+                      priorityString = "low";
+                      break;
+                  case NotificationCompat.PRIORITY_MIN:
+                      priorityString = "min";
+                      break;
+                  case NotificationCompat.PRIORITY_DEFAULT:
+                      priorityString = "default";
+                      break;
+              }
+            }
+
+            bundle.putString("priority", priorityString);
+
+            Uri uri = remoteNotification.getImageUrl();
+
+            if(uri != null) {
+                String imageUrl = uri.toString();
+              
+                bundle.putString("bigPictureUrl", imageUrl);
+                bundle.putString("largeIconUrl", imageUrl);
+            }
         }
 
         Map<String, String> notificationData = message.getData();
@@ -54,32 +105,13 @@ public class RNReceivedMessageHandler {
         if (notificationData.containsKey("twi_body")) {
             bundle.putString("message", notificationData.get("twi_body"));
         }
-        JSONObject data = getPushData(notificationData.get("data"));
-
-        if (data != null) {
-            if (!bundle.containsKey("message")) {
-                bundle.putString("message", data.optString("alert", null));
-            }
-            if (!bundle.containsKey("title")) {
-                bundle.putString("title", data.optString("title", null));
-            }
-            if (!bundle.containsKey("sound")) {
-                bundle.putString("soundName", data.optString("sound", null));
-            }
-            if (!bundle.containsKey("color")) {
-                bundle.putString("color", data.optString("color", null));
-            }
-
-            final int badge = data.optInt("badge", -1);
-            if (badge >= 0) {
-                ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(mFirebaseMessagingService, badge);
-            }
-        }
 
         Bundle dataBundle = new Bundle();
+        
         for(Map.Entry<String, String> entry : notificationData.entrySet()) {
             dataBundle.putString(entry.getKey(), entry.getValue());
         }
+
         bundle.putParcelable("data", dataBundle);
 
         Log.v(LOG_TAG, "onMessageReceived: " + bundle);
@@ -113,14 +145,6 @@ public class RNReceivedMessageHandler {
         });
     }
 
-    private JSONObject getPushData(String dataString) {
-        try {
-            return new JSONObject(dataString);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
@@ -129,9 +153,12 @@ public class RNReceivedMessageHandler {
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
-        RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());
+        Application applicationContext = (Application) context.getApplicationContext();
 
-        boolean isForeground = isApplicationInForeground();
+        RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());
+        RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+
+        boolean isForeground = pushNotificationHelper.isApplicationInForeground();
 
         RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
         bundle.putBoolean("foreground", isForeground);
@@ -146,25 +173,7 @@ public class RNReceivedMessageHandler {
         if (config.getNotificationForeground() || !isForeground) {
             Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-            Application applicationContext = (Application) context.getApplicationContext();
-            RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
         }
     }
-
-    private boolean isApplicationInForeground() {
-        ActivityManager activityManager = (ActivityManager) mFirebaseMessagingService.getSystemService(ACTIVITY_SERVICE);
-        List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
-        if (processInfos != null) {
-            for (RunningAppProcessInfo processInfo : processInfos) {
-                if (processInfo.processName.equals(mFirebaseMessagingService.getPackageName())
-                    && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                    && processInfo.pkgList.length > 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
 }

@@ -146,6 +146,10 @@ Notifications.unregister = function() {
  * @param {Object}    details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
 Notifications.localNotification = function(details) {
+  if ('android' === Platform.os && details && !details.channelId) {
+    console.warn('No channel id passed, notifications may not work.');
+  }
+
   if (details && typeof details.id === 'number') {
     if (isNaN(details.id)) {
       console.warn('NaN value has been passed as id');
@@ -218,6 +222,10 @@ Notifications.localNotification = function(details) {
  * @param {Date}    details.date - The date and time when the system should deliver the notification
  */
 Notifications.localNotificationSchedule = function(details) {
+  if ('android' === Platform.os && details && !details.channelId) {
+    console.warn('No channel id passed, notifications may not work.');
+  }
+  
   if (details && typeof details.id === 'number') {
     if(isNaN(details.id)) {
       console.warn('NaN value has been passed as id');

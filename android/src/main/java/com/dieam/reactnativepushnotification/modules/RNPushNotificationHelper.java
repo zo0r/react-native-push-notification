@@ -50,7 +50,6 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAt
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
     private static final long DEFAULT_VIBRATION = 300L;
-    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private Context context;
     private RNPushNotificationConfig config;
@@ -219,8 +218,6 @@ public class RNPushNotificationHelper {
             Resources res = context.getResources();
             String packageName = context.getPackageName();
 
-            String channel_id = NOTIFICATION_CHANNEL_ID;
-
             String title = bundle.getString("title");
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
@@ -252,44 +249,6 @@ public class RNPushNotificationHelper {
                 }
             }
 
-            int importance = 4; // Same as HIGH for lower version
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                importance = NotificationManager.IMPORTANCE_HIGH;
-
-                final String importanceString = bundle.getString("importance");
-
-                if (importanceString != null) {
-                    switch (importanceString.toLowerCase()) {
-                        case "default":
-                            importance = NotificationManager.IMPORTANCE_DEFAULT;
-                            break;
-                        case "max":
-                            importance = NotificationManager.IMPORTANCE_MAX;
-                            break;
-                        case "high":
-                            importance = NotificationManager.IMPORTANCE_HIGH;
-                            break;
-                        case "low":
-                            importance = NotificationManager.IMPORTANCE_LOW;
-                            break;
-                        case "min":
-                            importance = NotificationManager.IMPORTANCE_MIN;
-                            break;
-                        case "none":
-                            importance = NotificationManager.IMPORTANCE_NONE;
-                            break;
-                        case "unspecified":
-                            importance = NotificationManager.IMPORTANCE_UNSPECIFIED;
-                            break;
-                        default:
-                            importance = NotificationManager.IMPORTANCE_HIGH;
-                    }
-                }
-            }
-
-            channel_id = channel_id + "-" + importance;
-
             int visibility = NotificationCompat.VISIBILITY_PRIVATE;
             final String visibilityString = bundle.getString("visibility");
 
@@ -308,7 +267,9 @@ public class RNPushNotificationHelper {
                         visibility = NotificationCompat.VISIBILITY_PRIVATE;
                 }
             }
-
+            
+            String channel_id = bundle.getString("channelId");
+            
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channel_id)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
@@ -437,15 +398,12 @@ public class RNPushNotificationHelper {
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 String soundName = bundle.getString("soundName");
+
                 if (soundName == null) {
                     soundName = "default";
                 }
 
                 soundUri = getSoundUri(soundName);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // API 26 and higher
-                    channel_id = channel_id + "-" + soundName;
-                }
 
                 notification.setSound(soundUri);
             }
@@ -484,8 +442,6 @@ public class RNPushNotificationHelper {
                 if (vibration == 0)
                     vibration = DEFAULT_VIBRATION;
 
-                channel_id = channel_id + "-" + vibration;
-
                 vibratePattern = new long[]{0, vibration};
 
                 notification.setVibrate(vibratePattern); 
@@ -514,19 +470,6 @@ public class RNPushNotificationHelper {
 
             notification.setUsesChronometer(bundle.getBoolean("usesChronometer", false));
                 
-            // Override channel_id if there is one provided
-            String customChannelId = bundle.getString("channelId");
-            
-            if (customChannelId != null) {
-              channel_id = customChannelId;
-            }
-
-            // Override channel_name, channel_description if there is one provided
-            String channel_name = bundle.getString("channelName");
-            String channel_description = bundle.getString("channelDescription");
-            
-            checkOrCreateChannel(notificationManager, channel_id, channel_name, channel_description, soundUri, importance, vibratePattern);
-
             notification.setChannelId(channel_id);
             notification.setContentIntent(pendingIntent);
 
@@ -844,26 +787,6 @@ public class RNPushNotificationHelper {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void checkOrCreateDefaultChannel() {
-      if(!this.config.getChannelCreateDefault()) {
-        return;
-      }
-
-      NotificationManager manager = notificationManager();
-
-      int importance = 4; // Default value of HIGH for lower version
-
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-          importance = NotificationManager.IMPORTANCE_HIGH;
-      }
-
-      Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-      
-      // Instanciate a default channel with default sound.
-      String channel_id_sound = NOTIFICATION_CHANNEL_ID + "-" + importance + "-default-" + DEFAULT_VIBRATION;
-      checkOrCreateChannel(manager, channel_id_sound, null, null, soundUri, importance, new long[] {0, DEFAULT_VIBRATION});
-    }
-
     public List<String> listChannels() {
       List<String> channels = new ArrayList<>();
       
@@ -935,15 +858,14 @@ public class RNPushNotificationHelper {
 
         NotificationChannel channel = manager.getNotificationChannel(channel_id);
 
-        if(channel_name == null) {
-          channel_name = this.config.getChannelName(channel_id);
-        }
-
-        if(channel_description == null) {
-          channel_description = this.config.getChannelDescription(channel_id);
-        }
-
-        if (channel == null || !channel.getName().equals(channel_name) || !channel.getDescription().equals(channel_description)) {
+        if (
+          channel == null && channel_name != null && channel_description != null ||
+          channel != null &&
+          (
+            channel_name != null && !channel.getName().equals(channel_name) ||
+            channel_description != null && !channel.getDescription().equals(channel_description)
+          )
+        ) {
             // If channel doesn't exist create a new one.
             // If channel name or description is updated then update the existing channel.
             channel = new NotificationChannel(channel_id, channel_name, importance);
@@ -965,8 +887,10 @@ public class RNPushNotificationHelper {
             }
 
             manager.createNotificationChannel(channel);
+
             return true;
         }
+
         return false;
     }
 
@@ -976,7 +900,7 @@ public class RNPushNotificationHelper {
 
         String channelId = channelInfo.getString("channelId");
         String channelName = channelInfo.getString("channelName");
-        String channelDescription = channelInfo.hasKey("channelDescription") ? channelInfo.getString("channelDescription") : null;
+        String channelDescription = channelInfo.hasKey("channelDescription") ? channelInfo.getString("channelDescription") : "";
         String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
         boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");

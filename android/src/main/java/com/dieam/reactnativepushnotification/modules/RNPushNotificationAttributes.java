@@ -28,8 +28,6 @@ public class RNPushNotificationAttributes {
     private static final String BIG_PICTURE_URL = "bigPictureUrl";
     private static final String SHORTCUT_ID = "shortcutId";
     private static final String CHANNEL_ID = "channelId";
-    private static final String CHANNEL_NAME = "channelName";
-    private static final String CHANNEL_DESCRIPTION = "channelDescription";
     private static final String NUMBER = "number";
     private static final String SOUND = "sound";
     private static final String COLOR = "color";
@@ -68,8 +66,6 @@ public class RNPushNotificationAttributes {
     private final String shortcutId;
     private final String number;
     private final String channelId;
-    private final String channelName;
-    private final String channelDescription;
     private final String sound;
     private final String color;
     private final String group;
@@ -108,8 +104,6 @@ public class RNPushNotificationAttributes {
         shortcutId = bundle.getString(SHORTCUT_ID);
         number = bundle.getString(NUMBER);
         channelId = bundle.getString(CHANNEL_ID);
-        channelName = bundle.getString(CHANNEL_NAME);
-        channelDescription = bundle.getString(CHANNEL_DESCRIPTION);
         sound = bundle.getString(SOUND);
         color = bundle.getString(COLOR);
         group = bundle.getString(GROUP);
@@ -150,8 +144,6 @@ public class RNPushNotificationAttributes {
             shortcutId = jsonObject.has(SHORTCUT_ID) ? jsonObject.getString(SHORTCUT_ID) : null;
             number = jsonObject.has(NUMBER) ? jsonObject.getString(NUMBER) : null;
             channelId = jsonObject.has(CHANNEL_ID) ? jsonObject.getString(CHANNEL_ID) : null;
-            channelName = jsonObject.has(CHANNEL_NAME) ? jsonObject.getString(CHANNEL_NAME) : null;
-            channelDescription = jsonObject.has(CHANNEL_DESCRIPTION) ? jsonObject.getString(CHANNEL_DESCRIPTION) : null;
             sound = jsonObject.has(SOUND) ? jsonObject.getString(SOUND) : null;
             color = jsonObject.has(COLOR) ? jsonObject.getString(COLOR) : null;
             group = jsonObject.has(GROUP) ? jsonObject.getString(GROUP) : null;
@@ -249,8 +241,6 @@ public class RNPushNotificationAttributes {
         bundle.putString(SHORTCUT_ID, shortcutId);
         bundle.putString(NUMBER, number);
         bundle.putString(CHANNEL_ID, channelId);
-        bundle.putString(CHANNEL_NAME, channelName);
-        bundle.putString(CHANNEL_DESCRIPTION, channelDescription);
         bundle.putString(SOUND, sound);
         bundle.putString(COLOR, color);
         bundle.putString(GROUP, group);
@@ -293,8 +283,6 @@ public class RNPushNotificationAttributes {
             jsonObject.put(SHORTCUT_ID, shortcutId);
             jsonObject.put(NUMBER, number);
             jsonObject.put(CHANNEL_ID, channelId);
-            jsonObject.put(CHANNEL_NAME, channelName);
-            jsonObject.put(CHANNEL_DESCRIPTION, channelDescription);
             jsonObject.put(SOUND, sound);
             jsonObject.put(COLOR, color);
             jsonObject.put(GROUP, group);
@@ -343,8 +331,6 @@ public class RNPushNotificationAttributes {
                 ", shortcutId='" + shortcutId + '\'' +
                 ", number='" + number + '\'' +
                 ", channelId='" + channelId + '\'' +
-                ", channelName='" + channelId + '\'' +
-                ", channelDescription='" + channelDescription + '\'' +
                 ", sound='" + sound + '\'' +
                 ", color='" + color + '\'' +
                 ", group='" + group + '\'' +
