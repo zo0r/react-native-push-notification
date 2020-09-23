@@ -99,14 +99,8 @@ public class RNReceivedMessageHandler {
             }
         }
 
-        Map<String, String> notificationData = message.getData();
-
-        // Copy `twi_body` to `message` to support Twilio
-        if (notificationData.containsKey("twi_body")) {
-            bundle.putString("message", notificationData.get("twi_body"));
-        }
-
         Bundle dataBundle = new Bundle();
+        Map<String, String> notificationData = message.getData();
         
         for(Map.Entry<String, String> entry : notificationData.entrySet()) {
             dataBundle.putString(entry.getKey(), entry.getValue());

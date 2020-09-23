@@ -39,6 +39,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
   - `image`
   - `tag`
   - `visibility`
+- (Android) `data.twi_body` is no more used to trigger a notification in notification-center. Revert of [#744](https://github.com/zo0r/react-native-push-notification/pull/744)
 
 ### Fixed
 
