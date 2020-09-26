@@ -8,6 +8,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Breaking changes
 
+### Features
+
+### Fixed
+
+## [6.0.0] 2020-09-26
+
+### Breaking changes
+
 - (Android) Channel Management: In order to limit the scope of responsability of this library, developers are now responsible of the creation of the channels. You can find the documentation at https://github.com/zo0r/react-native-push-notification#channel-management-android. These changes are also made to allow improvements in the future of the library. Here the list of impacts:
   - You must create your channels before triggering a notification.
   - These entries in `AndroidManifest` are deprecated:
@@ -43,15 +51,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
-<<<<<<< HEAD
 - (iOS) upgrade `@react-native-community/push-notification-ios`, fixe the value of `userInteraction` [@react-native-community/push-notification-ios#122](https://github.com/react-native-community/push-notification-ios/pull/122).
-=======
+
 ## [5.1.1] 2020-09-15
 
 ### Fixed
 
 - (Android) Fatal Exception: java.lang.NullPointerException [#1641](https://github.com/zo0r/react-native-push-notification/issues/1641)
->>>>>>> master
 
 ## [5.1.0] 2020-08-31
 
