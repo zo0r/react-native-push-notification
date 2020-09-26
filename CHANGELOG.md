@@ -43,7 +43,15 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+<<<<<<< HEAD
 - (iOS) upgrade `@react-native-community/push-notification-ios`, fixe the value of `userInteraction` [@react-native-community/push-notification-ios#122](https://github.com/react-native-community/push-notification-ios/pull/122).
+=======
+## [5.1.1] 2020-09-15
+
+### Fixed
+
+- (Android) Fatal Exception: java.lang.NullPointerException [#1641](https://github.com/zo0r/react-native-push-notification/issues/1641)
+>>>>>>> master
 
 ## [5.1.0] 2020-08-31
 

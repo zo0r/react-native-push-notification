@@ -6,9 +6,9 @@
 React Native Local and Remote Notifications for iOS and Android
 
 
-## 🎉 Version 5.x is live ! 🎉
+## 🎉 Version 6.x is live ! 🎉
 
-Check out for changes in the CHANGELOG:
+Check out for changes and migration in the CHANGELOG:
 
 [Changelog](https://github.com/zo0r/react-native-push-notification/blob/master/CHANGELOG.md)
 
@@ -214,6 +214,8 @@ public class MainApplication extends Application implements ReactApplication {
 ## Usage
 
 **DO NOT USE `.configure()` INSIDE A COMPONENT, EVEN `App`**
+> If you do, notification handlers will not fire, because they are not loaded. Instead, use `.configure()` in the app's first file, usually `index.js`.
+
 
 ```javascript
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
