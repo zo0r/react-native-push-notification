@@ -49,7 +49,13 @@ public class RNReceivedMessageHandler {
             bundle.putString("sound", remoteNotification.getSound());
             bundle.putString("color", remoteNotification.getColor());
             bundle.putString("tag", remoteNotification.getTag());
-            bundle.putString("channelId", remoteNotification.getChannelId());
+
+            if(remoteNotification.getChannelId() != null) {
+              bundle.putString("channelId", remoteNotification.getChannelId());
+            }
+            else {
+              bundle.putString("channelId", "fcm_fallback_notification_channel");
+            }
 
             Integer visibilty = remoteNotification.getVisibility();
             String visibilityString = "private";
