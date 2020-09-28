@@ -420,6 +420,22 @@ If you want to use a different default channel for remote notification, refer to
       android:value="@string/default_notification_channel_id" />
 ```
 
+For local notifications, the same kind of option is available:
+
+- you can use:
+  ```xml
+    <meta-data
+        android:name="com.dieam.reactnativepushnotification.default_notification_channel_id"
+        android:value="@string/default_notification_channel_id" />
+  ```
+- If not defined, fallback to the Firebase value defined in the `AndroidManifest`:
+  ```xml
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="..." />
+  ```
+- If not defined, fallback to the default Firebase channel id `fcm_fallback_notification_channel`
+
 ### List channels
 
 You can list available channels with:

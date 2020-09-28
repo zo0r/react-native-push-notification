@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 class RNPushNotificationConfig {
+    private static final String KEY_NOTIFICATION_FIREBASE_DEFAULT_CHANNEL_ID = "com.google.firebase.messaging.default_notification_channel_id";
+    private static final String KEY_NOTIFICATION_DEFAULT_CHANNEL_ID = "com.dieam.reactnativepushnotification.default_notification_channel_id";
     private static final String KEY_NOTIFICATION_FOREGROUND = "com.dieam.reactnativepushnotification.notification_foreground";
     private static final String KEY_NOTIFICATION_COLOR = "com.dieam.reactnativepushnotification.notification_color";
 
@@ -62,5 +64,17 @@ class RNPushNotificationConfig {
         }
         // Default
         return false;
+    }
+
+    public String getNotificationDefaultChannelId() {
+        try {
+            return getStringValue(KEY_NOTIFICATION_DEFAULT_CHANNEL_ID,
+              getStringValue(KEY_NOTIFICATION_FIREBASE_DEFAULT_CHANNEL_ID, "fcm_fallback_notification_channel")
+            );
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_DEFAULT_CHANNEL_ID + " in manifest. Falling back to default");
+        }
+        // Default
+        return "fcm_fallback_notification_channel";
     }
 }

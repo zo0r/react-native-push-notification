@@ -31,9 +31,11 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotification.L
 
 public class RNReceivedMessageHandler {
     private FirebaseMessagingService mFirebaseMessagingService;
+    private RNPushNotificationConfig config;
 
     public RNReceivedMessageHandler(@NonNull FirebaseMessagingService service) {
         this.mFirebaseMessagingService = service;
+        this.config = new RNPushNotificationConfig(service.getApplication());
     }
 
     public void handleReceivedMessage(RemoteMessage message) {
@@ -54,7 +56,7 @@ public class RNReceivedMessageHandler {
               bundle.putString("channelId", remoteNotification.getChannelId());
             }
             else {
-              bundle.putString("channelId", "fcm_fallback_notification_channel");
+              bundle.putString("channelId", this.config.getNotificationDefaultChannelId());
             }
 
             Integer visibilty = remoteNotification.getVisibility();
@@ -155,7 +157,6 @@ public class RNReceivedMessageHandler {
 
         Application applicationContext = (Application) context.getApplicationContext();
 
-        RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
 
         boolean isForeground = pushNotificationHelper.isApplicationInForeground();
@@ -170,7 +171,7 @@ public class RNReceivedMessageHandler {
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        if (config.getNotificationForeground() || !isForeground) {
+        if (this.config.getNotificationForeground() || !isForeground) {
             Log.v(LOG_TAG, "sendNotification: " + bundle);
 
             pushNotificationHelper.sendToNotificationCentre(bundle);

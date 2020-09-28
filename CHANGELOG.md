@@ -12,6 +12,20 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [6.1.0] 2020-09-28
+
+### Features
+
+- (Android) Allow a default channel in the `AndroidManifest`:
+  ```xml
+        <meta-data android:name="com.dieam.reactnativepushnotification.default_notification_channel_id" android:value="..."/>
+  ```
+  If not defined, fallback to the Firebase value of:
+  ```xml
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="..."/>
+  ```
+  If not defined, fallback to the default Firebase channel id `fcm_fallback_notification_channel`
+
 ## [6.0.0] 2020-09-26
 
 ### Breaking changes
