@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [6.1.1] 2020-09-29
+
+### Fixed
+
+- (Android) Fix a crash when the application is in background [#1676](https://github.com/zo0r/react-native-push-notification/issues/1676)
+
 ## [6.1.0] 2020-09-28
 
 ### Features

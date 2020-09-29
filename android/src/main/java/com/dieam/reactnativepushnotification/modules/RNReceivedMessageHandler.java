@@ -31,11 +31,9 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotification.L
 
 public class RNReceivedMessageHandler {
     private FirebaseMessagingService mFirebaseMessagingService;
-    private RNPushNotificationConfig config;
 
     public RNReceivedMessageHandler(@NonNull FirebaseMessagingService service) {
         this.mFirebaseMessagingService = service;
-        this.config = new RNPushNotificationConfig(service.getApplication());
     }
 
     public void handleReceivedMessage(RemoteMessage message) {
@@ -46,17 +44,19 @@ public class RNReceivedMessageHandler {
         // data has it
         if (remoteNotification != null) {
             // ^ It's null when message is from GCM
+            RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());  
+
             bundle.putString("title", remoteNotification.getTitle());
             bundle.putString("message", remoteNotification.getBody());
             bundle.putString("sound", remoteNotification.getSound());
             bundle.putString("color", remoteNotification.getColor());
             bundle.putString("tag", remoteNotification.getTag());
-
+            
             if(remoteNotification.getChannelId() != null) {
               bundle.putString("channelId", remoteNotification.getChannelId());
             }
             else {
-              bundle.putString("channelId", this.config.getNotificationDefaultChannelId());
+              bundle.putString("channelId", config.getNotificationDefaultChannelId());
             }
 
             Integer visibilty = remoteNotification.getVisibility();
@@ -157,6 +157,7 @@ public class RNReceivedMessageHandler {
 
         Application applicationContext = (Application) context.getApplicationContext();
 
+        RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());  
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
 
         boolean isForeground = pushNotificationHelper.isApplicationInForeground();
@@ -171,7 +172,7 @@ public class RNReceivedMessageHandler {
             jsDelivery.notifyRemoteFetch(bundle);
         }
 
-        if (this.config.getNotificationForeground() || !isForeground) {
+        if (config.getNotificationForeground() || !isForeground) {
             Log.v(LOG_TAG, "sendNotification: " + bundle);
 
             pushNotificationHelper.sendToNotificationCentre(bundle);
