@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [6.1.2] 2020-10-291
+
+### Fixed
+
+- (Android) Fix for vibration on notifs for Android API >= 26 [#1686](https://github.com/zo0r/react-native-push-notification/pull/1686)
+
 ## [6.1.1] 2020-09-29
 
 ### Fixed
