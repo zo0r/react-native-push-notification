@@ -446,7 +446,7 @@ public class RNPushNotificationHelper {
                 if (vibration == 0)
                     vibration = DEFAULT_VIBRATION;
 
-                vibratePattern = new long[]{0, vibration};
+                vibratePattern = new long[]{vibration};
 
                 notification.setVibrate(vibratePattern); 
             }
@@ -908,7 +908,7 @@ public class RNPushNotificationHelper {
         String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
         boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
-        long[] vibratePattern = vibrate ? new long[] { DEFAULT_VIBRATION } : null;
+        long[] vibratePattern = vibrate ? new long[] { 0, DEFAULT_VIBRATION } : null;
 
         NotificationManager manager = notificationManager();
 
