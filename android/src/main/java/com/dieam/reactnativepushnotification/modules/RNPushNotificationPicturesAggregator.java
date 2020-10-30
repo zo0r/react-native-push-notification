@@ -22,13 +22,14 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotification.L
 
 public class RNPushNotificationPicturesAggregator {
   interface Callback {
-    public void call(Bitmap largeIconImage, Bitmap bigPictureImage);
+    public void call(Bitmap largeIconImage, Bitmap bigPictureImage, Bitmap bigLargeIconImage);
   }
 
   private AtomicInteger count = new AtomicInteger(0);
 
   private Bitmap largeIconImage;
   private Bitmap bigPictureImage;
+  private Bitmap bigLargeIconImage;
 
   private Callback callback;
 
@@ -108,6 +109,42 @@ public class RNPushNotificationPicturesAggregator {
     });
   }
   
+  public void setBigLargeIcon(Bitmap bitmap) {
+    this.bigLargeIconImage = bitmap;
+    this.finished();
+  }
+
+  public void setBigLargeIconUrl(Context context, String url) {
+    if(null == url) {
+      this.setBigLargeIcon(null);
+      return;
+    }
+
+    Uri uri = null;
+
+    try {
+      uri = Uri.parse(url);
+    } catch(Exception ex) {
+      Log.e(LOG_TAG, "Failed to parse bigLargeIconUrl", ex);
+      this.setBigLargeIcon(null);
+      return;
+    }
+
+    final RNPushNotificationPicturesAggregator aggregator = this;
+
+    this.downloadRequest(context, uri, new BaseBitmapDataSubscriber() {
+      @Override
+      public void onNewResultImpl(@Nullable Bitmap bitmap) {
+        aggregator.setBigLargeIcon(bitmap);
+      }
+
+      @Override
+      public void onFailureImpl(DataSource dataSource) {
+        aggregator.setBigLargeIcon(null);
+      }
+    });
+  }
+
   private void downloadRequest(Context context, Uri uri, BaseBitmapDataSubscriber subscriber) {
     ImageRequest imageRequest = ImageRequestBuilder
       .newBuilderWithSource(uri)
@@ -128,8 +165,8 @@ public class RNPushNotificationPicturesAggregator {
     synchronized(this.count) {
       int val = this.count.incrementAndGet();
 
-      if(val >= 2 && this.callback != null) {
-        this.callback.call(this.largeIconImage, this.bigPictureImage);
+      if(val >= 3 && this.callback != null) {
+        this.callback.call(this.largeIconImage, this.bigPictureImage, this.bigLargeIconImage);
       }
     }
   }
