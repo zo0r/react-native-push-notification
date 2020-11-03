@@ -376,6 +376,21 @@ public class RNPushNotificationHelper {
             NotificationCompat.Style style;
 
             if(bigPictureBitmap != null) {
+
+              // Big large icon
+              if(bigLargeIconBitmap == null) {
+                  int bigLargeIconResId = 0;
+
+                  String bigLargeIcon = bundle.getString("bigLargeIcon");
+
+                  if (bigLargeIcon != null && !bigLargeIcon.isEmpty()) {
+                    bigLargeIconResId = res.getIdentifier(bigLargeIcon, "mipmap", packageName);
+                    if (bigLargeIconResId != 0) {
+                      bigLargeIconBitmap = BitmapFactory.decodeResource(res, bigLargeIconResId);
+                    }
+                  }
+              }
+
               style = new NotificationCompat.BigPictureStyle()
                       .bigPicture(bigPictureBitmap)
                       .setBigContentTitle(title)
