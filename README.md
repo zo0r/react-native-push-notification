@@ -643,6 +643,16 @@ For e.g. `actions: ['Accept', 'Reject']`
 
 When you handle actions in background (`invokeApp: false`), you can open the application and pass the initial notification by using use `PushNotification.invokeApp(notification)`.
 
+<<<<<<< HEAD
+Make sure you have the receiver in `AndroidManifest.xml`:
+
+```xml
+  <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
+```
+For e.g. `actions: ['Accept', 'Reject']`
+
+When you handle actions in background (`invokeApp: false`), you can open the application and pass the initial notification by using use `PushNotification.invokeApp(notification)`.
+
 Make sure you have the receiver in `AndroidManifest.xml`:
 
 ```xml
@@ -672,7 +682,6 @@ if(notification.action === "ReplyInput"){
   console.log("texto", notification.reply_text)// this will contain the inline reply text. 
 }
 ...
-```
 
 For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
 

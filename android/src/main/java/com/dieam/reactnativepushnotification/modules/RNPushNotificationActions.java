@@ -13,14 +13,11 @@ import android.util.Log;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
-
 import androidx.core.app.RemoteInput;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationActions extends BroadcastReceiver {
-    private static final String KEY_TEXT_REPLY = "key_text_reply";
-    
     @Override
     public void onReceive(final Context context, Intent intent) {
       String intentActionPrefix = context.getPackageName() + ".ACTION_";
@@ -30,7 +27,6 @@ public class RNPushNotificationActions extends BroadcastReceiver {
       if (null == intent.getAction() || !intent.getAction().startsWith(intentActionPrefix)) {
         return;
       }
-
 
       final Bundle bundle = intent.getBundleExtra("notification");
       Bundle remoteInput = null;
