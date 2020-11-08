@@ -905,6 +905,7 @@ public class RNPushNotificationHelper {
         String channelId = channelInfo.getString("channelId");
         String channelName = channelInfo.getString("channelName");
         String channelDescription = channelInfo.hasKey("channelDescription") ? channelInfo.getString("channelDescription") : "";
+        boolean playSound = !channelInfo.hasKey("playSound") || channelInfo.getBoolean("playSound");
         String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
         boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
@@ -912,7 +913,7 @@ public class RNPushNotificationHelper {
 
         NotificationManager manager = notificationManager();
 
-        Uri soundUri = getSoundUri(soundName);
+        Uri soundUri = playSound ? getSoundUri(soundName) : null;
 
         return checkOrCreateChannel(manager, channelId, channelName, channelDescription, soundUri, importance, vibratePattern);
     }
