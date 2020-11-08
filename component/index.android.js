@@ -1,18 +1,16 @@
 'use strict';
 
-var {
-  NativeModules,
-  DeviceEventEmitter,
-} = require('react-native');
+import { NativeModules, DeviceEventEmitter } from "react-native";
 
-var RNPushNotification = NativeModules.RNPushNotification;
-var _notifHandlers = new Map();
+let RNPushNotification = NativeModules.RNPushNotification;
+let _notifHandlers = new Map();
 
 var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
+var NOTIF_ACTION_EVENT = 'notificationActionReceived';
 var REMOTE_FETCH_EVENT = 'remoteFetch';
 
-var NotificationsComponent = function() {
+let NotificationsComponent = function() {
 
 };
 
@@ -26,57 +24,55 @@ NotificationsComponent.prototype.getInitialNotification = function () {
         });
 };
 
-NotificationsComponent.prototype.requestPermissions = function(senderID: string) {
-	RNPushNotification.requestPermissions(senderID);
+NotificationsComponent.prototype.requestPermissions = function() {
+	RNPushNotification.requestPermissions();
 };
 
-NotificationsComponent.prototype.subscribeToTopic = function(topic: string) {
+NotificationsComponent.prototype.subscribeToTopic = function(topic) {
 	RNPushNotification.subscribeToTopic(topic);
 };
 
-NotificationsComponent.prototype.cancelLocalNotifications = function(details: Object) {
+NotificationsComponent.prototype.cancelLocalNotifications = function(details) {
 	RNPushNotification.cancelLocalNotifications(details);
 };
 
-NotificationsComponent.prototype.clearLocalNotification = function(details: Object) {
-	RNPushNotification.clearLocalNotification(details);
+NotificationsComponent.prototype.clearLocalNotification = function(details, tag) {
+	RNPushNotification.clearLocalNotification(details, tag);
 };
 
 NotificationsComponent.prototype.cancelAllLocalNotifications = function() {
 	RNPushNotification.cancelAllLocalNotifications();
 };
 
-NotificationsComponent.prototype.presentLocalNotification = function(details: Object) {
+NotificationsComponent.prototype.presentLocalNotification = function(details) {
 	RNPushNotification.presentLocalNotification(details);
 };
 
-NotificationsComponent.prototype.scheduleLocalNotification = function(details: Object) {
+NotificationsComponent.prototype.scheduleLocalNotification = function(details) {
 	RNPushNotification.scheduleLocalNotification(details);
 };
 
-NotificationsComponent.prototype.setApplicationIconBadgeNumber = function(number: number) {
+NotificationsComponent.prototype.setApplicationIconBadgeNumber = function(number) {
        if (!RNPushNotification.setApplicationIconBadgeNumber) {
                return;
        }
        RNPushNotification.setApplicationIconBadgeNumber(number);
 };
 
-NotificationsComponent.prototype.abandonPermissions = function() {
-	/* Void */
-};
-
-NotificationsComponent.prototype.checkPermissions = function(callback: Function) {
+NotificationsComponent.prototype.checkPermissions = function(callback) {
 	RNPushNotification.checkPermissions().then(alert => callback({ alert }));
 };
 
-NotificationsComponent.prototype.addEventListener = function(type: string, handler: Function) {
-	var listener;
+NotificationsComponent.prototype.addEventListener = function(type, handler) {
+	let listener;
 	if (type === 'notification') {
 		listener =  DeviceEventEmitter.addListener(
 			DEVICE_NOTIF_EVENT,
 			function(notifData) {
-				var data = JSON.parse(notifData.dataJSON);
-				handler(data);
+				if (notifData && notifData.dataJSON) {
+					let data = JSON.parse(notifData.dataJSON);
+					handler(data);
+				}
 			}
 		);
 	} else if (type === 'register') {
@@ -90,17 +86,29 @@ NotificationsComponent.prototype.addEventListener = function(type: string, handl
 		listener = DeviceEventEmitter.addListener(
 			REMOTE_FETCH_EVENT,
 			function(notifData) {
-				var notificationData = JSON.parse(notifData.dataJSON)
-				handler(notificationData);
+				if (notifData && notifData.dataJSON) {
+					let notificationData = JSON.parse(notifData.dataJSON)
+					handler(notificationData);
+				}
 			}
 		);
-	}
+	} else if (type === 'action') {
+		listener = DeviceEventEmitter.addListener(
+			NOTIF_ACTION_EVENT,
+			function(actionData) {
+				if (actionData && actionData.dataJSON) {
+					var action = JSON.parse(actionData.dataJSON)
+					handler(action);
+				}
+			}
+		);
+  }
 
 	_notifHandlers.set(type, listener);
 };
 
-NotificationsComponent.prototype.removeEventListener = function(type: string, handler: Function) {
-	var listener = _notifHandlers.get(type);
+NotificationsComponent.prototype.removeEventListener = function(type, handler) {
+	let listener = _notifHandlers.get(type);
 	if (!listener) {
 		return;
 	}
@@ -108,7 +116,7 @@ NotificationsComponent.prototype.removeEventListener = function(type: string, ha
 	_notifHandlers.delete(type);
 }
 
-NotificationsComponent.prototype.registerNotificationActions = function(details: Object) {
+NotificationsComponent.prototype.registerNotificationActions = function(details) {
 	RNPushNotification.registerNotificationActions(details);
 }
 
@@ -116,7 +124,48 @@ NotificationsComponent.prototype.clearAllNotifications = function() {
 	RNPushNotification.clearAllNotifications()
 }
 
+NotificationsComponent.prototype.removeAllDeliveredNotifications = function() {
+  RNPushNotification.removeAllDeliveredNotifications();
+}
+
+NotificationsComponent.prototype.getDeliveredNotifications = function(callback) {
+  RNPushNotification.getDeliveredNotifications(callback);
+}
+NotificationsComponent.prototype.getScheduledLocalNotifications = function(callback) {
+  RNPushNotification.getScheduledLocalNotifications(callback);
+}
+NotificationsComponent.prototype.removeDeliveredNotifications = function(identifiers) {
+  RNPushNotification.removeDeliveredNotifications(identifiers);
+}
+
+NotificationsComponent.prototype.abandonPermissions = function() {
+	RNPushNotification.abandonPermissions();
+}
+
+NotificationsComponent.prototype.invokeApp = function(data) {
+	RNPushNotification.invokeApp(data);
+}
+
+NotificationsComponent.prototype.getChannels = function(callback) {
+	RNPushNotification.getChannels(callback);
+}
+
+NotificationsComponent.prototype.channelExists = function(channel_id, callback) {
+	RNPushNotification.channelExists(channel_id, callback);
+}
+
+NotificationsComponent.prototype.createChannel = function(channelInfo, callback) {
+	RNPushNotification.createChannel(channelInfo, callback);
+}
+
+NotificationsComponent.prototype.channelBlocked = function(channel_id, callback) {
+	RNPushNotification.channelBlocked(channel_id, callback);
+}
+
+NotificationsComponent.prototype.deleteChannel = function(channel_id) {
+	RNPushNotification.deleteChannel(channel_id);
+}
+
 module.exports = {
-	state: false,
 	component: new NotificationsComponent()
 };

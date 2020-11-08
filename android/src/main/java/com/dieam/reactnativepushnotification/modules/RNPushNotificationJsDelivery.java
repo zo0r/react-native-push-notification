@@ -4,7 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -18,9 +18,9 @@ import java.util.Set;
  */
 
 public class RNPushNotificationJsDelivery {
-    private ReactApplicationContext mReactContext;
+    private ReactContext mReactContext;
 
-    public RNPushNotificationJsDelivery(ReactApplicationContext reactContext) {
+    public RNPushNotificationJsDelivery(ReactContext reactContext) {
         mReactContext = reactContext;
     }
 
@@ -67,7 +67,7 @@ public class RNPushNotificationJsDelivery {
     }
     
     // a Bundle is not a map, so we have to convert it explicitly
-    JSONObject convertJSONObject(Bundle bundle) throws JSONException {
+    private JSONObject convertJSONObject(Bundle bundle) throws JSONException {
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {
