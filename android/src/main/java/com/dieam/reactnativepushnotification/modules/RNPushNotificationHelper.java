@@ -543,6 +543,7 @@ public class RNPushNotificationHelper {
                           notification.addAction(icon, action, pendingActionIntent);
                         }
                     }
+                }
 
             }
 
