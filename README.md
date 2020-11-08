@@ -667,10 +667,10 @@ PushNotification.localNotificationSchedule({
 To get the text from the notification: 
 
 ```javascript
-DeviceEventEmitter.addListener('notificationActionReceived', function(action){ 
 ...
-const info = JSON.parse(action.dataJSON);
-info.reply_text // this will contain the inline reply text. 
+if(notification.action === "ReplyInput"){
+  console.log("texto", notification.reply_text)// this will contain the inline reply text. 
+}
 ...
 ```
 
