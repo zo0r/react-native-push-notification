@@ -516,7 +516,6 @@ public class RNPushNotificationHelper {
 
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
-                    
                     if(action.equals("ReplyInput")){
                         //Action with inline reply
                         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
@@ -537,12 +536,14 @@ public class RNPushNotificationHelper {
                         }
                     }
                     else{
+                        // Add "action" for later identifying which button gets pressed
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());
+                          notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());
                         } else {
                           notification.addAction(icon, action, pendingActionIntent);
                         }
                     }
+
             }
 
             // Remove the notification from the shared preferences once it has been shown
