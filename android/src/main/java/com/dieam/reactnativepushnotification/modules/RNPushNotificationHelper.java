@@ -866,8 +866,8 @@ public class RNPushNotificationHelper {
           channel == null && channel_name != null && channel_description != null ||
           channel != null &&
           (
-            channel_name != null && !channel.getName().equals(channel_name) ||
-            channel_description != null && !channel.getDescription().equals(channel_description)
+            channel_name != null && !channel_name.equals(channel.getName()) ||
+            channel_description != null && !channel_description.equals(channel.getDescription())
           )
         ) {
             // If channel doesn't exist create a new one.

@@ -12,7 +12,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
-## [6.1.2] 2020-10-291
+## [6.1.3] 2020-11-09
+
+### Fixed
+
+- (Android) Null pointer exception when trying to create channel [#134](https://github.com/zo0r/react-native-push-notification/issues/1734)
+
+## [6.1.2] 2020-10-29
 
 ### Fixed
 
