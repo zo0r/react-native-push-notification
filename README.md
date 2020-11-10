@@ -219,7 +219,7 @@ public class MainApplication extends Application implements ReactApplication {
 
 ```javascript
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
-var PushNotification = require("react-native-push-notification");
+import PushNotification from "react-native-push-notification";
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 PushNotification.configure({
@@ -502,7 +502,7 @@ _NOTE: there is currently no api for removing specific notification alerts from 
 ### 3) removeAllDeliveredNotifications
 
 ```javascript
-PushNotificationIOS.removeAllDeliveredNotifications();
+PushNotification.removeAllDeliveredNotifications();
 ```
 
 Remove all delivered notifications from Notification Center
@@ -510,7 +510,7 @@ Remove all delivered notifications from Notification Center
 ### 4) getDeliveredNotifications
 
 ```javascript
-PushNotificationIOS.getDeliveredNotifications(callback);
+PushNotification.getDeliveredNotifications(callback);
 ```
 
 Provides you with a list of the app’s notifications that are still displayed in Notification Center
@@ -533,7 +533,7 @@ A delivered notification is an object containing:
 ### 5) removeDeliveredNotifications
 
 ```javascript
-PushNotificationIOS.removeDeliveredNotifications(identifiers);
+PushNotification.removeDeliveredNotifications(identifiers);
 ```
 
 Removes the specified notifications from Notification Center
@@ -547,7 +547,7 @@ Removes the specified notifications from Notification Center
 ### 6) getScheduledLocalNotifications
 
 ```javascript
-PushNotificationIOS.getScheduledLocalNotifications(callback);
+PushNotification.getScheduledLocalNotifications(callback);
 ```
 
 Provides you with a list of the app’s scheduled local notifications that are yet to be displayed
