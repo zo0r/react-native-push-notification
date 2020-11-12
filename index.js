@@ -359,11 +359,11 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
       id: notifData?.id,
       foreground: !isFromBackground,
       userInteraction: notifData?.userInteraction === 1 || false,
-      message: data.getMessage(),
+      message: data.getMessage?.(),
       data: notifData,
-      badge: data.getBadgeCount(),
-      title: data.getTitle(),
-      soundName: data.getSound(),
+      badge: data.getBadgeCount?.(),
+      title: data.getTitle?.(),
+      soundName: data.getSound?.(),
       fireDate: Date.parse(data._fireDate),
       finish: (res) => data.finish(res)
     };
