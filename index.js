@@ -176,15 +176,14 @@ Notifications.localNotification = function(details) {
     }
 
     // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
-    // alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle
 
-    this.handler.presentLocalNotification({
-      alertTitle: details.title,
-      alertBody: details.message,
-      alertAction: details.alertAction,
+    this.handler.addNotificationRequest({
+      id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
+      title: details.title,
+      body: details.message,
+      badge: details.number,
+      sound: soundName,
       category: details.category,
-      soundName: soundName,
-      applicationIconBadgeNumber: details.number,
       userInfo: details.userInfo
     });
   } else {
@@ -250,14 +249,14 @@ Notifications.localNotificationSchedule = function(details) {
     }
 
     const iosDetails = {
+      id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
       fireDate: details.date.toISOString(),
-      alertTitle: details.title,
-      alertBody: details.message,
-      category: details.category,
+      title: details.title,
+      body: details.message,
       soundName: soundName,
+      category: details.category,
       userInfo: details.userInfo,
       repeatInterval: details.repeatType,
-      category: details.category,
     };
 
     if (details.number) {
@@ -268,7 +267,7 @@ Notifications.localNotificationSchedule = function(details) {
     if (!details.repeatType || details.repeatType === 'time') {
       delete iosDetails.repeatInterval;
     }
-    this.handler.scheduleLocalNotification(iosDetails);
+    this.handler.addNotificationRequest(iosDetails);
   } else {
     if (details && typeof details.number === 'number') {
       if (isNaN(details.number)) {
