@@ -206,6 +206,14 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+     /**
+      * Cancel a scheduled notifications by Id and removes notification from the notification centre.
+      */
+     public void cancelLocalNotificationById(String notificationIDString) {
+        mRNPushNotificationHelper.cancelScheduledNotificationById(notificationIDString);
+     }
+
+    @ReactMethod
     /**
      * Cancel scheduled notifications, and removes notifications from the notification centre.
      *
