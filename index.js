@@ -464,7 +464,11 @@ Notifications.clearLocalNotification = function() {
 };
 
 Notifications.cancelAllLocalNotifications = function() {
-  return this.callNative('cancelAllLocalNotifications', arguments);
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removeAllPendingNotificationRequests', arguments);
+  } else if (Platform.OS === 'android') {
+    return this.callNative('cancelAllLocalNotifications', arguments);
+  }
 };
 
 Notifications.setApplicationIconBadgeNumber = function() {
@@ -512,13 +516,13 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 			if(Platform.OS === 'ios'){
 				mappedNotifications = notifications.map(notif => {
 					return ({
-						soundName: notif.soundName,
+						soundName: notif?.sound,
 						repeatInterval: notif.repeatInterval,
-						id: notif.userInfo?.id,
-            date: new Date(notif.fireDate),
-						number: notif?.applicationIconBadgeNumber,
-						message: notif?.alertBody,
-						title: notif?.alertTitle,
+						id: notif.id,
+                        date: (notif.date ? new Date(notif.date) : null),
+						number: notif?.badge,
+						message: notif?.body,
+						title: notif?.title,
 					})
 				})
 			} else if(Platform.OS === 'android') {
@@ -538,7 +542,11 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 		callback(mappedNotifications);
 	}
 
-	return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+  if(Platform.OS === 'ios'){
+    return this.callNative('getPendingNotificationRequests', [mapNotifications]);
+  } else {
+    return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+  }
 }
 
 Notifications.removeDeliveredNotifications = function() {
