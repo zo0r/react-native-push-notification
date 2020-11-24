@@ -253,20 +253,16 @@ Notifications.localNotificationSchedule = function(details) {
       fireDate: details.date.toISOString(),
       title: details.title,
       body: details.message,
-      soundName: soundName,
+      sound: soundName,
       category: details.category,
       userInfo: details.userInfo,
-      repeatInterval: details.repeatType,
+      repeats: (details.repeatType && details.repeatType == "day"),
     };
 
     if (details.number) {
-      iosDetails.applicationIconBadgeNumber = parseInt(details.number, 10);
+      iosDetails.badge = parseInt(details.number, 10);
     }
 
-    // ignore Android only repeatType
-    if (!details.repeatType || details.repeatType === 'time') {
-      delete iosDetails.repeatInterval;
-    }
     this.handler.addNotificationRequest(iosDetails);
   } else {
     if (details && typeof details.number === 'number') {
@@ -517,7 +513,6 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 				mappedNotifications = notifications.map(notif => {
 					return ({
 						soundName: notif?.sound,
-						repeatInterval: notif.repeatInterval,
 						id: notif.id,
                         date: (notif.date ? new Date(notif.date) : null),
 						number: notif?.badge,

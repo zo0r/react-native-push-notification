@@ -559,15 +559,15 @@ Provides you with a list of the app’s scheduled local notifications that are y
 
 Returns an array of local scheduled notification objects containing:
 
-| Name           | Type   | Description                               |
-| -------------- | ------ | ----------------------------------------- |
-| id             | number | The identifier of this notification.      |
-| date           | Date   | The fire date of this notification.       |
-| title          | string | The title of this notification.           |
-| message        | string | The message body of this notification.    |
-| soundName      | string | The sound name of this notification.      |
-| repeatInterval | number | The repeat interval of this notification. |
-| number         | number | App notification badge count number.      |
+| Name           | Type   | Description                                              |
+| -------------- | ------ | -------------------------------------------------------- |
+| id             | number | The identifier of this notification.                     |
+| date           | Date   | The fire date of this notification.                      |
+| title          | string | The title of this notification.                          |
+| message        | string | The message body of this notification.                   |
+| soundName      | string | The sound name of this notification.                     |
+| repeatInterval | number | (Android only) The repeat interval of this notification. |
+| number         | number | App notification badge count number.                     |
 
 ## Abandon Permissions
 
@@ -630,6 +630,10 @@ https://developer.android.com/training/monitoring-device-state/doze-standby
 
 (optional) Specify `repeatType` and optionally `repeatTime` (Android-only) while scheduling the local notification. Check the local notification example above.
 
+### iOS
+Property `repeatType` can only be `day`.
+
+### Android
 Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
 
 ## Notification Actions
