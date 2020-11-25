@@ -453,7 +453,7 @@ Notifications.scheduleLocalNotification = function() {
 
 Notifications.cancelLocalNotifications = function(userInfo) {
   if ( Platform.OS === 'ios' ) {
-    return this.callNative('removePendingNotificationRequests', [userInfo.id]);
+    return this.callNative('removePendingNotificationRequests', [[userInfo.id]]);
   } else {
     return this.callNative('cancelLocalNotifications', [userInfo]);
   }
