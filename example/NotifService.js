@@ -93,7 +93,6 @@ export default class NotifService {
       timeoutAfter: null, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
 
       /* iOS only properties */
-      alertAction: 'view', // (optional) default: view
       category: '', // (optional) default: empty string
       
       /* iOS and Android properties */
@@ -135,7 +134,6 @@ export default class NotifService {
       timeoutAfter: null, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
     
       /* iOS only properties */
-      alertAction: 'view', // (optional) default: view
       category: '', // (optional) default: empty string
       
       /* iOS and Android properties */

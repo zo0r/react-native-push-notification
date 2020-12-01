@@ -219,7 +219,7 @@ public class MainApplication extends Application implements ReactApplication {
 
 ```javascript
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
-var PushNotification = require("react-native-push-notification");
+import PushNotification from "react-native-push-notification";
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 PushNotification.configure({
@@ -336,7 +336,6 @@ PushNotification.localNotification({
   invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
   /* iOS only properties */
-  alertAction: "view", // (optional) default: view
   category: "", // (optional) default: empty string
 
   /* iOS and Android properties */
@@ -498,12 +497,10 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
 
-_NOTE: there is currently no api for removing specific notification alerts from the notification centre._
-
 ### 3) removeAllDeliveredNotifications
 
 ```javascript
-PushNotificationIOS.removeAllDeliveredNotifications();
+PushNotification.removeAllDeliveredNotifications();
 ```
 
 Remove all delivered notifications from Notification Center
@@ -511,7 +508,7 @@ Remove all delivered notifications from Notification Center
 ### 4) getDeliveredNotifications
 
 ```javascript
-PushNotificationIOS.getDeliveredNotifications(callback);
+PushNotification.getDeliveredNotifications(callback);
 ```
 
 Provides you with a list of the app’s notifications that are still displayed in Notification Center
@@ -534,7 +531,7 @@ A delivered notification is an object containing:
 ### 5) removeDeliveredNotifications
 
 ```javascript
-PushNotificationIOS.removeDeliveredNotifications(identifiers);
+PushNotification.removeDeliveredNotifications(identifiers);
 ```
 
 Removes the specified notifications from Notification Center
@@ -548,7 +545,7 @@ Removes the specified notifications from Notification Center
 ### 6) getScheduledLocalNotifications
 
 ```javascript
-PushNotificationIOS.getScheduledLocalNotifications(callback);
+PushNotification.getScheduledLocalNotifications(callback);
 ```
 
 Provides you with a list of the app’s scheduled local notifications that are yet to be displayed
@@ -561,15 +558,15 @@ Provides you with a list of the app’s scheduled local notifications that are y
 
 Returns an array of local scheduled notification objects containing:
 
-| Name           | Type   | Description                               |
-| -------------- | ------ | ----------------------------------------- |
-| id             | number | The identifier of this notification.      |
-| date           | Date   | The fire date of this notification.       |
-| title          | string | The title of this notification.           |
-| message        | string | The message body of this notification.    |
-| soundName      | string | The sound name of this notification.      |
-| repeatInterval | number | The repeat interval of this notification. |
-| number         | number | App notification badge count number.      |
+| Name           | Type   | Description                                              |
+| -------------- | ------ | -------------------------------------------------------- |
+| id             | number | The identifier of this notification.                     |
+| date           | Date   | The fire date of this notification.                      |
+| title          | string | The title of this notification.                          |
+| message        | string | The message body of this notification.                   |
+| soundName      | string | The sound name of this notification.                     |
+| repeatInterval | number | (Android only) The repeat interval of this notification. |
+| number         | number | App notification badge count number.                     |
 
 ## Abandon Permissions
 
@@ -632,6 +629,10 @@ https://developer.android.com/training/monitoring-device-state/doze-standby
 
 (optional) Specify `repeatType` and optionally `repeatTime` (Android-only) while scheduling the local notification. Check the local notification example above.
 
+### iOS
+Property `repeatType` can only be `day`.
+
+### Android
 Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
 
 ## Notification Actions

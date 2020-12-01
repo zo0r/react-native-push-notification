@@ -176,15 +176,14 @@ Notifications.localNotification = function(details) {
     }
 
     // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
-    // alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle
 
-    this.handler.presentLocalNotification({
-      alertTitle: details.title,
-      alertBody: details.message,
-      alertAction: details.alertAction,
+    this.handler.addNotificationRequest({
+      id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
+      title: details.title,
+      body: details.message,
+      badge: details.number,
+      sound: soundName,
       category: details.category,
-      soundName: soundName,
-      applicationIconBadgeNumber: details.number,
       userInfo: details.userInfo
     });
   } else {
@@ -250,25 +249,21 @@ Notifications.localNotificationSchedule = function(details) {
     }
 
     const iosDetails = {
+      id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
       fireDate: details.date.toISOString(),
-      alertTitle: details.title,
-      alertBody: details.message,
+      title: details.title,
+      body: details.message,
+      sound: soundName,
       category: details.category,
-      soundName: soundName,
       userInfo: details.userInfo,
-      repeatInterval: details.repeatType,
-      category: details.category,
+      repeats: (details.repeatType && details.repeatType == "day"),
     };
 
     if (details.number) {
-      iosDetails.applicationIconBadgeNumber = parseInt(details.number, 10);
+      iosDetails.badge = parseInt(details.number, 10);
     }
 
-    // ignore Android only repeatType
-    if (!details.repeatType || details.repeatType === 'time') {
-      delete iosDetails.repeatInterval;
-    }
-    this.handler.scheduleLocalNotification(iosDetails);
+    this.handler.addNotificationRequest(iosDetails);
   } else {
     if (details && typeof details.number === 'number') {
       if (isNaN(details.number)) {
@@ -456,8 +451,12 @@ Notifications.scheduleLocalNotification = function() {
   return this.callNative('scheduleLocalNotification', arguments);
 };
 
-Notifications.cancelLocalNotifications = function() {
-  return this.callNative('cancelLocalNotifications', arguments);
+Notifications.cancelLocalNotifications = function(userInfo) {
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removePendingNotificationRequests', [[userInfo.id]]);
+  } else {
+    return this.callNative('cancelLocalNotifications', [userInfo]);
+  }
 };
 
 Notifications.clearLocalNotification = function() {
@@ -465,7 +464,11 @@ Notifications.clearLocalNotification = function() {
 };
 
 Notifications.cancelAllLocalNotifications = function() {
-  return this.callNative('cancelAllLocalNotifications', arguments);
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removeAllPendingNotificationRequests', arguments);
+  } else if (Platform.OS === 'android') {
+    return this.callNative('cancelAllLocalNotifications', arguments);
+  }
 };
 
 Notifications.setApplicationIconBadgeNumber = function() {
@@ -513,13 +516,12 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 			if(Platform.OS === 'ios'){
 				mappedNotifications = notifications.map(notif => {
 					return ({
-						soundName: notif.soundName,
-						repeatInterval: notif.repeatInterval,
-						id: notif.userInfo?.id,
-            date: new Date(notif.fireDate),
-						number: notif?.applicationIconBadgeNumber,
-						message: notif?.alertBody,
-						title: notif?.alertTitle,
+						soundName: notif?.sound,
+						id: notif.id,
+                        date: (notif.date ? new Date(notif.date) : null),
+						number: notif?.badge,
+						message: notif?.body,
+						title: notif?.title,
 					})
 				})
 			} else if(Platform.OS === 'android') {
@@ -539,7 +541,11 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 		callback(mappedNotifications);
 	}
 
-	return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+  if(Platform.OS === 'ios'){
+    return this.callNative('getPendingNotificationRequests', [mapNotifications]);
+  } else {
+    return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+  }
 }
 
 Notifications.removeDeliveredNotifications = function() {
