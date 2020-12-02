@@ -61,7 +61,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public String getName() {
-        return "RNPushNotification";
+        return "ReactNativePushNotification";
     }
 
     @Override

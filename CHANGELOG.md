@@ -8,6 +8,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Breaking changes
 
+- (iOS) Replace deprecated local notification methods on iOS [1751](https://github.com/zo0r/react-native-push-notification/pull/1751)
+- (Android) Rename the Android package from `ReactNativePushNotification` to `ReactNativePushNotification` resolve [893](https://github.com/zo0r/react-native-push-notification/issues/893)
+
 ### Features
 
 ### Fixed
@@ -16,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
-- (Android) Null pointer exception when trying to create channel [#134](https://github.com/zo0r/react-native-push-notification/issues/1734)
+- (Android) Null pointer exception when trying to create channel [#1734](https://github.com/zo0r/react-native-push-notification/issues/1734)
 
 ## [6.1.2] 2020-10-29
 
