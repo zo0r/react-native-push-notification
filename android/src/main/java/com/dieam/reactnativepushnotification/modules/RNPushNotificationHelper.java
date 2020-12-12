@@ -191,16 +191,17 @@ public class RNPushNotificationHelper {
 
     public void sendToNotificationCentre(final Bundle bundle) {
       RNPushNotificationPicturesAggregator aggregator = new RNPushNotificationPicturesAggregator(new RNPushNotificationPicturesAggregator.Callback() {
-        public void call(Bitmap largeIconImage, Bitmap bigPictureImage) {
-          sendToNotificationCentreWithPicture(bundle, largeIconImage, bigPictureImage);
+        public void call(Bitmap largeIconImage, Bitmap bigPictureImage, Bitmap bigLargeIconImage) {
+          sendToNotificationCentreWithPicture(bundle, largeIconImage, bigPictureImage, bigLargeIconImage);
         }
       });
 
       aggregator.setLargeIconUrl(context, bundle.getString("largeIconUrl"));
+      aggregator.setBigLargeIconUrl(context, bundle.getString("bigLargeIconUrl"));
       aggregator.setBigPictureUrl(context, bundle.getString("bigPictureUrl"));
     }
 
-    public void sendToNotificationCentreWithPicture(Bundle bundle, Bitmap largeIconBitmap, Bitmap bigPictureBitmap) {
+    public void sendToNotificationCentreWithPicture(Bundle bundle, Bitmap largeIconBitmap, Bitmap bigPictureBitmap, Bitmap bigLargeIconBitmap) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -380,10 +381,26 @@ public class RNPushNotificationHelper {
             NotificationCompat.Style style;
 
             if(bigPictureBitmap != null) {
+
+              // Big large icon
+              if(bigLargeIconBitmap == null) {
+                  int bigLargeIconResId = 0;
+
+                  String bigLargeIcon = bundle.getString("bigLargeIcon");
+
+                  if (bigLargeIcon != null && !bigLargeIcon.isEmpty()) {
+                    bigLargeIconResId = res.getIdentifier(bigLargeIcon, "mipmap", packageName);
+                    if (bigLargeIconResId != 0) {
+                      bigLargeIconBitmap = BitmapFactory.decodeResource(res, bigLargeIconResId);
+                    }
+                  }
+              }
+
               style = new NotificationCompat.BigPictureStyle()
                       .bigPicture(bigPictureBitmap)
                       .setBigContentTitle(title)
-                      .setSummaryText(message);
+                      .setSummaryText(message)
+                      .bigLargeIcon(bigLargeIconBitmap);
             }
             else {
               style = new NotificationCompat.BigTextStyle().bigText(bigText);
