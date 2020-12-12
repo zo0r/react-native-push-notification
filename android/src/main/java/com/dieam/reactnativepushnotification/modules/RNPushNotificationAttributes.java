@@ -47,6 +47,8 @@ public class RNPushNotificationAttributes {
     private static final String TIMEOUT_AFTER = "timeoutAfter";
     private static final String ONLY_ALERT_ONCE = "onlyAlertOnce";
     private static final String ONGOING = "ongoing";
+    private static final String REPLY_BUTTON_TEXT = "reply_button_text";
+    private static final String REPLAY_PLACEHOLDER_TEXT = "reply_placeholder_text";
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
     private static final String IGNORE_IN_FOREGROUND = "ignoreInForeground";
 
@@ -84,6 +86,8 @@ public class RNPushNotificationAttributes {
     private final double timeoutAfter;
     private final boolean onlyAlertOnce;
     private final boolean ongoing;
+    private final String reply_button_text;
+    private final String reply_placeholder_text;
     private final boolean allowWhileIdle;
     private final boolean ignoreInForeground;
 
@@ -122,6 +126,8 @@ public class RNPushNotificationAttributes {
         timeoutAfter = bundle.getDouble(TIMEOUT_AFTER);
         onlyAlertOnce = bundle.getBoolean(ONLY_ALERT_ONCE);
         ongoing = bundle.getBoolean(ONGOING);
+        reply_button_text = bundle.getString(REPLY_BUTTON_TEXT);
+        reply_placeholder_text = bundle.getString(REPLAY_PLACEHOLDER_TEXT);
         allowWhileIdle = bundle.getBoolean(ALLOW_WHILE_IDLE);
         ignoreInForeground = bundle.getBoolean(IGNORE_IN_FOREGROUND);
     }
@@ -162,6 +168,8 @@ public class RNPushNotificationAttributes {
             timeoutAfter = jsonObject.has(TIMEOUT_AFTER) ? jsonObject.getDouble(TIMEOUT_AFTER) : -1;
             onlyAlertOnce = jsonObject.has(ONLY_ALERT_ONCE) ? jsonObject.getBoolean(ONLY_ALERT_ONCE) : false;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
+            reply_button_text = jsonObject.has(REPLY_BUTTON_TEXT) ? jsonObject.getString(REPLY_BUTTON_TEXT) : null;
+            reply_placeholder_text = jsonObject.has(REPLAY_PLACEHOLDER_TEXT) ? jsonObject.getString(REPLAY_PLACEHOLDER_TEXT) : null;
             allowWhileIdle = jsonObject.has(ALLOW_WHILE_IDLE) ? jsonObject.getBoolean(ALLOW_WHILE_IDLE) : false;
             ignoreInForeground = jsonObject.has(IGNORE_IN_FOREGROUND) ? jsonObject.getBoolean(IGNORE_IN_FOREGROUND) : false;
         } catch (JSONException e) {
@@ -259,6 +267,8 @@ public class RNPushNotificationAttributes {
         bundle.putDouble(TIMEOUT_AFTER, timeoutAfter);
         bundle.putBoolean(ONLY_ALERT_ONCE, onlyAlertOnce);
         bundle.putBoolean(ONGOING, ongoing);
+        bundle.putString(REPLY_BUTTON_TEXT, reply_button_text);
+        bundle.putString(REPLAY_PLACEHOLDER_TEXT, reply_placeholder_text);
         bundle.putBoolean(ALLOW_WHILE_IDLE, allowWhileIdle);
         bundle.putBoolean(IGNORE_IN_FOREGROUND, ignoreInForeground);
         return bundle;
@@ -301,6 +311,8 @@ public class RNPushNotificationAttributes {
             jsonObject.put(TIMEOUT_AFTER, timeoutAfter);
             jsonObject.put(ONLY_ALERT_ONCE, onlyAlertOnce);
             jsonObject.put(ONGOING, ongoing);
+            jsonObject.put(REPLY_BUTTON_TEXT, reply_button_text);
+            jsonObject.put(REPLAY_PLACEHOLDER_TEXT, reply_placeholder_text);
             jsonObject.put(ALLOW_WHILE_IDLE, allowWhileIdle);
             jsonObject.put(IGNORE_IN_FOREGROUND, ignoreInForeground);
         } catch (JSONException e) {
@@ -349,6 +361,8 @@ public class RNPushNotificationAttributes {
                 ", timeoutAfter=" + timeoutAfter +
                 ", onlyAlertOnce=" + onlyAlertOnce +
                 ", ongoing=" + ongoing +
+                ", reply_button_text=" + reply_button_text +
+                ", reply_placeholder_text=" + reply_placeholder_text +
                 ", allowWhileIdle=" + allowWhileIdle +
                 ", ignoreInForeground=" + ignoreInForeground +
                 '}';

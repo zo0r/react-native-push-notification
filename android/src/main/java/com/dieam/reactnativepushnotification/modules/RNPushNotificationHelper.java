@@ -23,6 +23,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+import androidx.core.app.RemoteInput;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -46,6 +50,7 @@ import java.util.Map;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.KEY_TEXT_REPLY;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
@@ -514,13 +519,35 @@ public class RNPushNotificationHelper {
 
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
+                    if(action.equals("ReplyInput")){
+                        //Action with inline reply
+                        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
+                            RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
+                                    .setLabel(bundle.getString("reply_placeholder_text"))
+                                    .build();
+                            NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                                    icon, bundle.getString("reply_button_text"), pendingActionIntent)
+                                    .addRemoteInput(remoteInput)
+                                    .setAllowGeneratedReplies(true)
+                                    .build();
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                      notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());
-                    } else {
-                      notification.addAction(icon, action, pendingActionIntent);
+                            notification.addAction(replyAction);
+                        }
+                        else{
+                            // The notification will not have action
+                            break;
+                        }
+                    }
+                    else{
+                        // Add "action" for later identifying which button gets pressed
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                          notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());
+                        } else {
+                          notification.addAction(icon, action, pendingActionIntent);
+                        }
                     }
                 }
+
             }
 
             // Remove the notification from the shared preferences once it has been shown

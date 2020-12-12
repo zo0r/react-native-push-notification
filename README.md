@@ -653,6 +653,31 @@ Make sure you have the receiver in `AndroidManifest.xml`:
 
 For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
 
+Notifications with inline reply: 
+
+You must register an action as "ReplyInput", this will show in the notifications an input to write in. 
+
+EXAMPLE:
+```javascript
+PushNotification.localNotificationSchedule({
+  message: "My Notification Message", // (required)
+  date: new Date(Date.now() + (60 * 1000)), // in 60 secs
+  actions: ["ReplyInput"],
+  reply_placeholder_text: "Write your response...", // (required)
+  reply_button_text: "Reply" // (required)
+});
+```
+
+To get the text from the notification: 
+
+```javascript
+...
+if(notification.action === "ReplyInput"){
+  console.log("texto", notification.reply_text)// this will contain the inline reply text. 
+}
+...
+
+
 ## Set application badge icon
 
 `PushNotification.setApplicationIconBadgeNumber(number: number)`

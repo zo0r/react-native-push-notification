@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -41,6 +40,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
+    public static final String KEY_TEXT_REPLY = "key_text_reply";
 
     private RNPushNotificationHelper mRNPushNotificationHelper;
     private final SecureRandom mRandomNumberGenerator = new SecureRandom();
@@ -95,7 +95,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
             mJsDelivery.notifyNotification(bundle);
         }
     }
-    
+
     @ReactMethod
     public void invokeApp(ReadableMap data) {
         Bundle bundle = null;
