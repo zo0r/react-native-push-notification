@@ -13,6 +13,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Features
 
+- (Android) implement 'bigLargeIcon' for Android notifications (must be combined with BigPicture) [#1730](https://github.com/zo0r/react-native-push-notification/pull/1730)
+- (Android) notification with inline reply [#612](https://github.com/zo0r/react-native-push-notification/pull/612)
+
 ### Fixed
 
 ## [6.1.3] 2020-11-09
