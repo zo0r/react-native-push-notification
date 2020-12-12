@@ -311,60 +311,6 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     /**
-     * Unregister for all remote notifications received
-     */
-    public void abandonPermissions() {
-      new Thread(new Runnable() {
-          @Override
-          public void run() {
-              try {
-                  FirebaseInstanceId.getInstance().deleteInstanceId();
-                  Log.i(LOG_TAG, "InstanceID deleted");
-              } catch (IOException e) {
-                  Log.e(LOG_TAG, "exception", e);
-              }
-          }
-      }).start();
-    }
-
-    @ReactMethod
-    /**
-     * List all channels id
-     */
-    public void getChannels(Callback callback) {
-      WritableArray array = Arguments.fromList(mRNPushNotificationHelper.listChannels());
-      
-      if(callback != null) {
-        callback.invoke(array);
-      }
-    }
-
-    @ReactMethod
-    /**
-     * Check if channel exists with a given id
-     */
-    public void channelExists(String channel_id, Callback callback) {
-      boolean exists = mRNPushNotificationHelper.channelExists(channel_id);
-
-      if(callback != null) {
-        callback.invoke(exists);
-      }
-    }
-
-    @ReactMethod
-    /**
-     * Creates a channel if it does not already exist. Returns whether the channel was created.
-     */
-    public void createChannel(ReadableMap channelInfo, Callback callback) {
-      boolean created = mRNPushNotificationHelper.createChannel(channelInfo);
-
-      if(callback != null) {
-        callback.invoke(created);
-      }
-    }
-
-    @ReactMethod
-    /**
      * Check if channel is blocked with a given id
      */
     public void channelBlocked(String channel_id, Callback callback) {
