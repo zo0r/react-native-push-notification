@@ -16,6 +16,7 @@ import com.facebook.react.bridge.ReactContext;
 import androidx.core.app.RemoteInput;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.KEY_TEXT_REPLY;
 
 public class RNPushNotificationActions extends BroadcastReceiver {
     @Override
