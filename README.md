@@ -660,7 +660,7 @@ EXAMPLE:
 PushNotification.localNotificationSchedule({
   message: "My Notification Message", // (required)
   date: new Date(Date.now() + (60 * 1000)), // in 60 secs
-  actions: '["ReplyInput"]',
+  actions: ["ReplyInput"],
   reply_placeholder_text: "Write your response...", // (required)
   reply_button_text: "Reply" // (required)
 });
