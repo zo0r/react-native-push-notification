@@ -50,6 +50,7 @@ import java.util.Map;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.KEY_TEXT_REPLY;
 
 public class RNPushNotificationHelper {
     public static final String PREFERENCES_KEY = "rn_push_notification";
@@ -61,8 +62,6 @@ public class RNPushNotificationHelper {
     private static final int ONE_MINUTE = 60 * 1000;
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
     private static final long ONE_DAY = 24 * ONE_HOUR;
-    private static final String KEY_TEXT_REPLY = "key_text_reply";
-
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
