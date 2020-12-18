@@ -282,6 +282,15 @@ public class RNPushNotificationHelper {
                     .setAutoCancel(bundle.getBoolean("autoCancel", true))
                     .setOnlyAlertOnce(bundle.getBoolean("onlyAlertOnce", false));
             
+            if (bundle.getBoolean("fullScreen")) {
+                Intent fullScreenIntent = new Intent(context, intentClass);
+                fullScreenIntent.putExtra("notification", bundle);
+                PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
+                        fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                notification.setFullScreenIntent(fullScreenPendingIntent, true);
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // API 24 and higher
                 // Restore showing timestamp on Android 7+
                 // Source: https://developer.android.com/reference/android/app/Notification.Builder.html#setShowWhen(boolean)
@@ -907,8 +916,18 @@ public class RNPushNotificationHelper {
         String channelDescription = channelInfo.hasKey("channelDescription") ? channelInfo.getString("channelDescription") : "";
         String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
-        boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
-        long[] vibratePattern = vibrate ? new long[] { 0, DEFAULT_VIBRATION } : null;
+        long[] vibratePattern = null;
+
+        if (channelInfo.hasKey("vibrationPattern")) {
+            ReadableArray vibrationPatternArray = channelInfo.getArray("vibrationPattern");
+            vibratePattern = new long[vibrationPatternArray.size()];
+
+            for (int i = 0; i < vibrationPatternArray.size(); i++) {
+                vibratePattern[i] = Long.valueOf(vibrationPatternArray.getInt(i));
+            }
+        } else if (channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate")) {
+            vibratePattern = new long[] { 0, DEFAULT_VIBRATION };
+        }
 
         NotificationManager manager = notificationManager();
 
