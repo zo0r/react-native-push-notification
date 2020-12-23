@@ -17,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Breaking changes
 
 - (iOS) Replace deprecated local notification methods on iOS [1751](https://github.com/zo0r/react-native-push-notification/pull/1751)
-- (Android) Rename the Android package from `ReactNativePushNotification` to `ReactNativePushNotification` resolve [893](https://github.com/zo0r/react-native-push-notification/issues/893)
+- (Android) Rename the Android package from `RNPushNotification` to `ReactNativePushNotification` resolve [893](https://github.com/zo0r/react-native-push-notification/issues/893)
 - (Android) Allow `userInfo` to be stored in scheduled notification as in iOS (mapped as `data` on press or list scheduled notifications).
 
 ### Features
