@@ -89,7 +89,7 @@ In your `android/app/src/main/AndroidManifest.xml`
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application ....>
-        <!-- Change the value to true to enable pop-up for in foreground (remote-only, for local use ignoreInForeground) -->
+        <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                     android:value="false"/>
         <!-- Change the resource name to your App's accent color - or any other color you want -->
@@ -324,7 +324,7 @@ PushNotification.localNotification({
   ongoing: false, // (optional) set whether this is an "ongoing" notification
   priority: "high", // (optional) set notification priority, default: high
   visibility: "private", // (optional) set notification visibility, default: private
-  ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
+  ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
   shortcutId: "shortcut-id", // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
   onlyAlertOnce: false, // (optional) alert will open only once with sound and notify, default: false
   
