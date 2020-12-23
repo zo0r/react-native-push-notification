@@ -653,8 +653,6 @@ Make sure you have the receiver in `AndroidManifest.xml`:
   <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
 ```
 
-For iOS, you can use this [package](https://github.com/holmesal/react-native-ios-notification-actions) to add notification actions.
-
 Notifications with inline reply: 
 
 You must register an action as "ReplyInput", this will show in the notifications an input to write in. 
@@ -678,7 +676,17 @@ if(notification.action === "ReplyInput"){
   console.log("texto", notification.reply_text)// this will contain the inline reply text. 
 }
 ...
+```
 
+For iOS, you can use:
+
+```javascript
+PushNotification.setNotificationCategories(categories);
+```
+
+And use the `category` field in the notification.
+
+Documentation [here](https://github.com/react-native-push-notification-ios/push-notification-ios#how-to-perform-different-action-based-on-user-selected-action) to add notification actions.
 
 ## Set application badge icon
 

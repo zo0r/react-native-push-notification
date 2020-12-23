@@ -210,6 +210,10 @@ Notifications.localNotification = function(details) {
     if(details && Array.isArray(details.actions)) {
       details.actions = JSON.stringify(details.actions);
     }
+
+    if(details.userInfo) {
+      details.userInfo = JSON.stringify(details.userInfo);
+    }
   
     this.handler.presentLocalNotification(details);
   }
@@ -289,6 +293,10 @@ Notifications.localNotificationSchedule = function(details) {
       details.actions = JSON.stringify(details.actions);
     }
 
+    if(details.userInfo) {
+      details.userInfo = JSON.stringify(details.userInfo);
+    }
+
     details.fireDate = details.date.getTime();
     delete details.date;
     // ignore iOS only repeatType
@@ -360,6 +368,8 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
       title: data.getTitle(),
       soundName: data.getSound(),
       fireDate: Date.parse(data._fireDate),
+      action: data.getActionIdentifier(),
+      reply_text: data.getUserText(),
       finish: (res) => data.finish(res)
     };
 
@@ -381,6 +391,15 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
         /* void */
       }
     }
+    
+    if ( typeof _notification.userInfo === 'string' ) {
+      try {
+        _notification.userInfo = JSON.parse(_notification.userInfo);
+      } catch(e) {
+        /* void */
+      }
+    }
+
 
     _notification.data = {
       ...(typeof _notification.userInfo === 'object' ? _notification.userInfo : {}),
@@ -521,11 +540,17 @@ Notifications.getScheduledLocalNotifications = function(callback) {
                         date: (notif.date ? new Date(notif.date) : null),
 						number: notif?.badge,
 						message: notif?.body,
-						title: notif?.title,
+            title: notif?.title,
+            data: notif?.userInfo
 					})
 				})
 			} else if(Platform.OS === 'android') {
 				mappedNotifications = notifications.map(notif => {
+
+          try {
+            notif.data = JSON.parse(notif.data);
+          } catch(e) { }
+
 					return ({
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
@@ -534,6 +559,7 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 						number: notif.number,
 						message: notif.message,
 						title: notif.title,
+						data: notif.data,
 					})
 				})
 			}
@@ -575,5 +601,9 @@ Notifications.channelBlocked = function() {
 Notifications.deleteChannel = function() {
   return this.callNative('deleteChannel', arguments);
 };
+
+Notifications.setNotificationCategories = function() {
+  return this.callNative('setNotificationCategories', arguments);
+}
 
 module.exports = Notifications;

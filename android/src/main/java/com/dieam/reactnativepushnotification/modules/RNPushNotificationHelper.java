@@ -431,10 +431,6 @@ public class RNPushNotificationHelper {
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
                 String soundName = bundle.getString("soundName");
 
-                if (soundName == null) {
-                    soundName = "default";
-                }
-
                 soundUri = getSoundUri(soundName);
 
                 notification.setSound(soundUri);
@@ -772,6 +768,7 @@ public class RNPushNotificationHelper {
                 notificationMap.putString("id", notification.getId());
                 notificationMap.putString("repeatInterval", notification.getRepeatType());
                 notificationMap.putString("soundName", notification.getSound());
+                notificationMap.putString("data", notification.getUserInfo());
 
                 scheduled.pushMap(notificationMap);
             } catch (JSONException e) {
