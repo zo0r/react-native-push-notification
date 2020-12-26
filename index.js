@@ -145,7 +145,7 @@ Notifications.unregister = function() {
  * @param {String}    details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
  * @param {Object}    details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
-Notifications.localNotification = function(details) {
+Notifications.localNotification = function({...details}) {
   if ('android' === Platform.os && details && !details.channelId) {
     console.warn('No channel id passed, notifications may not work.');
   }
@@ -224,7 +224,7 @@ Notifications.localNotification = function(details) {
  * @param {Object}    details (same as localNotification)
  * @param {Date}    details.date - The date and time when the system should deliver the notification
  */
-Notifications.localNotificationSchedule = function(details) {
+Notifications.localNotificationSchedule = function({...details}) {
   if ('android' === Platform.os && details && !details.channelId) {
     console.warn('No channel id passed, notifications may not work.');
   }
@@ -329,7 +329,7 @@ Notifications._onRemoteFetch = function(notificationData) {
   }
 };
 
-Notifications._onAction = function(notification) {
+Notifications._onAction = function({...notification}) {
   if ( typeof notification.data === 'string' ) {
     try {
       notification.data = JSON.parse(notificationData.data);
