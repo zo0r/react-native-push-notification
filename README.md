@@ -1,7 +1,7 @@
 # React Native Push Notifications
 
 [![npm version](https://badge.fury.io/js/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification)
-[![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification)
+[![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification) [![Meercode CI Score](https://meercode.io/badge/zo0r/react-native-push-notification?type=ci-score&branch=master)](https://meercode.io/zo0r/react-native-push-notification)
 
 React Native Local and Remote Notifications for iOS and Android
 
