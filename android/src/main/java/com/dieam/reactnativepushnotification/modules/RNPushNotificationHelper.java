@@ -69,6 +69,16 @@ public class RNPushNotificationHelper {
         this.scheduledNotificationsPersistence = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
 
+    public RNPushNotificationHelper(Context context) {
+        this.context = context;
+        this.config = new RNPushNotificationConfig(context);
+        this.scheduledNotificationsPersistence = context.getSharedPreferences(RNPushNotificationHelper.PREFERENCES_KEY, Context.MODE_PRIVATE);
+    }
+
+    public SharedPreferences getPrefs() {
+        return scheduledNotificationsPersistence;
+    }
+
     public Class getMainActivityClass() {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
@@ -152,6 +162,7 @@ public class RNPushNotificationHelper {
         Log.d(LOG_TAG, "Storing push notification with id " + id);
 
         SharedPreferences.Editor editor = scheduledNotificationsPersistence.edit();
+        editor.putString("id", id);
         editor.putString(id, notificationAttributes.toJson().toString());
         editor.apply();
 
@@ -162,6 +173,99 @@ public class RNPushNotificationHelper {
 
         sendNotificationScheduledCore(bundle);
     }
+
+    /**
+     * Methods to handle DST notifications
+     * set/get the notification data to reset the current notification.
+     */
+
+    public static String USER_NOTIFICATION_DATA = "notificationDataFromUser";
+
+    public void saveNotificationData(Bundle bundle) {
+        String userNotificationData = new Gson().toJson(new RNPushNotificationAttributes(bundle));
+        getPrefs().edit().putString(USER_NOTIFICATION_DATA, userNotificationData).apply();
+    }
+
+
+    public Long getNotificationDateFromUser() {
+        String notiDataFromUser = getPrefs().getString(USER_NOTIFICATION_DATA, null);
+        RNPushNotificationAttributes rnPushNotificationAttributes
+                = new Gson().fromJson(notiDataFromUser, RNPushNotificationAttributes.class);
+        return (long) rnPushNotificationAttributes.getFireDate();
+    }
+
+    public String getCurrentNotificationId() {
+        String notiDataFromUser = getPrefs().getString(USER_NOTIFICATION_DATA, null);
+        RNPushNotificationAttributes rnPushNotificationAttributes
+                = new Gson().fromJson(notiDataFromUser, RNPushNotificationAttributes.class);
+        return rnPushNotificationAttributes.getId();
+    }
+
+    public void cancelNotification(String notificationIDString) {
+
+        // remove it from the alarm manger schedule
+        Bundle b = new Bundle();
+        b.putString("id", notificationIDString);
+        PendingIntent pendingIntent = toScheduleNotificationIntent(b);
+
+        if (pendingIntent != null) {
+            getAlarmManager().cancel(pendingIntent);
+            Log.e( "Cancelled", " notification: " + notificationIDString);
+        }
+
+        // removed it from the notification center
+        NotificationManager notificationManager = notificationManager();
+
+        try {
+            notificationManager.cancel(Integer.parseInt(notificationIDString));
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Unable to parse Notification ID " + notificationIDString, e);
+        }
+    }
+
+
+    public void resetNotificationDate() {
+        SharedPreferences prefs = getPrefs();
+        String notificationId = prefs.getString("id", null);
+        String notificationDataString = prefs.getString(notificationId, null);
+        NotificationData notificationDataObject = null;
+        try {
+            notificationDataObject = new Gson().fromJson(notificationDataString, NotificationData.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (notificationDataObject != null) {
+            Calendar userDateCalendar = Calendar.getInstance(); // OCT 31 9:00:00:AM
+            userDateCalendar.setTimeInMillis(getNotificationDateFromUser());
+            Calendar newDateCalendar = Calendar.getInstance(); // NOV 1
+            newDateCalendar.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+
+            newDateCalendar.set(Calendar.HOUR, userDateCalendar.get(Calendar.HOUR));
+            newDateCalendar.set(Calendar.MINUTE, userDateCalendar.get(Calendar.MINUTE));
+            newDateCalendar.set(Calendar.SECOND, userDateCalendar.get(Calendar.SECOND));
+            newDateCalendar.set(Calendar.MILLISECOND, userDateCalendar.get(Calendar.MILLISECOND)); //NOV 1 9:AM
+
+            Log.e("User Start Date: ", new SimpleDateFormat("dd/MM/yyyy HH:mm a",
+                    Locale.getDefault()).format(userDateCalendar.getTimeInMillis()));
+            Log.e("New Date: ", new SimpleDateFormat("dd/MM/yyyy HH:mm a",
+                    Locale.getDefault()).format(newDateCalendar.getTimeInMillis()));
+
+            notificationDataObject.setFireDate(newDateCalendar.getTimeInMillis());
+            String newNotificationDataString = new Gson().toJson(notificationDataObject);
+            prefs.edit().putString(notificationId, newNotificationDataString).apply();
+            String notificationDataStringAfter = prefs.getString(notificationId, null);
+            try {
+                sendNotificationScheduledCore(RNPushNotificationAttributes.fromJson
+                        (notificationDataStringAfter).toBundle());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Methods to handle DST notifications
+     */
 
     public void sendNotificationScheduledCore(Bundle bundle) {
         long fireDate = (long) bundle.getDouble("fireDate");

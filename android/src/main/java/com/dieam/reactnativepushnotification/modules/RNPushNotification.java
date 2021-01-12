@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.dieam.reactnativepushnotification.dst.DSTManager;
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -161,6 +162,9 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         if (bundle.getString("id") == null) {
             bundle.putString("id", String.valueOf(mRandomNumberGenerator.nextInt()));
         }
+        new DSTManager().scheduleDSTTransitionAlarms(getReactApplicationContext());
+        //saving the default date set by user.
+        mRNPushNotificationHelper.saveNotificationData(bundle);
         mRNPushNotificationHelper.sendNotificationScheduled(bundle);
     }
 
