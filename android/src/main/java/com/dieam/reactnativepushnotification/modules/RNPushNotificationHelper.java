@@ -288,6 +288,7 @@ public class RNPushNotificationHelper {
                 PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                         fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                notification.setCategory(NotificationCompat.CATEGORY_ALARM);
                 notification.setFullScreenIntent(fullScreenPendingIntent, true);
             }
 
@@ -430,7 +431,7 @@ public class RNPushNotificationHelper {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                notification.setCategory(NotificationCompat.CATEGORY_CALL);
+                // notification.setCategory(NotificationCompat.CATEGORY_CALL);
 
                 String color = bundle.getString("color");
                 int defaultColor = this.config.getNotificationColor();
@@ -448,16 +449,19 @@ public class RNPushNotificationHelper {
 
             NotificationManager notificationManager = notificationManager();
 
-            long[] vibratePattern = new long[]{0};
+            if (bundle.containsKey("vibrate")) {
+                if (bundle.getBoolean("vibrate")) {
+                    long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
+                    if (vibration == 0)
+                        vibration = DEFAULT_VIBRATION;
 
-            if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
-                long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
-                if (vibration == 0)
-                    vibration = DEFAULT_VIBRATION;
+                    long[] vibratePattern = new long[]{0};
 
-                vibratePattern = new long[]{0, vibration};
-
-                notification.setVibrate(vibratePattern); 
+                    notification.setVibrate(vibratePattern); 
+                } else {
+                    long[] vibratePattern = new long[]{0};
+                    notification.setVibrate(vibratePattern);
+                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { 
