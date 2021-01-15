@@ -431,7 +431,7 @@ public class RNPushNotificationHelper {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // notification.setCategory(NotificationCompat.CATEGORY_CALL);
+                notification.setCategory(NotificationCompat.CATEGORY_CALL);
 
                 String color = bundle.getString("color");
                 int defaultColor = this.config.getNotificationColor();
