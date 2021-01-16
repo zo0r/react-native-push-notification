@@ -14,6 +14,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ## [7.1.0] 2021-01-16
 
+# Features
+
 - (Android) Add hooks to intent handling and bundle parsing [1819](https://github.com/zo0r/react-native-push-notification/pull/1819)
  
 ## [7.0.0] 2020-12-23
