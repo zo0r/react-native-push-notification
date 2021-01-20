@@ -46,8 +46,10 @@ public class RNReceivedMessageHandler {
             // ^ It's null when message is from GCM
             RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());  
 
-            bundle.putString("title", remoteNotification.getTitle());
-            bundle.putString("message", remoteNotification.getBody());
+            bundle.putString("title", getLocalizedString(remoteNotification.getTitleLocalizationKey(),
+                    remoteNotification.getTitleLocalizationArgs(), remoteNotification.getTitle()));
+            bundle.putString("message", getLocalizedString(remoteNotification.getBodyLocalizationKey(),
+                    remoteNotification.getBodyLocalizationArgs(), remoteNotification.getBody()));
             bundle.putString("sound", remoteNotification.getSound());
             bundle.putString("color", remoteNotification.getColor());
             bundle.putString("tag", remoteNotification.getTag());
@@ -177,5 +179,21 @@ public class RNReceivedMessageHandler {
 
             pushNotificationHelper.sendToNotificationCentre(bundle);
         }
+    }
+
+    private String getLocalizedString(String locKey, String[] locArgs, String defaultText) {
+        String packageName = getPackageName();
+        String result = defaultText;
+        if (locKey != null) {
+            int id = getResources().getIdentifier(locKey, "string", packageName);
+            if (id != 0) {
+                if (locArgs != null) {
+                    result = res.getString(id, (Object[]) locArgs);
+                } else {
+                    result = res.getString(id);
+                }
+            }
+        }
+        return result;
     }
 }
