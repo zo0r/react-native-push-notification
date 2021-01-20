@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [7.1.1] 2021-01-20
+
+### Fixed
+
+- (Android) unsubscribeFromTopic function fix [1831](https://github.com/zo0r/react-native-push-notification/pull/1831)
+
 ## [7.1.0] 2021-01-16
 
 # Features

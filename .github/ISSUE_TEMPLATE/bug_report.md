@@ -6,6 +6,8 @@ about: Report a reproducible bug or regression in this library.
 # Bug
 
 <!--
+  Before submitting it, please ensure that this was not already asked in another issue, or on StackOverflow. Ideally, you should always refer to StackOverflow first.
+  
   Please provide a clear and concise description of what the bug is.
   Include screenshots or gifs if needed.
   Please test using the latest release of the library, as maybe your bug has been already fixed.
