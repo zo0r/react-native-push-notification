@@ -9,6 +9,7 @@ import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.content.Context;
 import android.util.Log;
 import android.net.Uri;
 import androidx.annotation.NonNull;
@@ -46,8 +47,11 @@ public class RNReceivedMessageHandler {
             // ^ It's null when message is from GCM
             RNPushNotificationConfig config = new RNPushNotificationConfig(mFirebaseMessagingService.getApplication());  
 
-            bundle.putString("title", remoteNotification.getTitle());
-            bundle.putString("message", remoteNotification.getBody());
+            String title = getLocalizedString(remoteNotification.getTitle(), remoteNotification.getTitleLocalizationKey(), remoteNotification.getTitleLocalizationArgs());
+            String body = getLocalizedString(remoteNotification.getBody(), remoteNotification.getBodyLocalizationKey(), remoteNotification.getBodyLocalizationArgs());
+
+            bundle.putString("title", title);
+            bundle.putString("message", body);
             bundle.putString("sound", remoteNotification.getSound());
             bundle.putString("color", remoteNotification.getColor());
             bundle.putString("tag", remoteNotification.getTag());
@@ -177,5 +181,29 @@ public class RNReceivedMessageHandler {
 
             pushNotificationHelper.sendToNotificationCentre(bundle);
         }
+    }
+
+    private String getLocalizedString(String text, String locKey, String[] locArgs) {
+        if(text != null) {
+          return text;
+        }
+
+        Context context = mFirebaseMessagingService.getApplicationContext();
+        String packageName = context.getPackageName();
+
+        String result = null;
+
+        if (locKey != null) {
+            int id = context.getResources().getIdentifier(locKey, "string", packageName);
+            if (id != 0) {
+                if (locArgs != null) {
+                    result = context.getResources().getString(id, (Object[]) locArgs);
+                } else {
+                    result = context.getResources().getString(id);
+                }
+            }
+        }
+
+        return result;
     }
 }
