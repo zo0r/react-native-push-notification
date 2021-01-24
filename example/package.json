@@ -14,7 +14,7 @@
     "@react-native-community/push-notification-ios": "^1.7.0",
     "react": "16.13.1",
     "react-native": "0.63.3",
-    "react-native-push-notification": "zo0r/react-native-push-notification#master"
+    "react-native-push-notification": "zo0r/react-native-push-notification#dev"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

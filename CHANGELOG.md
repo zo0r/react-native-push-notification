@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [7.2.0] 2021-01-24
+
+### Features
+
+- (Android) Handle localization for notification title and body [1837](https://github.com/zo0r/react-native-push-notification/pull/1837)
+
 ## [7.1.1] 2021-01-20
 
 ### Fixed
