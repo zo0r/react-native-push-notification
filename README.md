@@ -1,4 +1,4 @@
-# React Native Push Notifications
+ # React Native Push Notifications
 
 [![npm version](https://badge.fury.io/js/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification)
 [![npm downloads](https://img.shields.io/npm/dm/react-native-push-notification.svg?update=9)](http://badge.fury.io/js/react-native-push-notification)
@@ -56,9 +56,26 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 ## iOS manual Installation
 
-The component uses PushNotificationIOS for the iOS part.
+The component uses PushNotificationIOS for the iOS part. You should follow their [installation instructions](https://github.com/react-native-community/react-native-push-notification-ios).
 
-[Please see: PushNotificationIOS](https://github.com/react-native-community/react-native-push-notification-ios)
+When done, modify the following method in the file `AppDelegate.m`:
+```objective-c
+// Called when a notification is delivered to a foreground app.
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center
+      willPresentNotification:(UNNotification *)notification
+        withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+  // Still call the JS onNotification handler so it can display the new message right away
+  NSDictionary *userInfo = notification.request.content.userInfo;
+  [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo
+                                fetchCompletionHandler:^void (UIBackgroundFetchResult result){}];
+
+  // allow showing foreground notifications
+  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
+  // or if you wish to hide all notification while in foreground replace it with 
+  // completionHandler(UNNotificationPresentationOptionNone);
+}
+```
 
 ## Android manual Installation
 
@@ -290,7 +307,7 @@ Notification object example:
     foreground: false, // BOOLEAN: If the notification was received in foreground or not
     userInteraction: false, // BOOLEAN: If the notification was opened by the user from the notification area or not
     message: 'My Notification Message', // STRING: The notification message
-    data: {}, // OBJECT: The push data
+    data: {}, // OBJECT: The push data or the defined userInfo in local notifications
 }
 ```
 
@@ -615,6 +632,12 @@ Available options:
 "unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
+
+## Show notifications while the app is in foreground
+
+If you want a consistent results in Android & iOS with the most flexibility, it is best to handle it manually by prompting a local notification when `onNotification` is triggered by a remote push notification on foreground (check `notification.foreground` prop).
+
+Watch out for an infinite loop triggering `onNotification` - remote & local notification will trigger it. You can overcome this by marking local notifications' data.
 
 ## Notification while idle
 
