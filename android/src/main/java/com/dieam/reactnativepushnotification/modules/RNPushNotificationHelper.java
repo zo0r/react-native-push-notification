@@ -28,9 +28,6 @@ import androidx.core.app.RemoteInput;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
