@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [7.2.1] 2021-02-11
+
+### Fixed
+
+- (iOS) Fix `playSound` options on local notifications. [1858](https://github.com/zo0r/react-native-push-notification/issues/1858#issuecomment-775714298)
+
 ## [7.2.0] 2021-01-24
 
 ### Features

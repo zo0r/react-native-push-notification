@@ -183,6 +183,7 @@ Notifications.localNotification = function(details) {
       body: details.message,
       badge: details.number,
       sound: soundName,
+      isSilent: details.playSound === false,
       category: details.category,
       userInfo: details.userInfo
     });
@@ -258,6 +259,7 @@ Notifications.localNotificationSchedule = function(details) {
       title: details.title,
       body: details.message,
       sound: soundName,
+      isSilent: details.playSound === false,
       category: details.category,
       userInfo: details.userInfo,
       repeats: (details.repeatType && details.repeatType == "day"),
