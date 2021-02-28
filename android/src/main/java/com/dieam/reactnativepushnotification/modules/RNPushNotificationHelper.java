@@ -431,6 +431,8 @@ public class RNPushNotificationHelper {
                 soundUri = getSoundUri(soundName);
 
                 notification.setSound(soundUri);
+            } else {
+                notification.setNotificationSilent();
             }
 
             if (soundUri == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
