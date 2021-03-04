@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Fixed
 
 - (Android) Fix: Could not invoke RNPushNotification.getDeliveredNotifications. [#1878](https://github.com/zo0r/react-native-push-notification/issues/1878)
+- (fix) deep clone details and notifications. [#1793](https://github.com/zo0r/react-native-push-notification/issues/1793)
 
 ## [7.2.1] 2021-02-11
 
