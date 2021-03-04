@@ -12,36 +12,42 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [7.2.2] 2021-03-04
+
+### Fixed
+
+- (Android) Fix: Could not invoke RNPushNotification.getDeliveredNotifications. [#1878](https://github.com/zo0r/react-native-push-notification/issues/1878)
+
 ## [7.2.1] 2021-02-11
 
 ### Fixed
 
-- (iOS) Fix `playSound` options on local notifications. [1858](https://github.com/zo0r/react-native-push-notification/issues/1858#issuecomment-775714298)
+- (iOS) Fix `playSound` options on local notifications. [#1858](https://github.com/zo0r/react-native-push-notification/issues/1858#issuecomment-775714298)
 
 ## [7.2.0] 2021-01-24
 
 ### Features
 
-- (Android) Handle localization for notification title and body [1837](https://github.com/zo0r/react-native-push-notification/pull/1837)
+- (Android) Handle localization for notification title and body [#1837](https://github.com/zo0r/react-native-push-notification/pull/1837)
 
 ## [7.1.1] 2021-01-20
 
 ### Fixed
 
-- (Android) unsubscribeFromTopic function fix [1831](https://github.com/zo0r/react-native-push-notification/pull/1831)
+- (Android) unsubscribeFromTopic function fix [#1831](https://github.com/zo0r/react-native-push-notification/pull/1831)
 
 ## [7.1.0] 2021-01-16
 
 # Features
 
-- (Android) Add hooks to intent handling and bundle parsing [1819](https://github.com/zo0r/react-native-push-notification/pull/1819)
+- (Android) Add hooks to intent handling and bundle parsing [#1819](https://github.com/zo0r/react-native-push-notification/pull/1819)
  
 ## [7.0.0] 2020-12-23
 
 ### Breaking changes
 
-- (iOS) Replace deprecated local notification methods on iOS [1751](https://github.com/zo0r/react-native-push-notification/pull/1751)
-- (Android) Rename the Android package from `RNPushNotification` to `ReactNativePushNotification` resolve [893](https://github.com/zo0r/react-native-push-notification/issues/893)
+- (iOS) Replace deprecated local notification methods on iOS [#1751](https://github.com/zo0r/react-native-push-notification/pull/1751)
+- (Android) Rename the Android package from `RNPushNotification` to `ReactNativePushNotification` resolve [#893](https://github.com/zo0r/react-native-push-notification/issues/893)
 - (Android) Allow `userInfo` to be stored in scheduled notification as in iOS (mapped as `data` on press or list scheduled notifications).
 
 ### Features

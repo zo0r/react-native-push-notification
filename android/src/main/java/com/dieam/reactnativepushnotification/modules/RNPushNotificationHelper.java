@@ -723,10 +723,15 @@ public class RNPushNotificationHelper {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public WritableArray getDeliveredNotifications() {
+      WritableArray result = Arguments.createArray();
+  
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        return result;
+      }
+
       NotificationManager notificationManager = notificationManager();
       StatusBarNotification delivered[] = notificationManager.getActiveNotifications();
       Log.i(LOG_TAG, "Found " + delivered.length + " delivered notifications");
-      WritableArray result = Arguments.createArray();
       /*
         * stay consistent to the return structure in
         * https://facebook.github.io/react-native/docs/pushnotificationios.html#getdeliverednotifications

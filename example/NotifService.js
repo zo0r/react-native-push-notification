@@ -170,4 +170,8 @@ export default class NotifService {
   getScheduledLocalNotifications(callback) {
     PushNotification.getScheduledLocalNotifications(callback);
   }
+
+  getDeliveredNotifications(callback) {
+    PushNotification.getDeliveredNotifications(callback);
+  }
 }
