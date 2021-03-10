@@ -4,16 +4,11 @@
 
 'use strict';
 
-import { AppState } from "react-native";
+import { AppState, Platform } from 'react-native';
+import { component } from './component';
 
-var RNNotificationsComponent = require( './component' );
-
-var RNNotifications = RNNotificationsComponent.component;
-
-let Platform = require('react-native').Platform;
-
-var Notifications = {
-  handler: RNNotifications,
+const Notifications = {
+  handler: component,
   onRegister: false,
   onRegistrationError: false,
   onNotification: false,
