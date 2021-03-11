@@ -121,6 +121,13 @@ public class RNReceivedMessageHandler {
         bundle.putParcelable("data", dataBundle);
 
         Log.v(LOG_TAG, "onMessageReceived: " + bundle);
+        // if Data contains title or message set title/message to the bundle to able to get notification. 
+        if (!bundle.containsKey("title") && dataBundle.containsKey("title")) {
+            bundle.putString("title", dataBundle.getString("title"));
+        }
+        if (!bundle.containsKey("message") && dataBundle.containsKey("message")) {
+            bundle.putString("message", dataBundle.getString("message"));
+        }
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
