@@ -61,6 +61,8 @@ public class RNPushNotificationActions extends BroadcastReceiver {
           RNPushNotificationHelper helper = new RNPushNotificationHelper((Application) context.getApplicationContext());
 
           helper.invokeApp(bundle);
+
+          context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
       } else {
 
         // We need to run this on the main thread, as the React code assumes that is true.
