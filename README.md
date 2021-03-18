@@ -320,7 +320,7 @@ EXAMPLE:
 ```javascript
 PushNotification.localNotification({
   /* Android Only Properties */
-  channelId: "your-channel-id", // (required) channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
+  channelId: "your-channel-id", // (required) channelId, if the channel doesn't exist, notification will not trigger.
   ticker: "My Notification Ticker", // (optional)
   showWhen: true, // (optional) default: true
   autoCancel: true, // (optional) default: true
