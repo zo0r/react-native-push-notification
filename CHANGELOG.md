@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [7.2.3] 2021-03-18
+
+### Fixed
+
 - (Android) Fix: Notification drawer doesn't close after click on action that navigates you to app [#1914](https://github.com/zo0r/react-native-push-notification/issues/1914)
 - (iOS) Fix: foreground notification property [#1916](https://github.com/zo0r/react-native-push-notification/pull/1916)
 
