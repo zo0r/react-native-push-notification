@@ -586,6 +586,7 @@ Returns an array of local scheduled notification objects containing:
 | soundName      | string | The sound name of this notification.                     |
 | repeatInterval | number | (Android only) The repeat interval of this notification. |
 | number         | number | App notification badge count number.                     |
+| data           | any    | The user info of this notification.                      |
 
 ## Abandon Permissions
 

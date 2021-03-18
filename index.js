@@ -346,7 +346,8 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
   if ( isFromBackground === null ) {
     isFromBackground = (
       data.foreground === false ||
-      AppState.currentState === 'background'
+      AppState.currentState === 'background' ||
+      AppState.currentState === 'unknown'
     );
   }
 
