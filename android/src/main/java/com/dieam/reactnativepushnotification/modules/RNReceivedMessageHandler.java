@@ -56,6 +56,12 @@ public class RNReceivedMessageHandler {
             bundle.putString("color", remoteNotification.getColor());
             bundle.putString("tag", remoteNotification.getTag());
             
+            if(remoteNotification.getIcon() != null) {
+              bundle.putString("smallIcon", remoteNotification.getIcon());
+            } else {
+              bundle.putString("smallIcon", "ic_notification");
+            }
+            
             if(remoteNotification.getChannelId() != null) {
               bundle.putString("channelId", remoteNotification.getChannelId());
             }
