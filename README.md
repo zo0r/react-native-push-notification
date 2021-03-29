@@ -142,6 +142,17 @@ In `android/app/src/main/res/values/colors.xml` (Create the file if it doesn't e
 </resources>
 ```
 
+If your app has an @Override on onNewIntent in `MainActivity.java` ensure that function includes a super call on onNewIntent (if your `MainActivity.java` does not have an @Override for onNewIntent skip this):
+
+```java
+    @Override
+    public void onNewIntent(Intent intent) {
+        ...
+        super.onNewIntent(intent);
+        ...
+    }
+```
+
 ### If you use remote notifications
 
 Make sure you have installed setup Firebase correctly.
