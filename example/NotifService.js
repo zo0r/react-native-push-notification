@@ -1,4 +1,4 @@
-import PushNotification from 'react-native-push-notification';
+import PushNotification, {Importance} from 'react-native-push-notification';
 import NotificationHandler from './NotificationHandler';
 
 export default class NotifService {
@@ -30,7 +30,7 @@ export default class NotifService {
         channelName: `Default channel`, // (required)
         channelDescription: "A default channel", // (optional) default: undefined.
         soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
-        importance: 4, // (optional) default: 4. Int value of the Android notification importance
+        importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
         vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
       },
       (created) => console.log(`createChannel 'default-channel-id' returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
@@ -41,7 +41,7 @@ export default class NotifService {
         channelName: `Sound channel`, // (required)
         channelDescription: "A sound channel", // (optional) default: undefined.
         soundName: "sample.mp3", // (optional) See `soundName` parameter of `localNotification` function
-        importance: 4, // (optional) default: 4. Int value of the Android notification importance
+        importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
         vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
       },
       (created) => console.log(`createChannel 'sound-channel-id' returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
@@ -56,7 +56,7 @@ export default class NotifService {
         channelName: `Custom channel - Counter: ${this.lastChannelCounter}`, // (required)
         channelDescription: `A custom channel to categorise your custom notifications. Updated at: ${Date.now()}`, // (optional) default: undefined.
         soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
-        importance: 4, // (optional) default: 4. Int value of the Android notification importance
+        importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
         vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
       },
       (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.

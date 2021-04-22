@@ -403,6 +403,8 @@ In the location notification json specify the full file name:
 To use channels, create them at startup and pass the matching `channelId` through to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
 
 ```javascript
+import PushNotification, {Importance} from 'react-native-push-notification';
+...
   PushNotification.createChannel(
     {
       channelId: "channel-id", // (required)
@@ -410,7 +412,7 @@ To use channels, create them at startup and pass the matching `channelId` throug
       channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
       playSound: false, // (optional) default: true
       soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
-      importance: 4, // (optional) default: 4. Int value of the Android notification importance
+      importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
       vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
     },
     (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
@@ -590,10 +592,10 @@ Returns an array of local scheduled notification objects containing:
 
 Available options:
 
-"max" = NotficationCompat.PRIORITY_MAX
-"high" = NotficationCompat.PRIORITY_HIGH
-"low" = NotficationCompat.PRIORITY_LOW
-"min" = NotficationCompat.PRIORITY_MIN
+"max" = NotficationCompat.PRIORITY_MAX\
+"high" = NotficationCompat.PRIORITY_HIGH\
+"low" = NotficationCompat.PRIORITY_LOW\
+"min" = NotficationCompat.PRIORITY_MIN\
 "default" = NotficationCompat.PRIORITY_DEFAULT
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
@@ -604,25 +606,25 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"private" = NotficationCompat.VISIBILITY_PRIVATE
-"public" = NotficationCompat.VISIBILITY_PUBLIC
-"secret" = NotficationCompat.VISIBILITY_SECRET
+"private" = NotficationCompat.VISIBILITY_PRIVATE\
+"public" = NotficationCompat.VISIBILITY_PUBLIC\
+"secret" = NotficationCompat.VISIBILITY_SECRET 
 
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
 
 ## Notification importance
 
-(optional) Specify `importance` to set importance of notification. Default value: "high"
+(optional) Specify `importance` to set importance of notification. Default value: Importance.HIGH  
+Constants available on the `Importance` object. `import PushNotification, {Importance} from 'react-native-push-notification';`
 
 Available options:
 
-"default" = NotificationManager.IMPORTANCE_DEFAULT
-"max" = NotificationManager.IMPORTANCE_MAX
-"high" = NotificationManager.IMPORTANCE_HIGH
-"low" = NotificationManager.IMPORTANCE_LOW
-"min" = NotificationManager.IMPORTANCE_MIN
-"none" = NotificationManager.IMPORTANCE_NONE
-"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
+Importance.DEFAULT = NotificationManager.IMPORTANCE_DEFAULT\
+Importance.HIGH = NotificationManager.IMPORTANCE_HIGH\
+Importance.LOW = NotificationManager.IMPORTANCE_LOW\
+Importance.MIN = NotificationManager.IMPORTANCE_MIN\
+Importance.NONE= NotificationManager.IMPORTANCE_NONE\
+Importance.UNSPECIFIED = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
