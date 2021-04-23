@@ -604,4 +604,14 @@ Notifications.setNotificationCategories = function() {
   return this.callNative('setNotificationCategories', arguments);
 }
 
+// https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
+Notifications.Importance = Object.freeze({
+  DEFAULT: 3,
+  HIGH: 4,
+  LOW: 2,
+  MIN: 1,
+  NONE: 0,
+  UNSPECIFIED: -1000,
+});
+
 module.exports = Notifications;

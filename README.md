@@ -58,25 +58,6 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 The component uses PushNotificationIOS for the iOS part. You should follow their [installation instructions](https://github.com/react-native-community/react-native-push-notification-ios).
 
-When done, modify the following method in the file `AppDelegate.m`:
-```objective-c
-// Called when a notification is delivered to a foreground app.
--(void)userNotificationCenter:(UNUserNotificationCenter *)center
-      willPresentNotification:(UNNotification *)notification
-        withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
-{
-  // Still call the JS onNotification handler so it can display the new message right away
-  NSDictionary *userInfo = notification.request.content.userInfo;
-  [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo
-                                fetchCompletionHandler:^void (UIBackgroundFetchResult result){}];
-
-  // allow showing foreground notifications
-  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
-  // or if you wish to hide all notification while in foreground replace it with 
-  // completionHandler(UNNotificationPresentationOptionNone);
-}
-```
-
 ## Android manual Installation
 
 **NOTE: `firebase-messaging`, prior to version 15 requires to have the same version number in order to work correctly at build time and at run time. To use a specific version:**
@@ -140,6 +121,17 @@ In `android/app/src/main/res/values/colors.xml` (Create the file if it doesn't e
 <resources>
     <color name="white">#FFF</color>
 </resources>
+```
+
+If your app has an @Override on onNewIntent in `MainActivity.java` ensure that function includes a super call on onNewIntent (if your `MainActivity.java` does not have an @Override for onNewIntent skip this):
+
+```java
+    @Override
+    public void onNewIntent(Intent intent) {
+        ...
+        super.onNewIntent(intent);
+        ...
+    }
 ```
 
 ### If you use remote notifications
@@ -217,10 +209,10 @@ public class MainApplication extends Application implements ReactApplication {
       @Override
       protected List<ReactPackage> getPackages() {
 
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new ReactNativePushNotificationPackage() // <---- Add the Package
-      );
+          return Arrays.<ReactPackage>asList(
+              new MainReactPackage(),
+              new ReactNativePushNotificationPackage() // <---- Add the Package
+          );
     }
   };
 
@@ -411,6 +403,8 @@ In the location notification json specify the full file name:
 To use channels, create them at startup and pass the matching `channelId` through to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
 
 ```javascript
+import PushNotification, {Importance} from 'react-native-push-notification';
+...
   PushNotification.createChannel(
     {
       channelId: "channel-id", // (required)
@@ -418,7 +412,7 @@ To use channels, create them at startup and pass the matching `channelId` throug
       channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
       playSound: false, // (optional) default: true
       soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
-      importance: 4, // (optional) default: 4. Int value of the Android notification importance
+      importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
       vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
     },
     (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
@@ -598,10 +592,10 @@ Returns an array of local scheduled notification objects containing:
 
 Available options:
 
-"max" = NotficationCompat.PRIORITY_MAX
-"high" = NotficationCompat.PRIORITY_HIGH
-"low" = NotficationCompat.PRIORITY_LOW
-"min" = NotficationCompat.PRIORITY_MIN
+"max" = NotficationCompat.PRIORITY_MAX\
+"high" = NotficationCompat.PRIORITY_HIGH\
+"low" = NotficationCompat.PRIORITY_LOW\
+"min" = NotficationCompat.PRIORITY_MIN\
 "default" = NotficationCompat.PRIORITY_DEFAULT
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
@@ -612,25 +606,25 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
-"private" = NotficationCompat.VISIBILITY_PRIVATE
-"public" = NotficationCompat.VISIBILITY_PUBLIC
-"secret" = NotficationCompat.VISIBILITY_SECRET
+"private" = NotficationCompat.VISIBILITY_PRIVATE\
+"public" = NotficationCompat.VISIBILITY_PUBLIC\
+"secret" = NotficationCompat.VISIBILITY_SECRET 
 
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
 
 ## Notification importance
 
-(optional) Specify `importance` to set importance of notification. Default value: "high"
+(optional) Specify `importance` to set importance of notification. Default value: Importance.HIGH  
+Constants available on the `Importance` object. `import PushNotification, {Importance} from 'react-native-push-notification';`
 
 Available options:
 
-"default" = NotificationManager.IMPORTANCE_DEFAULT
-"max" = NotificationManager.IMPORTANCE_MAX
-"high" = NotificationManager.IMPORTANCE_HIGH
-"low" = NotificationManager.IMPORTANCE_LOW
-"min" = NotificationManager.IMPORTANCE_MIN
-"none" = NotificationManager.IMPORTANCE_NONE
-"unspecified" = NotificationManager.IMPORTANCE_UNSPECIFIED
+Importance.DEFAULT = NotificationManager.IMPORTANCE_DEFAULT\
+Importance.HIGH = NotificationManager.IMPORTANCE_HIGH\
+Importance.LOW = NotificationManager.IMPORTANCE_LOW\
+Importance.MIN = NotificationManager.IMPORTANCE_MIN\
+Importance.NONE= NotificationManager.IMPORTANCE_NONE\
+Importance.UNSPECIFIED = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
