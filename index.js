@@ -141,7 +141,7 @@ Notifications.unregister = function() {
  * @param {Object}    details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
 Notifications.localNotification = function({...details}) {
-  if ('android' === Platform.os && details && !details.channelId) {
+  if ('android' === Platform.OS && details && !details.channelId) {
     console.warn('No channel id passed, notifications may not work.');
   }
 
