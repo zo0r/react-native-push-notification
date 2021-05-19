@@ -409,7 +409,7 @@ import PushNotification, {Importance} from 'react-native-push-notification';
 
 **NOTE: Without channel, notifications don't work**
 
-In the notifications options, you must provide a channel id with `channelId: "your-channel-id"`, if the channel doesn't exist the notification might not e triggered. Once the channel is created, the channel cannot be update. Make sure your `channelId` is different if you change these options. If you have created a channel in another way, it will apply options of the channel.
+In the notifications options, you must provide a channel id with `channelId: "your-channel-id"`, if the channel doesn't exist the notification might not be triggered. Once the channel is created, the channel cannot be updated. Make sure your `channelId` is different if you change these options. If you have created a channel in another way, it will apply options of the channel.
 
 If you want to use a different default channel for remote notification, refer to the documentation of Firebase:
 
