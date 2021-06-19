@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [7.3.2] 2021-05-12
+
+### Fixed
+
+- (Android) Fix: Foreground notifications missing small icon. [#1927](https://github.com/zo0r/react-native-push-notification/pull/1927)
+
 ## [7.3.1] 2021-05-12
 
 ### Fixed
