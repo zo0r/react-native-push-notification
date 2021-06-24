@@ -361,6 +361,9 @@ PushNotification.localNotificationSchedule({
   message: "My Notification Message", // (required)
   date: new Date(Date.now() + 60 * 1000), // in 60 secs
   allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+
+  /* Android Only Properties */
+  repeatTime: 1, // (optional) Increment of configured repeateType. Check 'Repeating Notifications' section for more info.
 });
 ```
 
@@ -641,7 +644,18 @@ https://developer.android.com/training/monitoring-device-state/doze-standby
 Property `repeatType` can only be `day`.
 
 ### Android
-Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, `time`. If specified as time, it should be accompanied by one more parameter `repeatTime` which should the number of milliseconds between each interval.
+Property `repeatType` could be one of `month`, `week`, `day`, `hour`, `minute`, `time`. 
+
+The interval used can be configured to a different interval using `repeatTime`. If `repeatType` is `time`, `repeatTime` must be specified as the number of milliseconds between each interval.
+For example, to configure a notification every other day
+```javascript
+PushNotification.localNotificationSchedule({
+    ...
+    repeatType: 'day',
+    repeatTime: 2,
+    ...
+});
+```
 
 ## Notification Actions
 

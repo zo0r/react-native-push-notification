@@ -40,8 +40,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -56,9 +54,6 @@ public class RNPushNotificationHelper {
     private Context context;
     private RNPushNotificationConfig config;
     private final SharedPreferences scheduledNotificationsPersistence;
-    private static final int ONE_MINUTE = 60 * 1000;
-    private static final long ONE_HOUR = 60 * ONE_MINUTE;
-    private static final long ONE_DAY = 24 * ONE_HOUR;
 
     public RNPushNotificationHelper(Application context) {
         this.context = context;
@@ -623,44 +618,19 @@ public class RNPushNotificationHelper {
                 return;
             }
 
-            long newFireDate = 0;
+            long newFireDate;
+            if ("time".equals(repeatType)) {
+                newFireDate = fireDate + repeatTime;
+            } else {
+                int repeatField = getRepeatField(repeatType);
 
-            switch (repeatType) {
-                case "time":
-                    newFireDate = fireDate + repeatTime;
-                    break;
-                case "month":
-                    final Calendar fireDateCalendar = new GregorianCalendar();
-                    fireDateCalendar.setTime(new Date(fireDate));
-                    final int fireDay = fireDateCalendar.get(Calendar.DAY_OF_MONTH);
-                    final int fireMinute = fireDateCalendar.get(Calendar.MINUTE);
-                    final int fireHour = fireDateCalendar.get(Calendar.HOUR_OF_DAY);
+                final Calendar nextEvent = Calendar.getInstance();
+                nextEvent.setTimeInMillis(fireDate);
+                // Limits repeat time increment to int instead of long
+                int increment = repeatTime > 0 ? (int) repeatTime : 1;
+                nextEvent.add(repeatField, increment);
 
-                    final Calendar nextEvent = new GregorianCalendar();
-                    nextEvent.setTime(new Date());
-                    final int currentMonth = nextEvent.get(Calendar.MONTH);
-                    int nextMonth = currentMonth < 11 ? (currentMonth + 1) : 0;
-                    nextEvent.set(Calendar.YEAR, nextEvent.get(Calendar.YEAR) + (nextMonth == 0 ? 1 : 0));
-                    nextEvent.set(Calendar.MONTH, nextMonth);
-                    final int maxDay = nextEvent.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    nextEvent.set(Calendar.DAY_OF_MONTH, Math.min(fireDay, maxDay));
-                    nextEvent.set(Calendar.HOUR_OF_DAY, fireHour);
-                    nextEvent.set(Calendar.MINUTE, fireMinute);
-                    nextEvent.set(Calendar.SECOND, 0);
-                    newFireDate = nextEvent.getTimeInMillis();
-                    break;
-                case "week":
-                    newFireDate = fireDate + 7 * ONE_DAY;
-                    break;
-                case "day":
-                    newFireDate = fireDate + ONE_DAY;
-                    break;
-                case "hour":
-                    newFireDate = fireDate + ONE_HOUR;
-                    break;
-                case "minute":
-                    newFireDate = fireDate + ONE_MINUTE;
-                    break;
+                newFireDate = nextEvent.getTimeInMillis();
             }
 
             // Sanity check, should never happen
@@ -670,6 +640,22 @@ public class RNPushNotificationHelper {
                 bundle.putDouble("fireDate", newFireDate);
                 this.sendNotificationScheduled(bundle);
             }
+        }
+    }
+
+    private int getRepeatField(String repeatType) {
+        switch (repeatType) {
+            case "month":
+                return Calendar.MONTH;
+            case "week":
+                return Calendar.WEEK_OF_YEAR;
+            case "hour":
+                return Calendar.HOUR;
+            case "minute":
+                return Calendar.MINUTE;
+            case "day":
+            default:
+                return Calendar.DATE;
         }
     }
 
