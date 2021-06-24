@@ -12,7 +12,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
-## [7.3.2] 2021-05-12
+## [7.4.0] 2021-06-24
+
+### Features
+
+ - (Android): Allow for repeat to specify amount of the given repeat type. [#2063](https://github.com/zo0r/react-native-push-notification/pull/2030)
+ - (iOS): Add support for subtitle notification property. [#2063](https://github.com/zo0r/react-native-push-notification/pull/2063)
+
+## [7.3.2] 2021-06-19
 
 ### Fixed
 
