@@ -324,7 +324,6 @@ PushNotification.localNotification({
   ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
   shortcutId: "shortcut-id", // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
   onlyAlertOnce: false, // (optional) alert will open only once with sound and notify, default: false
-  repeatTime: 1, // (optional) Increment of configured repeateType. Check 'Repeating Notifications' section for more info.
   
   when: null, // (optional) Add a timestamp (Unix timestamp value in milliseconds) pertaining to the notification (usually the time the event occurred). For apps targeting Build.VERSION_CODES.N and above, this time is not shown anymore by default and must be opted into by using `showWhen`, default: null.
   usesChronometer: false, // (optional) Show the `when` field as a stopwatch. Instead of presenting `when` as a timestamp, the notification will show an automatically updating display of the minutes and seconds since when. Useful when showing an elapsed time (like an ongoing phone call), default: false.
@@ -362,6 +361,9 @@ PushNotification.localNotificationSchedule({
   message: "My Notification Message", // (required)
   date: new Date(Date.now() + 60 * 1000), // in 60 secs
   allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+
+  /* Android Only Properties */
+  repeatTime: 1, // (optional) Increment of configured repeateType. Check 'Repeating Notifications' section for more info.
 });
 ```
 
