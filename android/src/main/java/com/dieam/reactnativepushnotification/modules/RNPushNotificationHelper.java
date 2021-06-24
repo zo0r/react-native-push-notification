@@ -649,13 +649,13 @@ public class RNPushNotificationHelper {
                 return Calendar.MONTH;
             case "week":
                 return Calendar.WEEK_OF_YEAR;
-            case "day":
-            default:
-                return Calendar.DATE;
             case "hour":
                 return Calendar.HOUR;
             case "minute":
                 return Calendar.MINUTE;
+            case "day":
+            default:
+                return Calendar.DATE;
         }
     }
 
