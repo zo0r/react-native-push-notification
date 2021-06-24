@@ -170,11 +170,12 @@ Notifications.localNotification = function({...details}) {
       soundName = ''; // empty string results in no sound (and no vibration)
     }
 
-    // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
+    // for valid fields see: https://github.com/react-native-push-notification-ios/push-notification-ios#addnotificationrequest
 
     this.handler.addNotificationRequest({
       id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
       title: details.title,
+      subtitle: details.subtitle,
       body: details.message,
       badge: details.number,
       sound: soundName,
@@ -252,6 +253,7 @@ Notifications.localNotificationSchedule = function({...details}) {
       id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
       fireDate: details.date.toISOString(),
       title: details.title,
+      subtitle: details.subtitle,
       body: details.message,
       sound: soundName,
       isSilent: details.playSound === false,
@@ -364,6 +366,7 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
       data: notifData,
       badge: data.getBadgeCount(),
       title: data.getTitle(),
+      subtitle: data.getSubtitle(),
       soundName: data.getSound(),
       fireDate: Date.parse(data._fireDate),
       action: data.getActionIdentifier(),
