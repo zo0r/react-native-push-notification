@@ -364,7 +364,7 @@ PushNotification.localNotificationSchedule({
   allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
 
   /* Android Only Properties */
-  repeatTime: 1, // (optional) Increment of configured repeateType. Check 'Repeating Notifications' section for more info.
+  repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
 });
 ```
 
@@ -405,7 +405,7 @@ import PushNotification, {Importance} from 'react-native-push-notification';
       playSound: false, // (optional) default: true
       soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
       importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-      vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+      vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
     },
     (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
   );

@@ -1,6 +1,6 @@
 ## Pull Requests
 
-If you are thinking of, or have prepared a pull request, **thank you!**  You efforts are greatly apprecaited by everyone associated with this project.
+If you are thinking of, or have prepared a pull request, **thank you!**  Your efforts are greatly appreciated by everyone associated with this project.
 
 In order to get your PR accepted please ensure the following:
 

@@ -11,7 +11,7 @@ Known bugs and issues:
   
 
   ```javascript
-  // It doesn't works with the javascript engine used by React Native 
+  // It doesn't work with the javascript engine used by React Native 
   const date = new Date("10-10-2020 12:30");
   ```
   A good practice to get valid date could be:
@@ -205,7 +205,6 @@ After you have processed the notification you must call isn't `finish` method (a
 
 #### Some useful links
 
- * http://www.fantageek.com/blog/2016/04/15/push-notification-in-practice/
  * https://devcenter.verivo.com/display/doc/Handling+Push+Notifications+on+iOS
  * https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1
  * http://stackoverflow.com/questions/12071726/how-to-use-beginbackgroundtaskwithexpirationhandler-for-already-running-task-in
