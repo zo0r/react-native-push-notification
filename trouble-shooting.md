@@ -11,7 +11,7 @@ Known bugs and issues:
   
 
   ```javascript
-  // It doesn't works with the javascript engine used by React Native 
+  // It doesn't work with the javascript engine used by React Native 
   const date = new Date("10-10-2020 12:30");
   ```
   A good practice to get valid date could be:

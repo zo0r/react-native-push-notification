@@ -31,7 +31,7 @@ export default class NotifService {
         channelDescription: "A default channel", // (optional) default: undefined.
         soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
         importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-        vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
       },
       (created) => console.log(`createChannel 'default-channel-id' returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
     );
@@ -42,7 +42,7 @@ export default class NotifService {
         channelDescription: "A sound channel", // (optional) default: undefined.
         soundName: "sample.mp3", // (optional) See `soundName` parameter of `localNotification` function
         importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-        vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
       },
       (created) => console.log(`createChannel 'sound-channel-id' returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
     );
@@ -57,7 +57,7 @@ export default class NotifService {
         channelDescription: `A custom channel to categorise your custom notifications. Updated at: ${Date.now()}`, // (optional) default: undefined.
         soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
         importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-        vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
       },
       (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
     );
