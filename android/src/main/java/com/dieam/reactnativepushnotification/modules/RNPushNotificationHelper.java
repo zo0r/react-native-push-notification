@@ -22,11 +22,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.util.Log;
 import androidx.core.app.RemoteInput;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.text.HtmlCompat;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -43,6 +47,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import static android.text.Html.FROM_HTML_MODE_LEGACY;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.KEY_TEXT_REPLY;
@@ -292,7 +297,11 @@ public class RNPushNotificationHelper {
                 // Changing Default mode of notification
                 notification.setDefaults(Notification.DEFAULT_LIGHTS);
             }
-      
+
+            Spanned styledText = HtmlCompat.fromHtml(bundle.getString("message"), HtmlCompat.FROM_HTML_MODE_LEGACY);
+
+            notification.setContentText(styledText);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) { // API 20 and higher
               String group = bundle.getString("group");
 
@@ -360,7 +369,25 @@ public class RNPushNotificationHelper {
               notification.setLargeIcon(largeIconBitmap);
             }
 
-            String message = bundle.getString("message");
+            notification.setSmallIcon(smallIconResId);
+
+            Spanned bigText = null;
+            String bigTextString = bundle.getString("bigText");
+
+            if(bigTextString == null) {
+                bigText = styledText;
+            } else {
+                bigText = HtmlCompat.fromHtml(bigTextString, HtmlCompat.FROM_HTML_MODE_LEGACY);
+            }
+
+            Spanned message = null;
+            String messageString = bundle.getString("message");
+
+            if(messageString == null) {
+                message = styledText;
+            } else {
+                message = HtmlCompat.fromHtml(messageString, HtmlCompat.FROM_HTML_MODE_LEGACY);
+            }
 
             notification.setContentText(message);
 
@@ -369,8 +396,6 @@ public class RNPushNotificationHelper {
             if (subText != null) {
                 notification.setSubText(subText);
             }
- 
-            String bigText = bundle.getString("bigText");
 
             if (bigText == null) {
                 bigText = message;
