@@ -578,6 +578,11 @@ public class RNPushNotificationHelper {
             if (!(this.isApplicationInForeground() && bundle.getBoolean("ignoreInForeground"))) {
                 Notification info = notification.build();
                 info.defaults |= Notification.DEFAULT_LIGHTS;
+                
+                if(bundle.getBoolean("isInsistent", false)){
+                    info.flags |= Notification.FLAG_INSISTENT;
+                }
+                
 
                 if (bundle.containsKey("tag")) {
                     String tag = bundle.getString("tag");
