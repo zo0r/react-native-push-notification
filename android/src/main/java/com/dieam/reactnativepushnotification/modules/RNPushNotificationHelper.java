@@ -22,11 +22,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.text.Spanned;
 import android.util.Log;
 import androidx.core.app.RemoteInput;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.text.HtmlCompat;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -369,12 +371,6 @@ public class RNPushNotificationHelper {
             if (subText != null) {
                 notification.setSubText(subText);
             }
- 
-            String bigText = bundle.getString("bigText");
-
-            if (bigText == null) {
-                bigText = message;
-            }
 
             NotificationCompat.Style style;
 
@@ -401,7 +397,14 @@ public class RNPushNotificationHelper {
                       .bigLargeIcon(bigLargeIconBitmap);
             }
             else {
-              style = new NotificationCompat.BigTextStyle().bigText(bigText);
+              String bigText = bundle.getString("bigText");
+
+              if (bigText == null) {
+                  style = new NotificationCompat.BigTextStyle().bigText(message);
+              } else {
+                  Spanned styledText = HtmlCompat.fromHtml(bigText, HtmlCompat.FROM_HTML_MODE_LEGACY);
+                  style = new NotificationCompat.BigTextStyle().bigText(styledText);
+              }
             }
 
             notification.setStyle(style);
