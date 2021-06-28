@@ -1,10 +1,8 @@
-# USAGE
+# Usage
 
 Here we describe how you can receive and work with notifications.
 
 ## Exemple
-
-### Example app
 
 Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`.
 
