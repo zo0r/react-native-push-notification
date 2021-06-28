@@ -1,4 +1,4 @@
-# Status and Caracteristics
+# Priority, Visibility and Permissions
 
 ## Notification priority
 

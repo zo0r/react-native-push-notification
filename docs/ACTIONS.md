@@ -1,5 +1,5 @@
 
-## Notification Actions
+## Actions
 
 (Android Only)
 
