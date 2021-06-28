@@ -5,21 +5,6 @@
 
 React Native Local and Remote Notifications for iOS and Android
 
-## Documents
-
-[Instalation](https://github.com/zo0r/react-native-push-notification/blob/master/docs/INSTALLATION.md)
-
-[Usage] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/USAGE.md)
-
-[Local Notifications] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
-
-[Actions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/ACTIONS.md)
-
-[iOS and Android Exclusive Functions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/EXCLUSIVE.md)
-
-[Priority, Visibility and Permissions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/STATUS_PERMISSION.md)
-
-
 ## 🎉 Version 7.x is live ! 🎉
 
 Check out for changes and migration in the CHANGELOG:
@@ -38,3 +23,18 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 ## Pull Requests
 
 [Please read...](./submitting-a-pull-request.md)
+
+
+## Documents
+
+[Instalation](https://github.com/zo0r/react-native-push-notification/blob/master/docs/INSTALLATION.md)
+
+[Usage] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/USAGE.md)
+
+[Local Notifications] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
+
+[Actions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/ACTIONS.md)
+
+[iOS and Android Exclusive Functions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/EXCLUSIVE.md)
+
+[Priority, Visibility and Permissions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/STATUS_PERMISSION.md)
