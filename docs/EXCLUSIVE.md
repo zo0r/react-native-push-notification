@@ -1,8 +1,15 @@
+# Methods Exclusive
+
 ## Android Only Methods
 
 `PushNotification.subscribeToTopic(topic: string)` Subscribe to a topic (works only with Firebase)
 
 `PushNotification.unsubscribeFromTopic(topic: string)` Unsubscribe from a topic (works only with Firebase)
+
+## iOS Only Methods
+
+`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
+
 
 ## Android Custom Notification Handling
 
@@ -46,7 +53,3 @@ RNPushNotification.IntentHandlers.add(new RNPushNotification.RNIntentHandler() {
   }
 });
 ```
-
-## iOS Only Methods
-
-`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number

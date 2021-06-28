@@ -1,4 +1,4 @@
-# OTHER GOOD FUNCTIONS
+# Other good functions
 
 ## Scheduled Notifications
 
