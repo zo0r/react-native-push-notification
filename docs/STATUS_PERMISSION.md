@@ -1,5 +1,11 @@
 # Status and Caracteristics
 
+## Show notifications while the app is in foreground
+
+If you want a consistent results in Android & iOS with the most flexibility, it is best to handle it manually by prompting a local notification when `onNotification` is triggered by a remote push notification on foreground (check `notification.foreground` prop).
+
+Watch out for an infinite loop triggering `onNotification` - remote & local notification will trigger it. You can overcome this by marking local notifications' data.
+
 ## Handling Notifications
 
 When any notification is opened or received the callback `onNotification` is called passing an object with the notification data.
@@ -57,11 +63,6 @@ Importance.UNSPECIFIED = NotificationManager.IMPORTANCE_UNSPECIFIED
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
-## Show notifications while the app is in foreground
-
-If you want a consistent results in Android & iOS with the most flexibility, it is best to handle it manually by prompting a local notification when `onNotification` is triggered by a remote push notification on foreground (check `notification.foreground` prop).
-
-Watch out for an infinite loop triggering `onNotification` - remote & local notification will trigger it. You can overcome this by marking local notifications' data.
 
 ## Notification while idle
 
