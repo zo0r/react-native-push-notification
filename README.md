@@ -7,11 +7,19 @@ React Native Local and Remote Notifications for iOS and Android
 
 ## Documents
 
-[Instalation](https://github.com/zo0r/react-native-push-notification/blob/master/docs/INSTALLATION.m)
+[Instalation](https://github.com/zo0r/react-native-push-notification/blob/master/docs/INSTALLATION.md)
 
-[Usage] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/USAGE.m)
+[Usage] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/USAGE.md)
 
-[LocalNotifications] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.m)
+[LocalNotifications] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
+
+[Actions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
+
+[iOS and Android Exclusive Functions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
+
+[Priority, Visibility and Permissions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
+
+[Actions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
 
 
 ## 🎉 Version 7.x is live ! 🎉

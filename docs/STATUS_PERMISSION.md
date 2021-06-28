@@ -1,26 +1,5 @@
 # Status and Caracteristics
 
-## Show notifications while the app is in foreground
-
-If you want a consistent results in Android & iOS with the most flexibility, it is best to handle it manually by prompting a local notification when `onNotification` is triggered by a remote push notification on foreground (check `notification.foreground` prop).
-
-Watch out for an infinite loop triggering `onNotification` - remote & local notification will trigger it. You can overcome this by marking local notifications' data.
-
-## Handling Notifications
-
-When any notification is opened or received the callback `onNotification` is called passing an object with the notification data.
-
-Notification object example:
-
-```javascript
-{
-    foreground: false, // BOOLEAN: If the notification was received in foreground or not
-    userInteraction: false, // BOOLEAN: If the notification was opened by the user from the notification area or not
-    message: 'My Notification Message', // STRING: The notification message
-    data: {}, // OBJECT: The push data or the defined userInfo in local notifications
-}
-```
-
 ## Notification priority
 
 (optional) Specify `priority` to set priority of notification. Default value: "high"
