@@ -5,6 +5,15 @@
 
 React Native Local and Remote Notifications for iOS and Android
 
+## Documents
+
+[Instalation](https://github.com/zo0r/react-native-push-notification/blob/master/docs/INSTALLATION.m)
+
+[Usage] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/USAGE.m)
+
+[Local Notifications] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.m)
+
+[]
 
 ## 🎉 Version 7.x is live ! 🎉
 
@@ -20,19 +29,6 @@ Maintainers are welcome ! Feel free to contact me :wink:
 
 Changelog is available from version 3.1.3 here: [Changelog](https://github.com/zo0r/react-native-push-notification/blob/master/CHANGELOG.md)
 
-## Installation
-
-### NPM
-
-`npm install --save react-native-push-notification`
-
-### Yarn
-
-`yarn add react-native-push-notification`
-
-**NOTE: If you target iOS you also need to follow the [installation instructions for PushNotificationIOS](https://github.com/react-native-community/react-native-push-notification-ios) since this package depends on it.**
-
-**NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
 ## Issues
 
@@ -42,233 +38,6 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 [Please read...](./submitting-a-pull-request.md)
 
-## iOS manual Installation
-
-The component uses PushNotificationIOS for the iOS part. You should follow their [installation instructions](https://github.com/react-native-community/react-native-push-notification-ios).
-
-## Android manual Installation
-
-**NOTE: `firebase-messaging`, prior to version 15 requires to have the same version number in order to work correctly at build time and at run time. To use a specific version:**
-
-In your `android/build.gradle`
-
-```gradle
-ext {
-    googlePlayServicesVersion = "<Your play services version>" // default: "+"
-    firebaseMessagingVersion = "<Your Firebase version>" // default: "21.1.0"
-
-    // Other settings
-    compileSdkVersion = <Your compile SDK version> // default: 23
-    buildToolsVersion = "<Your build tools version>" // default: "23.0.1"
-    targetSdkVersion = <Your target SDK version> // default: 23
-    supportLibVersion = "<Your support lib version>" // default: 23.1.1
-}
-```
-
-**NOTE: localNotification() works without changes in the application part, while localNotificationSchedule() only works with these changes:**
-
-In your `android/app/src/main/AndroidManifest.xml`
-
-```xml
-    .....
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <application ....>
-        <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
-                    android:value="false"/>
-        <!-- Change the resource name to your App's accent color - or any other color you want -->
-        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                    android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
-
-        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
-        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
-        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-     .....
-```
-
-If not using a built in Android color (`@android:color/{name}`) for the `notification_color` `meta-data` item.
-In `android/app/src/main/res/values/colors.xml` (Create the file if it doesn't exist).
-
-```xml
-<resources>
-    <color name="white">#FFF</color>
-</resources>
-```
-
-If your app has an @Override on onNewIntent in `MainActivity.java` ensure that function includes a super call on onNewIntent (if your `MainActivity.java` does not have an @Override for onNewIntent skip this):
-
-```java
-    @Override
-    public void onNewIntent(Intent intent) {
-        ...
-        super.onNewIntent(intent);
-        ...
-    }
-```
-
-### If you use remote notifications
-
-Make sure you have installed setup Firebase correctly.
-
-In `android/build.gradle`
-
-```gradle
-
-buildscript {
-    ...
-    dependencies {
-        ...
-        classpath('com.google.gms:google-services:4.3.3')
-        ...
-    }
-}
-```
-
-In `android/app/build.gradle`
-
-```gradle
-dependencies {
-  ...
-  implementation 'com.google.firebase:firebase-analytics:17.3.0'
-  ...
-}
-
-apply plugin: 'com.google.gms.google-services'
-
-```
-
-Then put your `google-services.json` in `android/app/`.
-
-**Note: [firebase/release-notes](https://firebase.google.com/support/release-notes/android)**
-
-> The Firebase Android library `firebase-core` is no longer needed. This SDK included the Firebase SDK for Google Analytics.
->
-> Now, to use Analytics or any Firebase product that recommends the use of Analytics (see table below), you need to explicitly add the Analytics dependency: `com.google.firebase:firebase-analytics:17.3.0`.
-
-### If you don't use autolink
-
-In `android/settings.gradle`
-
-```gradle
-...
-include ':react-native-push-notification'
-project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
-```
-
-In your `android/app/build.gradle`
-
-```gradle
- dependencies {
-    ...
-    implementation project(':react-native-push-notification')
-    ...
- }
-```
-
-Manually register module in `MainApplication.java` (if you did not use `react-native link`):
-
-```java
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
-
-public class MainApplication extends Application implements ReactApplication {
-
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-      @Override
-      protected boolean getUseDeveloperSupport() {
-        return BuildConfig.DEBUG;
-      }
-
-      @Override
-      protected List<ReactPackage> getPackages() {
-
-          return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),
-              new ReactNativePushNotificationPackage() // <---- Add the Package
-          );
-    }
-  };
-
-  ....
-}
-```
-
-## Usage
-
-**DO NOT USE `.configure()` INSIDE A COMPONENT, EVEN `App`**
-> If you do, notification handlers will not fire, because they are not loaded. Instead, use `.configure()` in the app's first file, usually `index.js`.
-
-
-```javascript
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
-import PushNotification from "react-native-push-notification";
-
-// Must be outside of any component LifeCycle (such as `componentDidMount`).
-PushNotification.configure({
-  // (optional) Called when Token is generated (iOS and Android)
-  onRegister: function (token) {
-    console.log("TOKEN:", token);
-  },
-
-  // (required) Called when a remote is received or opened, or local notification is opened
-  onNotification: function (notification) {
-    console.log("NOTIFICATION:", notification);
-
-    // process the notification
-
-    // (required) Called when a remote is received or opened, or local notification is opened
-    notification.finish(PushNotificationIOS.FetchResult.NoData);
-  },
-
-  // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
-  onAction: function (notification) {
-    console.log("ACTION:", notification.action);
-    console.log("NOTIFICATION:", notification);
-
-    // process the action
-  },
-
-  // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
-  onRegistrationError: function(err) {
-    console.error(err.message, err);
-  },
-
-  // IOS ONLY (optional): default: all - Permissions to register.
-  permissions: {
-    alert: true,
-    badge: true,
-    sound: true,
-  },
-
-  // Should the initial notification be popped automatically
-  // default: true
-  popInitialNotification: true,
-
-  /**
-   * (optional) default: true
-   * - Specified if permissions (ios) and token (android and ios) will requested or not,
-   * - if not, you must call PushNotificationsHandler.requestPermissions() later
-   * - if you are not using remote notification or do not have Firebase installed, use this:
-   *     requestPermissions: Platform.OS === 'ios'
-   */
-  requestPermissions: true,
-});
-```
 
 ## Example app
 
@@ -389,95 +158,6 @@ In iOS, add your custom sound file to the project `Resources` in xCode.
 In the location notification json specify the full file name:
 
     soundName: 'my_sound.mp3'
-
-## Channel Management (Android)
-
-To use channels, create them at startup and pass the matching `channelId` through to `PushNotification.localNotification` or `PushNotification.localNotificationSchedule`.
-
-```javascript
-import PushNotification, {Importance} from 'react-native-push-notification';
-...
-  PushNotification.createChannel(
-    {
-      channelId: "channel-id", // (required)
-      channelName: "My channel", // (required)
-      channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
-      playSound: false, // (optional) default: true
-      soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
-      importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-      vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
-    },
-    (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-  );
-```
-
-**NOTE: Without channel, notifications don't work**
-
-In the notifications options, you must provide a channel id with `channelId: "your-channel-id"`, if the channel doesn't exist the notification might not be triggered. Once the channel is created, the channel cannot be updated. Make sure your `channelId` is different if you change these options. If you have created a channel in another way, it will apply options of the channel.
-
-If you want to use a different default channel for remote notification, refer to the documentation of Firebase:
-
-[Set up a Firebase Cloud Messaging client app on Android](https://firebase.google.com/docs/cloud-messaging/android/client?hl=fr)
-
-```xml
-  <meta-data
-      android:name="com.google.firebase.messaging.default_notification_channel_id"
-      android:value="@string/default_notification_channel_id" />
-```
-
-For local notifications, the same kind of option is available:
-
-- you can use:
-  ```xml
-    <meta-data
-        android:name="com.dieam.reactnativepushnotification.default_notification_channel_id"
-        android:value="@string/default_notification_channel_id" />
-  ```
-- If not defined, fallback to the Firebase value defined in the `AndroidManifest`:
-  ```xml
-    <meta-data
-        android:name="com.google.firebase.messaging.default_notification_channel_id"
-        android:value="..." />
-  ```
-- If not defined, fallback to the default Firebase channel id `fcm_fallback_notification_channel`
-
-### List channels
-
-You can list available channels with:
-
-```js
-PushNotification.getChannels(function (channel_ids) {
-  console.log(channel_ids); // ['channel_id_1']
-});
-```
-
-### Channel exists
-
-You can check if a channel exists with:
-
-```js
-PushNotification.channelExists(channel_id, function (exists) {
-  console.log(exists); // true/false
-});
-```
-
-### Channel blocked
-
-You can check if a channel blocked with:
-
-```js
-PushNotification.channelBlocked(channel_id, function (blocked) {
-  console.log(blocked); // true/false
-});
-```
-
-### Delete channel
-
-You can delete a channel with:
-
-```js
-PushNotification.deleteChannel(channel_id);
-```
 
 ## Cancelling notifications
 
