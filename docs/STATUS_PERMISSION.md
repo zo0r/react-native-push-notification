@@ -1,3 +1,5 @@
+# Status and Caracteristics
+
 ## Handling Notifications
 
 When any notification is opened or received the callback `onNotification` is called passing an object with the notification data.
@@ -78,3 +80,13 @@ https://developer.android.com/training/monitoring-device-state/doze-standby
 ## Abandon Permissions
 
 `PushNotification.abandonPermissions()` Revokes the current token and unregister for all remote notifications received via APNS or FCM.
+
+## Checking Notification Permissions
+
+`PushNotification.checkPermissions(callback: Function)` Check permissions
+
+`callback` will be invoked with a `permissions` object:
+
+- `alert`: boolean
+- `badge`: boolean
+- `sound`: boolean

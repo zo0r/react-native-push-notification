@@ -252,16 +252,6 @@ RNPushNotification.IntentHandlers.add(new RNPushNotification.RNIntentHandler() {
 });
 ```
 
-## Checking Notification Permissions
-
-`PushNotification.checkPermissions(callback: Function)` Check permissions
-
-`callback` will be invoked with a `permissions` object:
-
-- `alert`: boolean
-- `badge`: boolean
-- `sound`: boolean
-
 ## iOS Only Methods
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
