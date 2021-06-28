@@ -1,8 +1,10 @@
 ## Local Notifications
 
+The below method can be used to disparatch local notifications.
+
 `PushNotification.localNotification(details: Object)`
 
-EXAMPLE:
+### EXAMPLE:
 
 ```javascript
 PushNotification.localNotification({
@@ -54,5 +56,23 @@ PushNotification.localNotification({
   soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
   number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
   repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+});
+```
+
+### Scheduled Notifications
+
+`PushNotification.localNotificationSchedule(details: Object)`
+
+EXAMPLE:
+
+```javascript
+PushNotification.localNotificationSchedule({
+  //... You can use all the options from localNotifications
+  message: "My Notification Message", // (required)
+  date: new Date(Date.now() + 60 * 1000), // in 60 secs
+  allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+
+  /* Android Only Properties */
+  repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
 });
 ```
