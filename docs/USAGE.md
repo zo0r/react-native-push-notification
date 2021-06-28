@@ -4,6 +4,13 @@ Here we describe how you can receive and work with notifications.
 
 ## Exemple
 
+### Example app
+
+Example folder contains an example app to demonstrate how to use this package. The notification Handling is done in `NotifService.js`.
+
+Please test your PRs with this example app before submitting them. It'll help maintaining this repo.
+
+
 **DO NOT USE `.configure()` INSIDE A COMPONENT, EVEN `App`**
 > If you do, notification handlers will not fire, because they are not loaded. Instead, use `.configure()` in the app's first file, usually `index.js`.
 
