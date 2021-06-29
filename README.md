@@ -27,14 +27,14 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 ## Documents
 
-[Instalation](https://github.com/zo0r/react-native-push-notification/blob/master/docs/INSTALLATION.md)
+[Instalation](./docs/INSTALLATION.md)
 
-[Usage] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/USAGE.md)
+[Usage] (./docs/USAGE.md)
 
-[Local Notifications] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/LOCAL.md)
+[Local Notifications] (./docs/LOCAL.md)
 
-[Actions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/ACTIONS.md)
+[Actions] (./docs/ACTIONS.md)
 
-[iOS and Android Exclusive Functions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/EXCLUSIVE.md)
+[iOS and Android Exclusive Functions] (./docs/EXCLUSIVE.md)
 
-[Priority, Visibility and Permissions] (https://github.com/zo0r/react-native-push-notification/blob/master/docs/STATUS_PERMISSION.md)
+[Priority, Visibility and Permissions] (./docs/STATUS_PERMISSION.md)
