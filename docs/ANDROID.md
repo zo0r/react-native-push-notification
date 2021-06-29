@@ -6,10 +6,6 @@
 
 `PushNotification.unsubscribeFromTopic(topic: string)` Unsubscribe from a topic (works only with Firebase)
 
-## iOS Only Methods
-
-`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
-
 
 ## Android Custom Notification Handling
 

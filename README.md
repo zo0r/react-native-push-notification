@@ -36,6 +36,8 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 [Actions](./docs/ACTIONS.md)
 
-[iOS and Android Exclusive Functions](./docs/EXCLUSIVE.md)
+[iOS](./docs/IOS.md)
+
+[Android](./docs/ANDROID.md)
 
 [Priority, Visibility and Permissions](./docs/STATUS_PERMISSION.md)
