@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import com.dieam.reactnativepushnotification.types.RNPushNotificationUserConfig;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -32,9 +33,15 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotification.L
 
 public class RNReceivedMessageHandler {
     private FirebaseMessagingService mFirebaseMessagingService;
+    private RNPushNotificationUserConfig userConfig;
 
     public RNReceivedMessageHandler(@NonNull FirebaseMessagingService service) {
         this.mFirebaseMessagingService = service;
+    }
+
+    public RNReceivedMessageHandler(@NonNull FirebaseMessagingService service, RNPushNotificationUserConfig userConfig) {
+        this.mFirebaseMessagingService = service;
+        this.userConfig = userConfig;
     }
 
     public void handleReceivedMessage(RemoteMessage message) {
@@ -127,6 +134,11 @@ public class RNReceivedMessageHandler {
         bundle.putParcelable("data", dataBundle);
 
         Log.v(LOG_TAG, "onMessageReceived: " + bundle);
+
+        if (this.userConfig != null && this.userConfig.getPushNotificationBundleEditor() != null) {
+            this.userConfig.getPushNotificationBundleEditor().editBundle(bundle, message);
+            Log.v(LOG_TAG, "onBundleEditedByUser: " + bundle);
+        }
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
