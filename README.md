@@ -29,12 +29,13 @@ Having a problem? Read the [troubleshooting](./trouble-shooting.md) guide before
 
 [Instalation](./docs/INSTALLATION.md)
 
-[Usage] (./docs/USAGE.md)
 
-[Local Notifications] (./docs/LOCAL.md)
+[Usage](./docs/USAGE.md)
 
-[Actions] (./docs/ACTIONS.md)
+[Local Notifications](./docs/LOCAL.md)
 
-[iOS and Android Exclusive Functions] (./docs/EXCLUSIVE.md)
+[Actions](./docs/ACTIONS.md)
 
-[Priority, Visibility and Permissions] (./docs/STATUS_PERMISSION.md)
+[iOS and Android Exclusive Functions](./docs/EXCLUSIVE.md)
+
+[Priority, Visibility and Permissions](./docs/STATUS_PERMISSION.md)
