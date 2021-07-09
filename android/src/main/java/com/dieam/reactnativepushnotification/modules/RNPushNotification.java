@@ -218,10 +218,12 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      * Cancels all scheduled local notifications, and removes all entries from the notification
      * centre.
      *
+     * @channelIdToSkipCancelling - use for excluding channel from getting canceled.
+     *
      */
-    public void cancelAllLocalNotifications() {
+    public void cancelAllLocalNotifications(String channelIdToSkipCancelling) {
         mRNPushNotificationHelper.cancelAllScheduledNotifications();
-        mRNPushNotificationHelper.clearNotifications();
+        mRNPushNotificationHelper.clearNotifications(channelIdToSkipCancelling);
     }
 
     @ReactMethod
@@ -247,7 +249,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      *
      */
     public void removeAllDeliveredNotifications() {
-      mRNPushNotificationHelper.clearNotifications();
+      mRNPushNotificationHelper.clearNotifications(null);
     }
 
     @ReactMethod

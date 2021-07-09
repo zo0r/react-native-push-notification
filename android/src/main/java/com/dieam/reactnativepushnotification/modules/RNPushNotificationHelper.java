@@ -680,11 +680,21 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void clearNotifications() {
+    public void clearNotifications(String channelIdToSkipCancelling) {
         Log.i(LOG_TAG, "Clearing alerts from the notification centre");
 
         NotificationManager notificationManager = notificationManager();
-        notificationManager.cancelAll();
+
+        if (channelIdToSkipCancelling == null || channelIdToSkipCancelling.trim().isEmpty()) {
+            notificationManager.cancelAll();
+        } else {
+            for (StatusBarNotification notif: notificationManager.getActiveNotifications()
+            ) {
+                if (!notif.getNotification().getChannelId().equals(channelIdToSkipCancelling)) {
+                    notificationManager.cancel(notif.getId());
+                }
+            }
+        }
     }
 
     public void clearNotification(String tag, int notificationID) {

@@ -44,8 +44,8 @@ NotificationsComponent.prototype.clearLocalNotification = function(details, tag)
 	RNPushNotification.clearLocalNotification(details, tag);
 };
 
-NotificationsComponent.prototype.cancelAllLocalNotifications = function() {
-	RNPushNotification.cancelAllLocalNotifications();
+NotificationsComponent.prototype.cancelAllLocalNotifications = function(channelIdToSkipCancelling) {
+	RNPushNotification.cancelAllLocalNotifications(channelIdToSkipCancelling);
 };
 
 NotificationsComponent.prototype.presentLocalNotification = function(details) {
