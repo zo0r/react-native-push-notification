@@ -24,11 +24,15 @@ Changelog is available from version 3.1.3 here: [Changelog](https://github.com/z
 
 ### NPM
 
-`npm install --save react-native-push-notification`
+```
+npm install --save react-native-push-notification
+```
 
 ### Yarn
 
-`yarn add react-native-push-notification`
+```
+yarn add react-native-push-notification
+```
 
 **NOTE: If you target iOS you also need to follow the [installation instructions for PushNotificationIOS](https://github.com/react-native-community/react-native-push-notification-ios) since this package depends on it.**
 
@@ -293,7 +297,9 @@ Notification object example:
 
 ## Local Notifications
 
-`PushNotification.localNotification(details: Object)`
+```js
+PushNotification.localNotification(details: Object)
+```
 
 EXAMPLE:
 
@@ -352,7 +358,9 @@ PushNotification.localNotification({
 
 ## Scheduled Notifications
 
-`PushNotification.localNotificationSchedule(details: Object)`
+```js
+PushNotification.localNotificationSchedule(details: Object)
+```
 
 EXAMPLE:
 
@@ -370,7 +378,9 @@ PushNotification.localNotificationSchedule({
 
 ## Get the initial notification
 
-`PushNotification.popInitialNotification(callback)`
+```js
+PushNotification.popInitialNotification(callback)
+```
 
 EXAMPLE:
 
@@ -578,7 +588,10 @@ Returns an array of local scheduled notification objects containing:
 
 ## Abandon Permissions
 
-`PushNotification.abandonPermissions()` Revokes the current token and unregister for all remote notifications received via APNS or FCM.
+```js
+PushNotification.abandonPermissions()
+```
+Revokes the current token and unregister for all remote notifications received via APNS or FCM.
 
 ## Notification priority
 
@@ -586,11 +599,13 @@ Returns an array of local scheduled notification objects containing:
 
 Available options:
 
+```
 "max" = NotficationCompat.PRIORITY_MAX\
 "high" = NotficationCompat.PRIORITY_HIGH\
 "low" = NotficationCompat.PRIORITY_LOW\
 "min" = NotficationCompat.PRIORITY_MIN\
 "default" = NotficationCompat.PRIORITY_DEFAULT
+```
 
 More information: https://developer.android.com/reference/android/app/Notification.html#PRIORITY_DEFAULT
 
@@ -600,10 +615,11 @@ More information: https://developer.android.com/reference/android/app/Notificati
 
 Available options:
 
+```
 "private" = NotficationCompat.VISIBILITY_PRIVATE\
 "public" = NotficationCompat.VISIBILITY_PUBLIC\
 "secret" = NotficationCompat.VISIBILITY_SECRET 
-
+```
 More information: https://developer.android.com/reference/android/app/Notification.html#VISIBILITY_PRIVATE
 
 ## Notification importance
@@ -612,13 +628,14 @@ More information: https://developer.android.com/reference/android/app/Notificati
 Constants available on the `Importance` object. `import PushNotification, {Importance} from 'react-native-push-notification';`
 
 Available options:
-
+```
 Importance.DEFAULT = NotificationManager.IMPORTANCE_DEFAULT\
 Importance.HIGH = NotificationManager.IMPORTANCE_HIGH\
 Importance.LOW = NotificationManager.IMPORTANCE_LOW\
 Importance.MIN = NotificationManager.IMPORTANCE_MIN\
 Importance.NONE= NotificationManager.IMPORTANCE_NONE\
 Importance.UNSPECIFIED = NotificationManager.IMPORTANCE_UNSPECIFIED
+```
 
 More information: https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 
@@ -713,7 +730,9 @@ Documentation [here](https://github.com/react-native-push-notification-ios/push-
 
 ## Set application badge icon
 
-`PushNotification.setApplicationIconBadgeNumber(number: number)`
+```js
+PushNotification.setApplicationIconBadgeNumber(number: number)
+```
 
 Works natively in iOS.
 
@@ -721,9 +740,15 @@ Uses the [ShortcutBadger](https://github.com/leolin310148/ShortcutBadger) on And
 
 ## Android Only Methods
 
-`PushNotification.subscribeToTopic(topic: string)` Subscribe to a topic (works only with Firebase)
+```js
+PushNotification.subscribeToTopic(topic: string)
+```
+Subscribe to a topic (works only with Firebase)
 
-`PushNotification.unsubscribeFromTopic(topic: string)` Unsubscribe from a topic (works only with Firebase)
+```js
+PushNotification.unsubscribeFromTopic(topic: string)
+```
+Unsubscribe from a topic (works only with Firebase)
 
 ## Android Custom Notification Handling
 
@@ -744,7 +769,7 @@ Data payloads of notifications from 3rd party services may not match the format 
 
 Custom handlers are added in Application init or `MainActivity.onCreate()` methods:
 
-```
+```java
 RNPushNotification.IntentHandlers.add(new RNPushNotification.RNIntentHandler() {
   @Override
   public void onNewIntent(Intent intent) {
@@ -770,7 +795,9 @@ RNPushNotification.IntentHandlers.add(new RNPushNotification.RNIntentHandler() {
 
 ## Checking Notification Permissions
 
-`PushNotification.checkPermissions(callback: Function)` Check permissions
+```js
+PushNotification.checkPermissions(callback: Function) //Check permissions
+```
 
 `callback` will be invoked with a `permissions` object:
 
@@ -780,4 +807,7 @@ RNPushNotification.IntentHandlers.add(new RNPushNotification.RNIntentHandler() {
 
 ## iOS Only Methods
 
-`PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
+```js
+PushNotification.getApplicationIconBadgeNumber(callback: Function) //Get badge number
+```
+
