@@ -50,7 +50,7 @@ Known bugs and issues:
   
 # About notifications...
 
-There are a number of different types of notifications, and they have subtly different behaviours.  There are essentially 4 types, let's call them _local notifications_ (1), _noisy remote push notifications_ (2), _silent remote push notifications_ (3) and _mixed remote push notifications_ (4).
+There are a number of different types of notifications, and they have subtly different behaviours.  There are essentially 4 types, let's call them _local notifications_ (1), _noisy remote push notifications_ (2) and _silent remote push notifications_ (3).
 
 ## 1. local notifications
 
@@ -202,50 +202,6 @@ The crucial bit of an iOS silent notification is presence of the `"content-avail
 ```
 
 After you have processed the notification you must call isn't `finish` method (as of RN 0.38).
-
-## 4. _mixed_ remote push notifications
-
-_Mixed_ remote push notifications are both delivered to your app AND to the notification center.
-
-#### Android _mixed_ remote push notifications
-
-Android doesn't directly support mixed notifications.  If you try to combine the above approaches you will see a _noisy_ notification but it will not be delivered to your app.  This library does however provide a basic work-around.  By adding `message` field to a _silent_ notification the library will synthesize a local notification as well as deliver a _silent_ notification to your app.  Something like this:
-
-```json
-{
-  "to": "<token>",
-  "time_to_live": 86400,
-  "collapse_key": "new_message",
-  "delay_while_idle": false,
-  "data": {
-    "title": "title",
-    "message": "this is a mixed test 14:03:29.676",
-    "your-key": "your-value"
-  }
-}
-```
-
-The resulting local notification will include the message as well as a few other (optional) fields: _title_, _sound_ and _colour_
-
-#### iOS _mixed_ remote push notifications
-
-Just combine the above _silent_ and _noisy_ notifications and send to APNS:
-
-```json
-{
-  "aps": {
-    "alert": {
-      "body": "body 16:03:49.889",
-      "title": "title"
-    },
-    "badge": 1,
-    "sound": "default"
-  },
-  "payload": "{\"your-key\":\"your-value\"}"
-}
-```
-
-It will be delivered to both the notification centre **and** your app if the app is running in the background, but only to your app if it's running in the foreground.
 
 #### Some useful links
 

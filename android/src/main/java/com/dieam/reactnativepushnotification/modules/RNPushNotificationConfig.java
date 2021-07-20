@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 class RNPushNotificationConfig {
-    private static final String KEY_CHANNEL_CREATE_DEFAULT = "com.dieam.reactnativepushnotification.channel_create_default";
-    private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
-    private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
+    private static final String KEY_NOTIFICATION_FIREBASE_DEFAULT_CHANNEL_ID = "com.google.firebase.messaging.default_notification_channel_id";
+    private static final String KEY_NOTIFICATION_DEFAULT_CHANNEL_ID = "com.dieam.reactnativepushnotification.default_notification_channel_id";
     private static final String KEY_NOTIFICATION_FOREGROUND = "com.dieam.reactnativepushnotification.notification_foreground";
     private static final String KEY_NOTIFICATION_COLOR = "com.dieam.reactnativepushnotification.notification_color";
 
@@ -46,18 +45,6 @@ class RNPushNotificationConfig {
         return defaultValue;
     }
 
-    public String getChannelName(String channel_id) {
-        String overrided = this.getStringValue(KEY_CHANNEL_NAME, "rn-push-notification-channel");  
-
-        return this.getStringValue(KEY_CHANNEL_NAME + "." + channel_id, overrided);
-    }
-    
-    public String getChannelDescription(String channel_id) {
-        String overrided = this.getStringValue(KEY_CHANNEL_DESCRIPTION, "");  
-        
-        return this.getStringValue(KEY_CHANNEL_DESCRIPTION + "." + channel_id, overrided);
-    }
-
     public int getNotificationColor() {
         try {
             int resourceId = metadata.getInt(KEY_NOTIFICATION_COLOR);
@@ -79,13 +66,15 @@ class RNPushNotificationConfig {
         return false;
     }
 
-    public boolean getChannelCreateDefault() {
+    public String getNotificationDefaultChannelId() {
         try {
-            return metadata.getBoolean(KEY_CHANNEL_CREATE_DEFAULT, true);
+            return getStringValue(KEY_NOTIFICATION_DEFAULT_CHANNEL_ID,
+              getStringValue(KEY_NOTIFICATION_FIREBASE_DEFAULT_CHANNEL_ID, "fcm_fallback_notification_channel")
+            );
         } catch (Exception e) {
-            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_CREATE_DEFAULT + " in manifest. Falling back to default");
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_DEFAULT_CHANNEL_ID + " in manifest. Falling back to default");
         }
         // Default
-        return true;
+        return "fcm_fallback_notification_channel";
     }
 }

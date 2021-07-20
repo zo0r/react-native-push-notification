@@ -13,8 +13,10 @@ import android.util.Log;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
+import androidx.core.app.RemoteInput;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
+import static com.dieam.reactnativepushnotification.modules.RNPushNotification.KEY_TEXT_REPLY;
 
 public class RNPushNotificationActions extends BroadcastReceiver {
     @Override
@@ -28,7 +30,15 @@ public class RNPushNotificationActions extends BroadcastReceiver {
       }
 
       final Bundle bundle = intent.getBundleExtra("notification");
+      Bundle remoteInput = null;
 
+      if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
+          remoteInput = RemoteInput.getResultsFromIntent(intent);
+      }
+      if (remoteInput != null) {
+          // Add to reply_text the text written by the user in the notification
+          bundle.putCharSequence("reply_text", remoteInput.getCharSequence(KEY_TEXT_REPLY));
+      }
       // Dismiss the notification popup.
       NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
       int notificationID = Integer.parseInt(bundle.getString("id"));
@@ -51,6 +61,8 @@ public class RNPushNotificationActions extends BroadcastReceiver {
           RNPushNotificationHelper helper = new RNPushNotificationHelper((Application) context.getApplicationContext());
 
           helper.invokeApp(bundle);
+
+          context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
       } else {
 
         // We need to run this on the main thread, as the React code assumes that is true.
