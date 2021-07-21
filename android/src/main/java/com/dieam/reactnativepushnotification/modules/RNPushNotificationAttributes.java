@@ -186,7 +186,7 @@ public class RNPushNotificationAttributes {
     @NonNull
     public static RNPushNotificationAttributes fromJson(String notificationAttributesJson) throws JSONException {
         JSONObject jsonObject = new JSONObject(notificationAttributesJson);
-        
+
         return new RNPushNotificationAttributes(jsonObject);
     }
 
@@ -244,6 +244,26 @@ public class RNPushNotificationAttributes {
         }
 
         return true;
+    }
+
+    /**
+    * Checks if the id of this RNPushNotificationAttributes is equal to the id
+    * provided within the userInfo map
+    *
+    * @param userInfo map of fields containing the id field to match
+    * @return true if ids match, false otherwise
+    */
+    public boolean idMatches(ReadableMap userInfo) {
+        try {
+            if(this.userInfo == null || userInfo == null) {
+              return false;
+            }
+            String userInfoId = userInfo.getString("id");
+            return this.id.equals(userInfoId);
+        } catch(Exception e) {
+            Log.e(LOG_TAG, "idMatches encountered an error", e);
+            return false;
+        }
     }
 
     public Bundle toBundle() {
