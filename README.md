@@ -498,7 +498,9 @@ PushNotification.cancelLocalNotifications({id: '123'});
 
 ### 2) cancelAllLocalNotifications
 
-`PushNotification.cancelAllLocalNotifications()`
+```javascript
+PushNotification.cancelAllLocalNotifications()
+```
 
 Cancels all scheduled notifications AND clears the notifications alerts that are in the notification centre.
 
