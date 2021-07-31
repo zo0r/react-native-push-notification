@@ -333,6 +333,8 @@ PushNotification.localNotification({
 
   actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
   invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
+  fullScreenIntent: false, // (optional) Specifies to whether or not to launch an intent instead of posting the notification to the status bar.
+  
 
   /* iOS only properties */
   category: "", // (optional) default: empty string
@@ -781,3 +783,43 @@ RNPushNotification.IntentHandlers.add(new RNPushNotification.RNIntentHandler() {
 ## iOS Only Methods
 
 `PushNotification.getApplicationIconBadgeNumber(callback: Function)` Get badge number
+
+## Full screen intents
+
+(Android Only)
+
+In order to launch an intent instead of posting the notification to the status bar you will have to specify `fullScreenIntent: true` while configuring the local notification.
+
+**NOTE: Apps targeting Build.VERSION_CODES#Q and above will have to request a permission in order to use full screen intents.**
+```xml
+<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+````
+
+**NOTE: To be able to view the intent launched by the app when the device is locked you will have to add the following properties the the MainActivity as follows**
+```xml
+<activity
+        android:name=".MainActivity"
+        ...
+        android:showOnLockScreen="true"
+        android:showWhenLocked="true"
+        android:turnScreenOn="true"
+        ...
+</activity>
+````
+
+Additionally you will have to add the following code to the `MainActivity.java` file.
+```java
+@Override
+protected void onStart() {
+    super.onStart();
+    ...
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        setShowWhenLocked(true);
+        setTurnScreenOn(true);
+    } else {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+    }
+    ...
+}
+```
+
