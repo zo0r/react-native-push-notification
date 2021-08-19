@@ -775,23 +775,7 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void cancelScheduledNotification(ReadableMap userInfo) {
-        for (String id : scheduledNotificationsPersistence.getAll().keySet()) {
-            try {
-                String notificationAttributesJson = scheduledNotificationsPersistence.getString(id, null);
-                if (notificationAttributesJson != null) {
-                    RNPushNotificationAttributes notificationAttributes = fromJson(notificationAttributesJson);
-                    if (notificationAttributes.matches(userInfo)) {
-                        cancelScheduledNotification(id);
-                    }
-                }
-            } catch (JSONException e) {
-                Log.w(LOG_TAG, "Problem dealing with scheduled notification " + id, e);
-            }
-        }
-    }
-
-    private void cancelScheduledNotification(String notificationIDString) {
+    public void cancelScheduledNotification(String notificationIDString) {
         Log.i(LOG_TAG, "Cancelling notification: " + notificationIDString);
 
         // remove it from the alarm manger schedule

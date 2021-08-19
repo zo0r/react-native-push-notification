@@ -190,62 +190,6 @@ public class RNPushNotificationAttributes {
         return new RNPushNotificationAttributes(jsonObject);
     }
 
-    /**
-     * User to find notifications:
-     * <p>
-     *
-     * @param userInfo map of fields to match
-     * @return true all fields in userInfo object match, false otherwise
-     */
-    public boolean matches(ReadableMap userInfo) {
-        try {
-          if(this.userInfo == null) {
-            return false;
-          }
-
-          JSONObject jsonObject = new JSONObject(this.userInfo);
-
-          ReadableMapKeySetIterator iterator = userInfo.keySetIterator();
-          while (iterator.hasNextKey()) {
-              String key = iterator.nextKey();
-
-              if (!jsonObject.has(key))
-                  return false;
-
-              switch (userInfo.getType(key)) {
-                  case Null: {
-                      if (jsonObject.get(key) != null)
-                          return false;
-                      break;
-                  }
-                  case Boolean: {
-                      if (userInfo.getBoolean(key) != jsonObject.getBoolean(key))
-                          return false;
-                      break;
-                  }
-                  case Number: {
-                      if ((userInfo.getDouble(key) != jsonObject.getDouble(key)) && (userInfo.getInt(key) != jsonObject.getInt(key)))
-                          return false;
-                      break;
-                  }
-                  case String: {
-                      if (!userInfo.getString(key).equals(jsonObject.getString(key)))
-                          return false;
-                      break;
-                  }
-                  case Map:
-                      return false;//there are no maps in the jsonObject
-                  case Array:
-                      return false;//there are no arrays in the jsonObject
-              }
-          }
-        } catch(JSONException e) {
-          return false;
-        }
-
-        return true;
-    }
-
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         bundle.putString(ID, id);
