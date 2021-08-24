@@ -12,6 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [8.0.1] 2021-08-24
+
+### Fixed
+
+- (Android): Fix bug cancelLocalNotification() does not work on Android [#2122](https://github.com/zo0r/react-native-push-notification/issues/2122)
+
 ## [8.0.0] 2021-08-19
 
 ### Breaking changes
