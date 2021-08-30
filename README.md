@@ -307,7 +307,7 @@ PushNotification.localNotification({
   largeIcon: "ic_launcher", // (optional) default: "ic_launcher". Use "" for no large icon.
   largeIconUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
   smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher". Use "" for default small icon.
-  bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
+  bigText: "My big text that will be shown when notification is expanded. Styling can be done using HTML tags(see android docs for details)", // (optional) default: "message" prop
   subText: "This is a subText", // (optional) default: none
   bigPictureUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
   bigLargeIcon: "ic_launcher", // (optional) default: undefined
