@@ -12,6 +12,17 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [8.1.0] 2021-09-03
+
+### Features
+
+- (iOS) Upgrade `@react-native-community/push-notification-ios` to version [1.10.0](https://github.com/react-native-push-notification/ios/releases/tag/v1.10.0)
+- (iOS) Allow `month`, `week`, `day`, `hour`, `minute` as `repeatType` for iOS.
+
+### Fixed
+
+- (Android): Fix Android 12 PendingIntent [#2130](https://github.com/zo0r/react-native-push-notification/pull/2130)
+
 ## [8.0.1] 2021-08-24
 
 ### Fixed

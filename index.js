@@ -250,6 +250,14 @@ Notifications.localNotificationSchedule = function({...details}) {
       details.userInfo = details.userInfo || {};
       details.userInfo.image = details.picture;
     }
+    
+    const repeatsComponent = {
+      second: details.repeatType == "minute",
+      minute: details.repeatType == "hour",
+      hour: details.repeatType == "day",
+      day: details.repeatType == "month",
+      dayOfWeek: details.repeatType == "week",
+    };
 
     const iosDetails = {
       id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
@@ -261,7 +269,8 @@ Notifications.localNotificationSchedule = function({...details}) {
       isSilent: details.playSound === false,
       category: details.category,
       userInfo: details.userInfo,
-      repeats: (details.repeatType && details.repeatType == "day"),
+      repeats: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
+      repeatsComponent: repeatsComponent
     };
 
     if (details.number) {
@@ -304,10 +313,7 @@ Notifications.localNotificationSchedule = function({...details}) {
 
     details.fireDate = details.date.getTime();
     delete details.date;
-    // ignore iOS only repeatType
-    if (['year'].includes(details.repeatType)) {
-      delete details.repeatType;
-    }
+
     this.handler.scheduleLocalNotification(details);
   }
 };
