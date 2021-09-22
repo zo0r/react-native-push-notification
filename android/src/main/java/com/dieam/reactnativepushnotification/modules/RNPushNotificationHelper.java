@@ -22,11 +22,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.text.Spanned;
 import android.util.Log;
 import androidx.core.app.RemoteInput;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.text.HtmlCompat;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -107,7 +109,9 @@ public class RNPushNotificationHelper {
             notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
             notificationIntent.putExtras(bundle);
 
-            return PendingIntent.getBroadcast(context, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
+
+            return PendingIntent.getBroadcast(context, notificationID, notificationIntent, flags);
         } catch (Exception e) {
             Log.e(LOG_TAG, "Unable to parse Notification ID", e);
         }
@@ -369,12 +373,6 @@ public class RNPushNotificationHelper {
             if (subText != null) {
                 notification.setSubText(subText);
             }
- 
-            String bigText = bundle.getString("bigText");
-
-            if (bigText == null) {
-                bigText = message;
-            }
 
             NotificationCompat.Style style;
 
@@ -401,7 +399,14 @@ public class RNPushNotificationHelper {
                       .bigLargeIcon(bigLargeIconBitmap);
             }
             else {
-              style = new NotificationCompat.BigTextStyle().bigText(bigText);
+              String bigText = bundle.getString("bigText");
+
+              if (bigText == null) {
+                  style = new NotificationCompat.BigTextStyle().bigText(message);
+              } else {
+                  Spanned styledText = HtmlCompat.fromHtml(bigText, HtmlCompat.FROM_HTML_MODE_LEGACY);
+                  style = new NotificationCompat.BigTextStyle().bigText(styledText);
+              }
             }
 
             notification.setStyle(style);
@@ -451,7 +456,7 @@ public class RNPushNotificationHelper {
             int notificationID = Integer.parseInt(notificationIdString);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
 
@@ -531,8 +536,10 @@ public class RNPushNotificationHelper {
                         intent.putExtra("message_id", messageId);
                     }
 
-                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
+                    int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
+
+                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent, flags);
+
                     if(action.equals("ReplyInput")){
                         //Action with inline reply
                         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH){
@@ -778,23 +785,7 @@ public class RNPushNotificationHelper {
         }
     }
 
-    public void cancelScheduledNotification(ReadableMap userInfo) {
-        for (String id : scheduledNotificationsPersistence.getAll().keySet()) {
-            try {
-                String notificationAttributesJson = scheduledNotificationsPersistence.getString(id, null);
-                if (notificationAttributesJson != null) {
-                    RNPushNotificationAttributes notificationAttributes = fromJson(notificationAttributesJson);
-                    if (notificationAttributes.matches(userInfo)) {
-                        cancelScheduledNotification(id);
-                    }
-                }
-            } catch (JSONException e) {
-                Log.w(LOG_TAG, "Problem dealing with scheduled notification " + id, e);
-            }
-        }
-    }
-
-    private void cancelScheduledNotification(String notificationIDString) {
+    public void cancelScheduledNotification(String notificationIDString) {
         Log.i(LOG_TAG, "Cancelling notification: " + notificationIDString);
 
         // remove it from the alarm manger schedule

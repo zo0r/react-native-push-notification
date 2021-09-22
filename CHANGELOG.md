@@ -12,6 +12,40 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [8.1.0] 2021-09-03
+
+### Features
+
+- (iOS) Upgrade `@react-native-community/push-notification-ios` to version [1.10.0](https://github.com/react-native-push-notification/ios/releases/tag/v1.10.0)
+- (iOS) Allow `month`, `week`, `day`, `hour`, `minute` as `repeatType` for iOS.
+- (Android) Allow HTML tags to be used for styling in bigText field only [#2067](https://github.com/zo0r/react-native-push-notification/pull/2067).
+
+### Fixed
+
+- (Android): Fix Android 12 PendingIntent [#2130](https://github.com/zo0r/react-native-push-notification/pull/2130)
+
+## [8.0.1] 2021-08-24
+
+### Fixed
+
+- (Android): Fix bug cancelLocalNotification() does not work on Android [#2122](https://github.com/zo0r/react-native-push-notification/issues/2122)
+
+## [8.0.0] 2021-08-19
+
+### Breaking changes
+
+- `userInfo` is no more populated with the `id` of the notification, initialy included to cancel scheduled notifications. This change will probably not impact you.
+-  Rename `cancelLocalNotifications` to `cancelLocalNotification` (deprecation notice).
+
+### Features
+
+- (iOS) upgrade `@react-native-community/push-notification-ios` to version [1.9.0](https://github.com/react-native-push-notification/ios/releases/tag/v1.9.0)
+- `picture` is now support for both Android and iOS, (alias of `bigPictureUrl` for Android).
+
+### Fixed
+
+- (Android): Fix bug cancelLocalNotifications() does not work on Android [#2100](https://github.com/zo0r/react-native-push-notification/issues/2100)
+
 ## [7.4.0] 2021-06-24
 
 ### Features
