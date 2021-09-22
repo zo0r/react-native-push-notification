@@ -826,7 +826,7 @@ In order to launch an intent instead of posting the notification to the status b
 <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 ````
 
-**NOTE: To be able to view the intent launched by the app when the device is locked you will have to add the following properties the the MainActivity as follows**
+**NOTE: To be able to view the intent launched by the app when the device is locked you will have to add the following properties to the MainActivity as follows**
 ```xml
 <activity
         android:name=".MainActivity"
@@ -834,7 +834,7 @@ In order to launch an intent instead of posting the notification to the status b
         android:showOnLockScreen="true"
         android:showWhenLocked="true"
         android:turnScreenOn="true"
-        ...
+        ...>
 </activity>
 ````
 
