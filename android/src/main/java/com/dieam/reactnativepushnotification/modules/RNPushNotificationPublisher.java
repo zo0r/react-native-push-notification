@@ -51,12 +51,30 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
         if (isForeground) {
             final ReactInstanceManager mReactInstanceManager = ((ReactApplication) context.getApplicationContext()).getReactNativeHost().getReactInstanceManager();
             ReactContext reactContext = mReactInstanceManager.getCurrentReactContext();
-            RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(reactContext);
-            jsDelivery.notifyNotification(bundle);
+            if (reactContext != null) {
+                handleForeground(reactContext, bundle);
+            } else {
+                // Otherwise wait for construction, then send the notification
+                mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+                    public void onReactContextInitialized(ReactContext context) {
+                        handleForeground(context, bundle);
+                        mReactInstanceManager.removeReactInstanceEventListener(this);
+                    }
+                });
+                if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
+                    // Construct it in the background
+                    mReactInstanceManager.createReactContextInBackground();
+                }
+            }
         }
         
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
         pushNotificationHelper.sendToNotificationCentre(bundle);
+    }
+
+    private void handleForeground(ReactContext context, Bundle bundle) {
+        RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
+        jsDelivery.notifyNotification(bundle);
     }
 }
