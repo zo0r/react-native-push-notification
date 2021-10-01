@@ -155,12 +155,6 @@ Notifications.localNotification = function({...details}) {
     }
   }
 
-  if (details.userInfo) {
-    details.userInfo.id = details.userInfo.id || details.id;
-  } else {
-    details.userInfo = {id: details.id};
-  }
-
   if (Platform.OS === 'ios') {
     // https://developer.apple.com/reference/uikit/uilocalnotification
 
@@ -168,6 +162,11 @@ Notifications.localNotification = function({...details}) {
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
+    }
+
+    if(details.picture) {
+      details.userInfo = details.userInfo || {};
+      details.userInfo.image = details.picture;
     }
 
     // for valid fields see: https://github.com/react-native-push-notification-ios/push-notification-ios#addnotificationrequest
@@ -212,6 +211,10 @@ Notifications.localNotification = function({...details}) {
       details.userInfo = JSON.stringify(details.userInfo);
     }
   
+    if(details.picture && !details.bigPictureUrl) {
+      details.bigPictureUrl = details.picture;
+    }
+
     this.handler.presentLocalNotification(details);
   }
 };
@@ -236,18 +239,25 @@ Notifications.localNotificationSchedule = function({...details}) {
     }
   }
 
-  if (details.userInfo) {
-    details.userInfo.id = details.userInfo.id || details.id;
-  } else {
-    details.userInfo = {id: details.id};
-  }
-
   if (Platform.OS === 'ios') {
     let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
     if (details.hasOwnProperty('playSound') && !details.playSound) {
       soundName = ''; // empty string results in no sound (and no vibration)
     }
+
+    if(details.picture) {
+      details.userInfo = details.userInfo || {};
+      details.userInfo.image = details.picture;
+    }
+    
+    const repeatsComponent = {
+      second: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
+      minute: ['hour', 'day', 'week', 'month'].includes(details.repeatType),
+      hour: ['day', 'week', 'month'].includes(details.repeatType),
+      day: details.repeatType == "month",
+      dayOfWeek: details.repeatType == "week",
+    };
 
     const iosDetails = {
       id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
@@ -259,7 +269,8 @@ Notifications.localNotificationSchedule = function({...details}) {
       isSilent: details.playSound === false,
       category: details.category,
       userInfo: details.userInfo,
-      repeats: (details.repeatType && details.repeatType == "day"),
+      repeats: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
+      repeatsComponent: repeatsComponent
     };
 
     if (details.number) {
@@ -296,12 +307,13 @@ Notifications.localNotificationSchedule = function({...details}) {
       details.userInfo = JSON.stringify(details.userInfo);
     }
 
+    if(details.picture && !details.bigPictureUrl) {
+      details.bigPictureUrl = details.picture;
+    }
+
     details.fireDate = details.date.getTime();
     delete details.date;
-    // ignore iOS only repeatType
-    if (['year'].includes(details.repeatType)) {
-      delete details.repeatType;
-    }
+
     this.handler.scheduleLocalNotification(details);
   }
 };
@@ -472,10 +484,24 @@ Notifications.scheduleLocalNotification = function() {
 };
 
 Notifications.cancelLocalNotifications = function(userInfo) {
+  console.warn('This method is now deprecated, please use `cancelLocalNotification` (remove the ending `s`).');
+
+  return this.cancelLocalNotification(userInfo);
+};
+
+Notifications.cancelLocalNotification = function(notificationId) {
+  if(typeof notificationId === 'object') {
+    notificationId = notificationId?.id;
+  }
+
+  if(typeof notificationId === 'number') {
+    notificationId = '' + notificationId;
+  }
+
   if ( Platform.OS === 'ios' ) {
-    return this.callNative('removePendingNotificationRequests', [[userInfo.id]]);
+    return this.callNative('removePendingNotificationRequests', [[notificationId]]);
   } else {
-    return this.callNative('cancelLocalNotifications', [userInfo]);
+    return this.callNative('cancelLocalNotification', [notificationId]);
   }
 };
 
