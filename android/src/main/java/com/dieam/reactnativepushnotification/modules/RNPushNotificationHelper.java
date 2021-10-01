@@ -374,12 +374,6 @@ public class RNPushNotificationHelper {
                 notification.setSubText(subText);
             }
 
-            String bigText = bundle.getString("bigText");
-
-            if (bigText == null) {
-                bigText = message;
-            }
-
             NotificationCompat.Style style;
 
             if(bigPictureBitmap != null) {
@@ -405,7 +399,8 @@ public class RNPushNotificationHelper {
                       .bigLargeIcon(bigLargeIconBitmap);
             }
             else {
-              String bigText = bundle.getString("bigText");
+              String 
+                  = bundle.getString("bigText");
 
               if (bigText == null) {
                   style = new NotificationCompat.BigTextStyle().bigText(message);
