@@ -252,9 +252,9 @@ Notifications.localNotificationSchedule = function({...details}) {
     }
     
     const repeatsComponent = {
-      second: details.repeatType == "minute",
-      minute: details.repeatType == "hour",
-      hour: details.repeatType == "day",
+      second: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
+      minute: ['hour', 'day', 'week', 'month'].includes(details.repeatType),
+      hour: ['day', 'week', 'month'].includes(details.repeatType),
       day: details.repeatType == "month",
       dayOfWeek: details.repeatType == "week",
     };
