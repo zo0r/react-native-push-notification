@@ -12,6 +12,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [8.1.1] 2021-10-01
+
+### Fixed
+
+- (iOS): Raise @react-native-community/push-notification-ios version [#2151](https://github.com/zo0r/react-native-push-notification/pull/2151)
+- (iOS): Fix iOS repeated notification timing [#2150](https://github.com/zo0r/react-native-push-notification/pull/2150)
+
 ## [8.1.0] 2021-09-03
 
 ### Features
