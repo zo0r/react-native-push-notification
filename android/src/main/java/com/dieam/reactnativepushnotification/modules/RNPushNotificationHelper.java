@@ -269,13 +269,13 @@ public class RNPushNotificationHelper {
                         visibility = NotificationCompat.VISIBILITY_PRIVATE;
                 }
             }
-            
+
             String channel_id = bundle.getString("channelId");
 
             if(channel_id == null) {
                 channel_id = this.config.getNotificationDefaultChannelId();
             }
-            
+
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channel_id)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
@@ -283,7 +283,7 @@ public class RNPushNotificationHelper {
                     .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true))
                     .setOnlyAlertOnce(bundle.getBoolean("onlyAlertOnce", false));
-            
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // API 24 and higher
                 // Restore showing timestamp on Android 7+
                 // Source: https://developer.android.com/reference/android/app/Notification.Builder.html#setShowWhen(boolean)
@@ -296,7 +296,7 @@ public class RNPushNotificationHelper {
                 // Changing Default mode of notification
                 notification.setDefaults(Notification.DEFAULT_LIGHTS);
             }
-      
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) { // API 20 and higher
               String group = bundle.getString("group");
 
@@ -359,7 +359,7 @@ public class RNPushNotificationHelper {
                     largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
                 }
             }
-            
+
             if (largeIconBitmap != null){
               notification.setLargeIcon(largeIconBitmap);
             }
@@ -469,32 +469,32 @@ public class RNPushNotificationHelper {
 
                 vibratePattern = new long[]{0, vibration};
 
-                notification.setVibrate(vibratePattern); 
+                notification.setVibrate(vibratePattern);
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
               // Define the shortcutId
               String shortcutId = bundle.getString("shortcutId");
-              
+
               if (shortcutId != null) {
                 notification.setShortcutId(shortcutId);
               }
- 
+
               Long timeoutAfter = (long) bundle.getDouble("timeoutAfter");
-  
+
               if (timeoutAfter != null && timeoutAfter >= 0) {
                 notification.setTimeoutAfter(timeoutAfter);
               }
             }
 
             Long when = (long) bundle.getDouble("when");
-  
+
             if (when != null && when >= 0) {
               notification.setWhen(when);
             }
 
             notification.setUsesChronometer(bundle.getBoolean("usesChronometer", false));
-                
+
             notification.setChannelId(channel_id);
             notification.setContentIntent(pendingIntent);
 
@@ -717,7 +717,7 @@ public class RNPushNotificationHelper {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public WritableArray getDeliveredNotifications() {
       WritableArray result = Arguments.createArray();
-  
+
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         return result;
       }
@@ -819,10 +819,10 @@ public class RNPushNotificationHelper {
 
     public List<String> listChannels() {
       List<String> channels = new ArrayList<>();
-      
+
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
           return channels;
-      
+
       NotificationManager manager = notificationManager();
 
       if (manager == null)
@@ -840,7 +840,7 @@ public class RNPushNotificationHelper {
     public boolean channelBlocked(String channel_id) {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
           return false;
-      
+
       NotificationManager manager = notificationManager();
 
       if (manager == null)
@@ -857,7 +857,7 @@ public class RNPushNotificationHelper {
     public boolean channelExists(String channel_id) {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
           return false;
-      
+
       NotificationManager manager = notificationManager();
 
       if (manager == null)
@@ -871,7 +871,7 @@ public class RNPushNotificationHelper {
     public void deleteChannel(String channel_id) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
-        
+
         NotificationManager manager = notificationManager();
 
         if (manager == null)
@@ -880,7 +880,7 @@ public class RNPushNotificationHelper {
         manager.deleteNotificationChannel(channel_id);
     }
 
-    private boolean checkOrCreateChannel(NotificationManager manager, String channel_id, String channel_name, String channel_description, Uri soundUri, int importance, long[] vibratePattern) {
+    private boolean checkOrCreateChannel(NotificationManager manager, String channel_id, String channel_name, String channel_description, Uri soundUri, int importance, long[] vibratePattern, boolean showBadge) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return false;
         if (manager == null)
@@ -904,6 +904,7 @@ public class RNPushNotificationHelper {
             channel.enableLights(true);
             channel.enableVibration(vibratePattern != null);
             channel.setVibrationPattern(vibratePattern);
+            channel.setShowBadge(showBadge);
 
             if (soundUri != null) {
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -936,14 +937,15 @@ public class RNPushNotificationHelper {
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
         boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
         long[] vibratePattern = vibrate ? new long[] { 0, DEFAULT_VIBRATION } : null;
+        boolean showBadge = channelInfo.hasKey("showBadge") ? channelInfo.getBoolean("showBadge") : true;
 
         NotificationManager manager = notificationManager();
 
         Uri soundUri = playSound ? getSoundUri(soundName) : null;
 
-        return checkOrCreateChannel(manager, channelId, channelName, channelDescription, soundUri, importance, vibratePattern);
+        return checkOrCreateChannel(manager, channelId, channelName, channelDescription, soundUri, importance, vibratePattern, showBadge);
     }
-    
+
     public boolean isApplicationInForeground() {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
