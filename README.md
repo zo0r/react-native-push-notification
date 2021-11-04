@@ -428,7 +428,7 @@ In the notifications options, you must provide a channel id with `channelId: "yo
 
 If you want to use a different default channel for remote notification, refer to the documentation of Firebase:
 
-[Set up a Firebase Cloud Messaging client app on Android](https://firebase.google.com/docs/cloud-messaging/android/client?hl=fr)
+[Set up a Firebase Cloud Messaging client app on Android](https://firebase.google.com/docs/cloud-messaging/android/client)
 
 ```xml
   <meta-data
