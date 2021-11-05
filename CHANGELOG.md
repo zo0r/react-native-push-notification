@@ -7,14 +7,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ## Unreleased
 
 ### Breaking changes
-
-### Features
-
-### Fixed
-
-## [9.0.0] 2021-10-01
-
-### Breaking changes
 - In order to fix the issue with `reply_text`, an upgrade of the API version of Android is required (to API 31).
   - `compileSdkVersion` MUST be at least 31.
   - In case of issue: 
