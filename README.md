@@ -417,6 +417,7 @@ import PushNotification, {Importance} from 'react-native-push-notification';
       soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
       importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
       vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+      showBadge: true, // (optional) default: true. Allow you to disable badge number on the channel.
     },
     (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
   );

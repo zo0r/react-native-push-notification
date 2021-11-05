@@ -24,17 +24,12 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 28)
-    buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    compileSdkVersion safeExtGet('compileSdkVersion', 31)
+    buildToolsVersion safeExtGet('buildToolsVersion', '30.0.3')
 
     defaultConfig {
         minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 28)
+        targetSdkVersion safeExtGet('targetSdkVersion', 31)
         versionCode 1
         versionName "1.0"
         ndk {

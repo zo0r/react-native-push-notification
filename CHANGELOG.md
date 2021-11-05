@@ -12,6 +12,26 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [9.0.0] 2021-10-01
+
+### Breaking changes
+- In order to fix the issue with `reply_text`, an upgrade of the API version of Android is required (to API 31).
+  - `compileSdkVersion` MUST be at least 31.
+  - In case of issue: 
+    ```
+    An exception has occurred in the compiler (1.8.0_131). Please file a bug against the Java compiler via the Java bug reporting page (http://bugreport.java.com) after checking the Bug Database (http://bugs.java.com) for duplicates. Include your program and the following diagnostic in your report. Thank you.
+    java.lang.AssertionError: annotationType(): unrecognized Attribute name MODULE (class com.sun.tools.javac.util.UnsharedNameTable$NameImpl)
+    ```
+    You can remove: `compileOptions` with `sourceCompatibility` and `targetCompatibility` (`android/app/build.gradle`)
+
+### Features
+
+- (Android) Add `showBadge` option for created channel [#2089](https://github.com/zo0r/react-native-push-notification/pull/2089)
+
+### Fixed
+
+- (Android) Fix Android notification action reply input not returning reply_text [#2152](https://github.com/zo0r/react-native-push-notification/issues/2152)
+
 ## [8.1.1] 2021-10-01
 
 ### Fixed

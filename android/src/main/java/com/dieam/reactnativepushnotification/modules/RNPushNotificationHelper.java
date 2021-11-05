@@ -109,7 +109,7 @@ public class RNPushNotificationHelper {
             notificationIntent.putExtra(RNPushNotificationPublisher.NOTIFICATION_ID, notificationID);
             notificationIntent.putExtras(bundle);
 
-            int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
+            int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
 
             return PendingIntent.getBroadcast(context, notificationID, notificationIntent, flags);
         } catch (Exception e) {
@@ -456,7 +456,7 @@ public class RNPushNotificationHelper {
             int notificationID = Integer.parseInt(notificationIdString);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT);
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
 
@@ -533,7 +533,7 @@ public class RNPushNotificationHelper {
                         intent.putExtra("message_id", messageId);
                     }
 
-                    int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
+                    int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
 
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent, flags);
 
@@ -936,8 +936,8 @@ public class RNPushNotificationHelper {
         String soundName = channelInfo.hasKey("soundName") ? channelInfo.getString("soundName") : "default";
         int importance = channelInfo.hasKey("importance") ? channelInfo.getInt("importance") : 4;
         boolean vibrate = channelInfo.hasKey("vibrate") && channelInfo.getBoolean("vibrate");
-        long[] vibratePattern = vibrate ? new long[] { 0, DEFAULT_VIBRATION } : null;
         boolean showBadge = channelInfo.hasKey("showBadge") ? channelInfo.getBoolean("showBadge") : true;
+        long[] vibratePattern = vibrate ? new long[] { 0, DEFAULT_VIBRATION } : null;
 
         NotificationManager manager = notificationManager();
 
