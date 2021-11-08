@@ -14,6 +14,7 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  ScrollView
 } from 'react-native';
 import NotifService from './NotifService';
 
@@ -30,7 +31,7 @@ export default class App extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>
           Example app react-native-push-notification
         </Text>
@@ -133,13 +134,20 @@ export default class App extends Component {
           }}>
           <Text>popInitialNotification</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            this.notif.scheduleNotif(null, true);
+          }}>
+          <Text>Full screen intent notification in 30s</Text>
+        </TouchableOpacity>
 
         <View style={styles.spacer}></View>
 
         {this.state.fcmRegistered && <Text>FCM Configured !</Text>}
 
         <View style={styles.spacer}></View>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -158,7 +166,6 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
