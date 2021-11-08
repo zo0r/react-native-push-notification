@@ -5,6 +5,12 @@
 
 React Native Local and Remote Notifications for iOS and Android
 
+## State of the repository
+
+This repository is not actively maintained. The main reason is time. The second one is probably the complexity of notifications on both iOS and Android.
+Since this project probably need a huge refactor to fix some issue or to implement new features. I think you should probably consider these alternatives: [Notifee](https://notifee.app) free since september or [react-native-notifications](https://github.com/wix/react-native-notifications).
+
+If you are interested in being a maintainer of this project, feel free to ask in issues.
 
 ## 🎉 Version 7.x is live ! 🎉
 
