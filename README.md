@@ -300,6 +300,20 @@ Notification object example:
     data: {}, // OBJECT: The push data or the defined userInfo in local notifications
 }
 ```
+```js
+PushNotification.onNotificationOpenedApp(handler: (notification: Object) => EmitterSubscription)
+```
+
+EXAMPLE:
+
+```js
+useEffect(() => {
+  const subscription = PushNotification.onNotificationOpenedApp((notification) => {
+    console.log('Notification was opened', notification)
+  })
+  return () => subscription.remove()
+}, [])
+```
 
 ## Local Notifications
 
