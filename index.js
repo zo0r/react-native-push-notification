@@ -633,6 +633,12 @@ Notifications.setNotificationCategories = function() {
   return this.callNative('setNotificationCategories', arguments);
 }
 
+Notifications.onNotificationOpenedApp = function (callback) {
+  return this.callNative('addEventListener', ['notification', (notification) => {
+    callback(this._transformNotificationObject(notification, true))
+  }]);
+}
+
 // https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
 Notifications.Importance = Object.freeze({
   DEFAULT: 3,
