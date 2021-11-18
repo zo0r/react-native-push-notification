@@ -833,3 +833,79 @@ PushNotification.checkPermissions(callback: Function) //Check permissions
 PushNotification.getApplicationIconBadgeNumber(callback: Function) //Get badge number
 ```
 
+## Deep Linking Push Notifications with React Navigation
+This description was inspired from: https://medium.com/cybermonkey/deep-linking-push-notifications-with-react-navigation-5fce260ccca2
+
+Push Notification payload contains a data attribute. You can send any key-value pair as data. If we just pass the deep link as a part of data object and somehow we tell our navigation mechanism to open the link as the first screen instead of the home screen of the app, our work is done.
+
+React Navigation provides a neat little function in the `linking` attribute of the `NavigationContainer` tag. `NavigationContainer` commonly contains all the application (and definitely all the routes). This function is named `getInitialUrl` and it is called every time the application launches from the quit state. It is where you will land when the app is opened from a push notification. So, we need to put the logic here to redirect to the appropriate screen. Since we cleverly pass the deep link as a part of push notification, we can let React Navigation deal with it.
+
+Here is how our linking attribute looks like once we add getInitialUrl function to it (refer: https://reactnavigation.org/docs/navigation-container#linkinggetinitialurl):
+
+
+```js
+const linking: LinkingOptions = {
+  prefixes: ['myapp://', 'https://app.myapp.com'],
+  config: deepLinksConf,
+  async getInitialURL() {
+    // Check if app was opened from a deep link
+    const url = await Linking.getInitialURL();
+
+    if (url != null) {
+      return url;
+    }
+
+      const getInitialNotification = () => {
+        return new Promise<ReceivedNotification | null>((resolve) => {
+          PushNotification.popInitialNotification((notification) => {
+            resolve(notification)
+          })
+        })
+      }
+      // Check if there is an initial notification
+      const message = await getInitialNotification()
+      
+      // Get deep link from data
+      // if this is undefined, the app will open the default/home page
+      return message?.data?.link
+  }
+}
+```
+
+But what about the case when we receive the push notification when our app is in the background? You need to add a listener in that case. It looks like this (refer: https://reactnavigation.org/docs/navigation-container/#linkingsubscribe):
+
+
+```js
+const linking: LinkingOptions = {
+  prefixes: ['myapp://', 'https://app.myapp.com'],
+  config: deepLinksConf,
+  async getInitialURL() { /* redacted */ },
+  subscribe(listener) {
+    const onReceiveURL = ({url}: {url: string}) => listener(url);
+
+    // Listen to incoming links from deep linking
+    const urlListener = Linking.addEventListener('url', onReceiveURL);
+
+    // Listen to firebase push notifications
+    const onNotificationListener = PushNotification.onNotificationOpenedApp(
+      (notification) => {
+        const url = notification?.data?.link;
+
+        if (url) {
+          // Any custom logic to check whether the URL needs to be handled
+
+          // Call the listener to let React Navigation handle the URL
+          listener(url)
+        }
+      })
+
+    return () => {
+      // Clean up the event listeners
+      urlListener.remove()
+      onNotificationListener.remove()
+    };
+  },
+}
+```
+
+We are done now. When a push notification is tapped either `getInitialUrl` is called or `onNotificationOpenedApp` invokes our listener passed in subscribe method. In both cases, React Navigation handles the incoming URL and redirects to the right screen.
