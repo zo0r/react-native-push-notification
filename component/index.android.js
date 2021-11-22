@@ -109,6 +109,7 @@ NotificationsComponent.prototype.addEventListener = function(type, handler) {
   }
 
 	_notifHandlers.set(type, listener);
+	return listener
 };
 
 NotificationsComponent.prototype.removeEventListener = function(type, handler) {
