@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
++import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -62,7 +63,9 @@ public class RNPushNotificationActions extends BroadcastReceiver {
 
           helper.invokeApp(bundle);
 
-          context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+          if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+              context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+          }
       } else {
 
         // We need to run this on the main thread, as the React code assumes that is true.
