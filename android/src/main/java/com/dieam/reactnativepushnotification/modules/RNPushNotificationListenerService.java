@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import com.dieam.reactnativepushnotification.types.RNPushNotificationUserConfig;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -26,10 +27,21 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         this.mMessageReceivedHandler = new RNReceivedMessageHandler(this);
     }
 
+    public RNPushNotificationListenerService(RNPushNotificationUserConfig userConfig) {
+        super();
+        this.mMessageReceivedHandler = new RNReceivedMessageHandler(this, userConfig);
+    }
+
     public RNPushNotificationListenerService(FirebaseMessagingService delegate) {
         super();
         this.mFirebaseServiceDelegate = delegate;
         this.mMessageReceivedHandler = new RNReceivedMessageHandler(delegate);
+    }
+
+    public RNPushNotificationListenerService(FirebaseMessagingService delegate, RNPushNotificationUserConfig userConfig) {
+        super();
+        this.mFirebaseServiceDelegate = delegate;
+        this.mMessageReceivedHandler = new RNReceivedMessageHandler(delegate, userConfig);
     }
 
     @Override
