@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
@@ -230,7 +231,7 @@ public class RNPushNotificationHelper {
             final String priorityString = bundle.getString("priority");
 
             if (priorityString != null) {
-                switch (priorityString.toLowerCase()) {
+                switch (priorityString.toLowerCase(Locale.ROOT)) {
                     case "max":
                         priority = NotificationCompat.PRIORITY_MAX;
                         break;
@@ -255,7 +256,7 @@ public class RNPushNotificationHelper {
             final String visibilityString = bundle.getString("visibility");
 
             if (visibilityString != null) {
-                switch (visibilityString.toLowerCase()) {
+                switch (visibilityString.toLowerCase(Locale.ROOT)) {
                     case "private":
                         visibility = NotificationCompat.VISIBILITY_PRIVATE;
                         break;
