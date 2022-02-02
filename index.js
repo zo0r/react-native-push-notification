@@ -252,11 +252,11 @@ Notifications.localNotificationSchedule = function({...details}) {
     }
     
     const repeatsComponent = {
-      second: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
-      minute: ['hour', 'day', 'week', 'month'].includes(details.repeatType),
-      hour: ['day', 'week', 'month'].includes(details.repeatType),
-      day: details.repeatType == "month",
-      dayOfWeek: details.repeatType == "week",
+      second: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType) ? true : undefined,
+      minute: ['hour', 'day', 'week', 'month'].includes(details.repeatType) ? true : undefined,
+      hour: ['day', 'week', 'month'].includes(details.repeatType) ? true : undefined,
+      day: details.repeatType == "month" ? true : undefined,
+      dayOfWeek: details.repeatType == "week" ? true : undefined,
     };
 
     const iosDetails = {
