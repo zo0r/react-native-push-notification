@@ -255,7 +255,7 @@ Notifications.localNotificationSchedule = function({...details}) {
       second: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
       minute: ['hour', 'day', 'week', 'month'].includes(details.repeatType),
       hour: ['day', 'week', 'month'].includes(details.repeatType),
-      day: details.repeatType == "month",
+      day: details.repeatType == "day",
       dayOfWeek: details.repeatType == "week",
     };
 
