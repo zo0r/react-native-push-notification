@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -10,6 +11,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -24,6 +26,11 @@ def safeExtGet(prop, fallback) {
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
     buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         minSdkVersion safeExtGet('minSdkVersion', 16)
@@ -43,15 +50,15 @@ android {
 }
 
 dependencies {
+    // Use either AndroidX library names or old/support library names based on major version of support lib
     def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
-    def googlePlayServicesVersion = safeExtGet('googlePlayServicesVersion', '+')
-    def firebaseVersion = safeExtGet('firebaseVersion', '+')
+    def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
+    def appCompatLibName =  (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "$appCompatLibName:$supportLibVersion"
     implementation 'com.facebook.react:react-native:+'
-    implementation "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
-    implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
-    implementation "com.google.firebase:firebase-messaging:$firebaseVersion"
+    implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
+    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseMessagingVersion', '21.1.0')}"
 }

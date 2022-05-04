@@ -1,6 +1,6 @@
 ## Pull Requests
 
-If you are thinking of, or have prepared a pull request, **thank you!**  You efforts are greatly apprecaited by everyone associated with this project.
+If you are thinking of, or have prepared a pull request, **thank you!**  Your efforts are greatly appreciated by everyone associated with this project.
 
 In order to get your PR accepted please ensure the following:
 
@@ -23,7 +23,7 @@ If you are testing someones PR, please provide the following feedback:
  * are you happy that the change in behaviour works as described, and you have tested the change on all affected operating systems?
  * in your opinion, is the code written _sensibly_? 
    * is it clean and tidy? 
-   * there are and unnecessary changes?
+   * there are any unnecessary changes?
    * is it documented appropriately?
    
    
