@@ -643,4 +643,4 @@ Notifications.Importance = Object.freeze({
   UNSPECIFIED: -1000,
 });
 
-module.exports = Notifications;
+export default Notifications;
