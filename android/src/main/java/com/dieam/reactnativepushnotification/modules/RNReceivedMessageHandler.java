@@ -23,6 +23,7 @@ import com.facebook.react.bridge.ReactContext;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 import java.security.SecureRandom;
@@ -32,6 +33,8 @@ import static com.dieam.reactnativepushnotification.modules.RNPushNotification.L
 
 public class RNReceivedMessageHandler {
     private FirebaseMessagingService mFirebaseMessagingService;
+
+    public static List<RNReceivedMessageCustomHandler> CustomHandlers = new ArrayList();
 
     public RNReceivedMessageHandler(@NonNull FirebaseMessagingService service) {
         this.mFirebaseMessagingService = service;
@@ -127,6 +130,10 @@ public class RNReceivedMessageHandler {
         bundle.putParcelable("data", dataBundle);
 
         Log.v(LOG_TAG, "onMessageReceived: " + bundle);
+
+        for (RNReceivedMessageCustomHandler handler : CustomHandlers) {
+            handler.onMessageReceived(bundle);
+        }
 
         // We need to run this on the main thread, as the React code assumes that is true.
         // Namely, DevServerHelper constructs a Handler() without a Looper, which triggers:
