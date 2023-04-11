@@ -442,7 +442,68 @@ public class RNPushNotificationHelper {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                notification.setCategory(NotificationCompat.CATEGORY_CALL);
+                String categroy = bundle.getString("category");
+                switch (categroy) {
+                    case "alarm":
+                        notification.setCategory(NotificationCompat.CATEGORY_ALARM);
+                        break;
+                    case "call":
+                        notification.setCategory(NotificationCompat.CATEGORY_CALL);
+                        break;
+                    case "email":
+                        notification.setCategory(NotificationCompat.CATEGORY_EMAIL);
+                        break;
+                    case "error":
+                        notification.setCategory(NotificationCompat.CATEGORY_ERROR);
+                        break;
+                    case "event":
+                        notification.setCategory(NotificationCompat.CATEGORY_EVENT);
+                        break;
+                    case "location_sharing":
+                        notification.setCategory(NotificationCompat.CATEGORY_LOCATION_SHARING);
+                        break;
+                    case "message":
+                        notification.setCategory(NotificationCompat.CATEGORY_MESSAGE);
+                        break;
+                    case "missed_call":
+                        notification.setCategory(NotificationCompat.CATEGORY_MISSED_CALL);
+                        break;
+                    case "navigation":
+                        notification.setCategory(NotificationCompat.CATEGORY_NAVIGATION);
+                        break;
+                    case "promotion":
+                        notification.setCategory(NotificationCompat.CATEGORY_PROMO);
+                        break;
+                    case "recommendation":
+                        notification.setCategory(NotificationCompat.CATEGORY_RECOMMENDATION);
+                        break;
+                    case "reminder":
+                        notification.setCategory(NotificationCompat.CATEGORY_REMINDER);
+                        break;
+                    case "service":
+                        notification.setCategory(NotificationCompat.CATEGORY_SERVICE);
+                        break;
+                    case "social":
+                        notification.setCategory(NotificationCompat.CATEGORY_SOCIAL);
+                        break;
+                    case "status":
+                        notification.setCategory(NotificationCompat.CATEGORY_STATUS);
+                        break;
+                    case "stopwatch":
+                        notification.setCategory(NotificationCompat.CATEGORY_STOPWATCH);
+                        break;
+                    case "system":
+                        notification.setCategory(NotificationCompat.CATEGORY_SYSTEM);
+                        break;
+                    case "transport":
+                        notification.setCategory(NotificationCompat.CATEGORY_TRANSPORT);
+                        break;
+                    case "workout":
+                        notification.setCategory(NotificationCompat.CATEGORY_WORKOUT);
+                        break;
+                    default:
+                        break;
+                }
 
                 String color = bundle.getString("color");
                 int defaultColor = this.config.getNotificationColor();
