@@ -36,6 +36,18 @@ NotificationsComponent.prototype.unsubscribeFromTopic = function(topic) {
 	RNPushNotification.unsubscribeFromTopic(topic);
 };
 
+NotificationsComponent.prototype.getFCMToken = function() {
+	return new Promise(function(resolve, reject) {
+		RNPushNotification.getFCMToken()
+		  .then(function(token) {
+			resolve(token);
+		  })
+		  .catch(function(err) {
+			reject(err);
+		  });
+	  });
+};
+
 NotificationsComponent.prototype.cancelLocalNotification = function(details) {
 	RNPushNotification.cancelLocalNotification(details);
 };

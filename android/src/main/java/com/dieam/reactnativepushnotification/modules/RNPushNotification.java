@@ -163,6 +163,20 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
     }
 
+       
+    @ReactMethod
+    public void getFCMToken(final Promise promise) {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e(LOG_TAG, "exception", task.getException());
+                        promise.reject(task.getException());
+                    } else {
+                        promise.resolve(task.getResult());
+                    }
+                });
+    }
+
     @ReactMethod
     public void presentLocalNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
