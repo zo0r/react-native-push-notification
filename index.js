@@ -475,6 +475,10 @@ Notifications.unsubscribeFromTopic = function () {
   return this.callNative('unsubscribeFromTopic', arguments);
 };
 
+Notifications.getFCMToken = function () {
+  return this.callNative('getFCMToken', arguments);
+};
+
 Notifications.presentLocalNotification = function() {
   return this.callNative('presentLocalNotification', arguments);
 };
