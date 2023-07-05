@@ -2,10 +2,12 @@ package com.dieam.reactnativepushnotification.modules;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.firebase.messaging.Constants;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.content.Intent;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -30,6 +32,14 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         super();
         this.mFirebaseServiceDelegate = delegate;
         this.mMessageReceivedHandler = new RNReceivedMessageHandler(delegate);
+    }
+
+    @Override
+    public void handleIntent(Intent intent){
+        intent.putExtra(Constants.AnalyticsKeys.ENABLED, "0");
+        String enabled =  intent.getStringExtra(Constants.AnalyticsKeys.ENABLED);
+        Log.i(LOG_TAG, "Disabling analyticsKeys.ENABLED, new value: "+ enabled);
+        super.handleIntent(intent);
     }
 
     @Override
