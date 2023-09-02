@@ -818,4 +818,5 @@ PushNotification.checkPermissions(callback: Function) //Check permissions
 ```js
 PushNotification.getApplicationIconBadgeNumber(callback: Function) //Get badge number
 ```
-
+## iOS Local Scheduled Notification Limitations
+iOS seems to have a limit of 64 local scheduled notifications that can be active at any given time. It is also mentioned in [the official documentation](https://developer.apple.com/documentation/uikit/uilocalnotification#:~:text=Local%20notifications%20are%20primarily,and%20discards%20the%20rest.).
