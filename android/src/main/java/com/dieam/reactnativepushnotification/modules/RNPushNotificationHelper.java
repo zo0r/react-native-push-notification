@@ -271,10 +271,6 @@ public class RNPushNotificationHelper {
             }
             
             String channel_id = bundle.getString("channelId");
-
-            if(channel_id == null) {
-                channel_id = this.config.getNotificationDefaultChannelId();
-            }
             
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channel_id)
                     .setContentTitle(title)

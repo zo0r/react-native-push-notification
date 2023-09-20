@@ -38,14 +38,6 @@
           </intent-filter>
       </receiver>
 
-      <service
-          android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
-          android:exported="false" >
-          <intent-filter>
-              <action android:name="com.google.firebase.MESSAGING_EVENT" />
-          </intent-filter>
-      </service>
-
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                   android:value="false"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"

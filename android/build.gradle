@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -27,7 +27,7 @@ android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
     buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
 
-    compileOptions {
+    compileOptions { // might not be necessary
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -60,5 +60,4 @@ dependencies {
     implementation "$appCompatLibName:$supportLibVersion"
     implementation 'com.facebook.react:react-native:+'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
-    implementation "com.google.firebase:firebase-messaging:${safeExtGet('firebaseMessagingVersion', '21.1.0')}"
 }
