@@ -34,10 +34,6 @@ import java.util.Map;
 
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 public class RNPushNotification extends ReactContextBaseJavaModule implements ActivityEventListener {
     public static final String LOG_TAG = "RNPushNotification";// all logging should use this tag
     public static final String KEY_TEXT_REPLY = "key_text_reply";
@@ -135,32 +131,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void requestPermissions() {
-      final RNPushNotificationJsDelivery fMjsDelivery = mJsDelivery;
-      
-      FirebaseMessaging.getInstance().getToken()
-              .addOnCompleteListener(new OnCompleteListener<String>() {
-                  @Override
-                  public void onComplete(@NonNull Task<String> task) {
-                      if (!task.isSuccessful()) {
-                          Log.e(LOG_TAG, "exception", task.getException());
-                          return;
-                      }
-
-                      WritableMap params = Arguments.createMap();
-                      params.putString("deviceToken", task.getResult());
-                      fMjsDelivery.sendEvent("remoteNotificationsRegistered", params);
-                  }
-              });
-    }
-
-    @ReactMethod
-    public void subscribeToTopic(String topic) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic);
-    }
-    
-    @ReactMethod
-    public void unsubscribeFromTopic(String topic) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
+     //removed
     }
 
     @ReactMethod
@@ -280,8 +251,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
      * Unregister for all remote notifications received
      */
     public void abandonPermissions() {
-      FirebaseMessaging.getInstance().deleteToken();
-      Log.i(LOG_TAG, "InstanceID deleted");
+        //removed
     }
 
     @ReactMethod
