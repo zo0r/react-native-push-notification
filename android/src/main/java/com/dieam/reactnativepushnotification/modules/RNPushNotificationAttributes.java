@@ -10,6 +10,8 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Iterator;
+
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationAttributes {
@@ -47,8 +49,11 @@ public class RNPushNotificationAttributes {
     private static final String TIMEOUT_AFTER = "timeoutAfter";
     private static final String ONLY_ALERT_ONCE = "onlyAlertOnce";
     private static final String ONGOING = "ongoing";
+    private static final String REPLY_BUTTON_TEXT = "reply_button_text";
+    private static final String REPLAY_PLACEHOLDER_TEXT = "reply_placeholder_text";
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
     private static final String IGNORE_IN_FOREGROUND = "ignoreInForeground";
+    private static final String USER_INFO = "userInfo";
 
     private final String id;
     private final String message;
@@ -84,8 +89,11 @@ public class RNPushNotificationAttributes {
     private final double timeoutAfter;
     private final boolean onlyAlertOnce;
     private final boolean ongoing;
+    private final String reply_button_text;
+    private final String reply_placeholder_text;
     private final boolean allowWhileIdle;
     private final boolean ignoreInForeground;
+    private final String userInfo;
 
     public RNPushNotificationAttributes(Bundle bundle) {
         id = bundle.getString(ID);
@@ -122,8 +130,11 @@ public class RNPushNotificationAttributes {
         timeoutAfter = bundle.getDouble(TIMEOUT_AFTER);
         onlyAlertOnce = bundle.getBoolean(ONLY_ALERT_ONCE);
         ongoing = bundle.getBoolean(ONGOING);
+        reply_button_text = bundle.getString(REPLY_BUTTON_TEXT);
+        reply_placeholder_text = bundle.getString(REPLAY_PLACEHOLDER_TEXT);
         allowWhileIdle = bundle.getBoolean(ALLOW_WHILE_IDLE);
         ignoreInForeground = bundle.getBoolean(IGNORE_IN_FOREGROUND);
+        userInfo = bundle.getString(USER_INFO);
     }
 
     private RNPushNotificationAttributes(JSONObject jsonObject) {
@@ -162,8 +173,11 @@ public class RNPushNotificationAttributes {
             timeoutAfter = jsonObject.has(TIMEOUT_AFTER) ? jsonObject.getDouble(TIMEOUT_AFTER) : -1;
             onlyAlertOnce = jsonObject.has(ONLY_ALERT_ONCE) ? jsonObject.getBoolean(ONLY_ALERT_ONCE) : false;
             ongoing = jsonObject.has(ONGOING) ? jsonObject.getBoolean(ONGOING) : false;
+            reply_button_text = jsonObject.has(REPLY_BUTTON_TEXT) ? jsonObject.getString(REPLY_BUTTON_TEXT) : null;
+            reply_placeholder_text = jsonObject.has(REPLAY_PLACEHOLDER_TEXT) ? jsonObject.getString(REPLAY_PLACEHOLDER_TEXT) : null;
             allowWhileIdle = jsonObject.has(ALLOW_WHILE_IDLE) ? jsonObject.getBoolean(ALLOW_WHILE_IDLE) : false;
             ignoreInForeground = jsonObject.has(IGNORE_IN_FOREGROUND) ? jsonObject.getBoolean(IGNORE_IN_FOREGROUND) : false;
+            userInfo = jsonObject.has(USER_INFO) ? jsonObject.getString(USER_INFO) : null;
         } catch (JSONException e) {
             throw new IllegalStateException("Exception while initializing RNPushNotificationAttributes from JSON", e);
         }
@@ -172,55 +186,8 @@ public class RNPushNotificationAttributes {
     @NonNull
     public static RNPushNotificationAttributes fromJson(String notificationAttributesJson) throws JSONException {
         JSONObject jsonObject = new JSONObject(notificationAttributesJson);
+        
         return new RNPushNotificationAttributes(jsonObject);
-    }
-
-    /**
-     * User to find notifications:
-     * <p>
-     *
-     * @param userInfo map of fields to match
-     * @return true all fields in userInfo object match, false otherwise
-     */
-    public boolean matches(ReadableMap userInfo) {
-        Bundle bundle = toBundle();
-
-        ReadableMapKeySetIterator iterator = userInfo.keySetIterator();
-        while (iterator.hasNextKey()) {
-            String key = iterator.nextKey();
-
-            if (!bundle.containsKey(key))
-                return false;
-
-            switch (userInfo.getType(key)) {
-                case Null: {
-                    if (bundle.get(key) != null)
-                        return false;
-                    break;
-                }
-                case Boolean: {
-                    if (userInfo.getBoolean(key) != bundle.getBoolean(key))
-                        return false;
-                    break;
-                }
-                case Number: {
-                    if ((userInfo.getDouble(key) != bundle.getDouble(key)) && (userInfo.getInt(key) != bundle.getInt(key)))
-                        return false;
-                    break;
-                }
-                case String: {
-                    if (!userInfo.getString(key).equals(bundle.getString(key)))
-                        return false;
-                    break;
-                }
-                case Map:
-                    return false;//there are no maps in the bundle
-                case Array:
-                    return false;//there are no arrays in the bundle
-            }
-        }
-
-        return true;
     }
 
     public Bundle toBundle() {
@@ -259,8 +226,11 @@ public class RNPushNotificationAttributes {
         bundle.putDouble(TIMEOUT_AFTER, timeoutAfter);
         bundle.putBoolean(ONLY_ALERT_ONCE, onlyAlertOnce);
         bundle.putBoolean(ONGOING, ongoing);
+        bundle.putString(REPLY_BUTTON_TEXT, reply_button_text);
+        bundle.putString(REPLAY_PLACEHOLDER_TEXT, reply_placeholder_text);
         bundle.putBoolean(ALLOW_WHILE_IDLE, allowWhileIdle);
         bundle.putBoolean(IGNORE_IN_FOREGROUND, ignoreInForeground);
+        bundle.putString(USER_INFO, userInfo);
         return bundle;
     }
 
@@ -301,8 +271,11 @@ public class RNPushNotificationAttributes {
             jsonObject.put(TIMEOUT_AFTER, timeoutAfter);
             jsonObject.put(ONLY_ALERT_ONCE, onlyAlertOnce);
             jsonObject.put(ONGOING, ongoing);
+            jsonObject.put(REPLY_BUTTON_TEXT, reply_button_text);
+            jsonObject.put(REPLAY_PLACEHOLDER_TEXT, reply_placeholder_text);
             jsonObject.put(ALLOW_WHILE_IDLE, allowWhileIdle);
             jsonObject.put(IGNORE_IN_FOREGROUND, ignoreInForeground);
+            jsonObject.put(USER_INFO, userInfo);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Exception while converting RNPushNotificationAttributes to " +
                     "JSON. Returning an empty object", e);
@@ -349,8 +322,11 @@ public class RNPushNotificationAttributes {
                 ", timeoutAfter=" + timeoutAfter +
                 ", onlyAlertOnce=" + onlyAlertOnce +
                 ", ongoing=" + ongoing +
+                ", reply_button_text=" + reply_button_text +
+                ", reply_placeholder_text=" + reply_placeholder_text +
                 ", allowWhileIdle=" + allowWhileIdle +
                 ", ignoreInForeground=" + ignoreInForeground +
+                ", userInfo=" + userInfo +
                 '}';
     }
 
@@ -372,6 +348,10 @@ public class RNPushNotificationAttributes {
 
     public String getNumber() {
         return number;
+    }
+
+    public String getUserInfo() {
+        return userInfo;
     }
 
     public String getRepeatType() {

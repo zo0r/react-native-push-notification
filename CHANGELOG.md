@@ -12,11 +12,134 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Fixed
 
+## [8.1.1] 2021-10-01
+
+### Fixed
+
+- (iOS): Raise @react-native-community/push-notification-ios version [#2151](https://github.com/zo0r/react-native-push-notification/pull/2151)
+- (iOS): Fix iOS repeated notification timing [#2150](https://github.com/zo0r/react-native-push-notification/pull/2150)
+
+## [8.1.0] 2021-09-03
+
+### Features
+
+- (iOS) Upgrade `@react-native-community/push-notification-ios` to version [1.10.0](https://github.com/react-native-push-notification/ios/releases/tag/v1.10.0)
+- (iOS) Allow `month`, `week`, `day`, `hour`, `minute` as `repeatType` for iOS.
+- (Android) Allow HTML tags to be used for styling in bigText field only [#2067](https://github.com/zo0r/react-native-push-notification/pull/2067).
+
+### Fixed
+
+- (Android): Fix Android 12 PendingIntent [#2130](https://github.com/zo0r/react-native-push-notification/pull/2130)
+
+## [8.0.1] 2021-08-24
+
+### Fixed
+
+- (Android): Fix bug cancelLocalNotification() does not work on Android [#2122](https://github.com/zo0r/react-native-push-notification/issues/2122)
+
+## [8.0.0] 2021-08-19
+
+### Breaking changes
+
+- `userInfo` is no more populated with the `id` of the notification, initialy included to cancel scheduled notifications. This change will probably not impact you.
+-  Rename `cancelLocalNotifications` to `cancelLocalNotification` (deprecation notice).
+
+### Features
+
+- (iOS) upgrade `@react-native-community/push-notification-ios` to version [1.9.0](https://github.com/react-native-push-notification/ios/releases/tag/v1.9.0)
+- `picture` is now support for both Android and iOS, (alias of `bigPictureUrl` for Android).
+
+### Fixed
+
+- (Android): Fix bug cancelLocalNotifications() does not work on Android [#2100](https://github.com/zo0r/react-native-push-notification/issues/2100)
+
+## [7.4.0] 2021-06-24
+
+### Features
+
+ - (Android): Allow for repeat to specify amount of the given repeat type. [#2030](https://github.com/zo0r/react-native-push-notification/pull/2030)
+ - (iOS): Add support for subtitle notification property. [#2063](https://github.com/zo0r/react-native-push-notification/pull/2063)
+
+## [7.3.2] 2021-06-19
+
+### Fixed
+
+- (Android) Fix: Foreground notifications missing small icon. [#1927](https://github.com/zo0r/react-native-push-notification/pull/1927)
+
+## [7.3.1] 2021-05-12
+
+### Fixed
+
+- (Android) Pin the firebase-messaging dependency to `21.1.0`.
+- (Android) Fix: android missing channelId warning should now show [#1995](https://github.com/zo0r/react-native-push-notification/pull/1995).
+
+## [7.3.0] 2021-05-12
+
+### Features
+- (Android) Add constants for notification importance [#1959](https://github.com/zo0r/react-native-push-notification/pull/1959)
+
+### Fixed
+
+- (Android) Fix: Task :react-native-push-notification:compileDebugJavaWithJavac FAILED [#1979](https://github.com/zo0r/react-native-push-notification/issues/1979)
+
+## [7.2.3] 2021-03-18
+
+### Fixed
+
+- (Android) Fix: Notification drawer doesn't close after click on action that navigates you to app [#1914](https://github.com/zo0r/react-native-push-notification/issues/1914)
+- (iOS) Fix: foreground notification property [#1916](https://github.com/zo0r/react-native-push-notification/pull/1916)
+
+## [7.2.2] 2021-03-04
+
+### Fixed
+
+- (Android) Fix: Could not invoke RNPushNotification.getDeliveredNotifications. [#1878](https://github.com/zo0r/react-native-push-notification/issues/1878)
+- (fix) deep clone details and notifications. [#1793](https://github.com/zo0r/react-native-push-notification/issues/1793)
+
+## [7.2.1] 2021-02-11
+
+### Fixed
+
+- (iOS) Fix `playSound` options on local notifications. [#1858](https://github.com/zo0r/react-native-push-notification/issues/1858#issuecomment-775714298)
+
+## [7.2.0] 2021-01-24
+
+### Features
+
+- (Android) Handle localization for notification title and body [#1837](https://github.com/zo0r/react-native-push-notification/pull/1837)
+
+## [7.1.1] 2021-01-20
+
+### Fixed
+
+- (Android) unsubscribeFromTopic function fix [#1831](https://github.com/zo0r/react-native-push-notification/pull/1831)
+
+## [7.1.0] 2021-01-16
+
+### Features
+
+- (Android) Add hooks to intent handling and bundle parsing [#1819](https://github.com/zo0r/react-native-push-notification/pull/1819)
+ 
+## [7.0.0] 2020-12-23
+
+### Breaking changes
+
+- (iOS) Replace deprecated local notification methods on iOS [#1751](https://github.com/zo0r/react-native-push-notification/pull/1751)
+- (Android) Rename the Android package from `RNPushNotification` to `ReactNativePushNotification` resolve [#893](https://github.com/zo0r/react-native-push-notification/issues/893)
+- (Android) Allow `userInfo` to be stored in scheduled notification as in iOS (mapped as `data` on press or list scheduled notifications).
+
+### Features
+
+- (Android) silent channel using playSound flag
+- (Android) implement 'bigLargeIcon' for Android notifications (must be combined with BigPicture) [#1730](https://github.com/zo0r/react-native-push-notification/pull/1730)
+- (Android) notification with inline reply [#612](https://github.com/zo0r/react-native-push-notification/pull/612)
+- (Android) Support using drawable as Android small icon [#1787](https://github.com/zo0r/react-native-push-notification/pull/1787)
+
 ## [6.1.3] 2020-11-09
 
 ### Fixed
 
-- (Android) Null pointer exception when trying to create channel [#134](https://github.com/zo0r/react-native-push-notification/issues/1734)
+- (Android) Null pointer exception when trying to create channel [#1734](https://github.com/zo0r/react-native-push-notification/issues/1734)
 
 ## [6.1.2] 2020-10-29
 
@@ -326,3 +449,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 [unreleased]: https://github.com/zo0r/react-native-push-notification/compare/v3.1.2...HEAD
 [3.1.2]: https://github.com/zo0r/react-native-push-notification/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/zo0r/react-native-push-notification/compare/...v3.1.1
+
+
+## Supported React Native Versions
+
+| Component Version | RN Versions          | README                                                                                                                 |
+| ----------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **1.0.7**         | **<= 0.27**          | [Open](https://github.com/zo0r/react-native-push-notification/blob/f42723817f1687e0da23e6753eb8a9f0385b6ac5/README.md) |
+| **1.0.8**         | **0.28**             | [Open](https://github.com/zo0r/react-native-push-notification/blob/2eafd1961273ca6a82ad4dd6514fbf1d1a829089/README.md) |
+| **2.0.1**         | **0.29**             | [Open](https://github.com/zo0r/react-native-push-notification/blob/c7ab7cd84ea19e42047379aefaf568bb16a81936/README.md) |
+| **2.0.2**         | **0.30, 0.31, 0.32** | [Open](https://github.com/zo0r/react-native-push-notification/blob/a0f7d44e904ba0b92933518e5bf6b444f1c90abb/README.md) |
+| **>= 2.1.0**      | **>= 0.33**          | [Open](https://github.com/zo0r/react-native-push-notification/blob/a359e5c00954aa324136eaa9808333d6ca246171/README.md) |

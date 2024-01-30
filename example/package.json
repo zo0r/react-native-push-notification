@@ -11,9 +11,9 @@
     "pod-install": "cd ios && pod install"
   },
   "dependencies": {
-    "@react-native-community/push-notification-ios": "^1.4.0",
-    "react": "16.11.0",
-    "react-native": "0.62.2",
+    "@react-native-community/push-notification-ios": "^1.10.1",
+    "react": "16.13.1",
+    "react-native": "0.63.3",
     "react-native-push-notification": "zo0r/react-native-push-notification#dev"
   },
   "devDependencies": {

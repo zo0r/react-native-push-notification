@@ -4,16 +4,11 @@
 
 'use strict';
 
-import { AppState } from "react-native";
+import { AppState, Platform } from 'react-native';
+import { component } from './component';
 
-var RNNotificationsComponent = require( './component' );
-
-var RNNotifications = RNNotificationsComponent.component;
-
-let Platform = require('react-native').Platform;
-
-var Notifications = {
-  handler: RNNotifications,
+const Notifications = {
+  handler: component,
   onRegister: false,
   onRegistrationError: false,
   onNotification: false,
@@ -145,8 +140,8 @@ Notifications.unregister = function() {
  * @param {String}    details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
  * @param {Object}    details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
-Notifications.localNotification = function(details) {
-  if ('android' === Platform.os && details && !details.channelId) {
+Notifications.localNotification = function({...details}) {
+  if ('android' === Platform.OS && details && !details.channelId) {
     console.warn('No channel id passed, notifications may not work.');
   }
 
@@ -160,12 +155,6 @@ Notifications.localNotification = function(details) {
     }
   }
 
-  if (details.userInfo) {
-    details.userInfo.id = details.userInfo.id || details.id;
-  } else {
-    details.userInfo = {id: details.id};
-  }
-
   if (Platform.OS === 'ios') {
     // https://developer.apple.com/reference/uikit/uilocalnotification
 
@@ -175,16 +164,22 @@ Notifications.localNotification = function(details) {
       soundName = ''; // empty string results in no sound (and no vibration)
     }
 
-    // for valid fields see: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
-    // alertTitle only valid for apple watch: https://developer.apple.com/library/ios/documentation/iPhone/Reference/UILocalNotification_Class/#//apple_ref/occ/instp/UILocalNotification/alertTitle
+    if(details.picture) {
+      details.userInfo = details.userInfo || {};
+      details.userInfo.image = details.picture;
+    }
 
-    this.handler.presentLocalNotification({
-      alertTitle: details.title,
-      alertBody: details.message,
-      alertAction: details.alertAction,
+    // for valid fields see: https://github.com/react-native-push-notification-ios/push-notification-ios#addnotificationrequest
+
+    this.handler.addNotificationRequest({
+      id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
+      title: details.title,
+      subtitle: details.subtitle,
+      body: details.message,
+      badge: details.number,
+      sound: soundName,
+      isSilent: details.playSound === false,
       category: details.category,
-      soundName: soundName,
-      applicationIconBadgeNumber: details.number,
       userInfo: details.userInfo
     });
   } else {
@@ -211,7 +206,15 @@ Notifications.localNotification = function(details) {
     if(details && Array.isArray(details.actions)) {
       details.actions = JSON.stringify(details.actions);
     }
+
+    if(details.userInfo) {
+      details.userInfo = JSON.stringify(details.userInfo);
+    }
   
+    if(details.picture && !details.bigPictureUrl) {
+      details.bigPictureUrl = details.picture;
+    }
+
     this.handler.presentLocalNotification(details);
   }
 };
@@ -221,7 +224,7 @@ Notifications.localNotification = function(details) {
  * @param {Object}    details (same as localNotification)
  * @param {Date}    details.date - The date and time when the system should deliver the notification
  */
-Notifications.localNotificationSchedule = function(details) {
+Notifications.localNotificationSchedule = function({...details}) {
   if ('android' === Platform.os && details && !details.channelId) {
     console.warn('No channel id passed, notifications may not work.');
   }
@@ -236,12 +239,6 @@ Notifications.localNotificationSchedule = function(details) {
     }
   }
 
-  if (details.userInfo) {
-    details.userInfo.id = details.userInfo.id || details.id;
-  } else {
-    details.userInfo = {id: details.id};
-  }
-
   if (Platform.OS === 'ios') {
     let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
 
@@ -249,26 +246,38 @@ Notifications.localNotificationSchedule = function(details) {
       soundName = ''; // empty string results in no sound (and no vibration)
     }
 
+    if(details.picture) {
+      details.userInfo = details.userInfo || {};
+      details.userInfo.image = details.picture;
+    }
+    
+    const repeatsComponent = {
+      second: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
+      minute: ['hour', 'day', 'week', 'month'].includes(details.repeatType),
+      hour: ['day', 'week', 'month'].includes(details.repeatType),
+      day: details.repeatType == "month",
+      dayOfWeek: details.repeatType == "week",
+    };
+
     const iosDetails = {
+      id: (!details.id ? Math.floor(Math.random() * Math.pow(2, 32)).toString() : details.id),
       fireDate: details.date.toISOString(),
-      alertTitle: details.title,
-      alertBody: details.message,
+      title: details.title,
+      subtitle: details.subtitle,
+      body: details.message,
+      sound: soundName,
+      isSilent: details.playSound === false,
       category: details.category,
-      soundName: soundName,
       userInfo: details.userInfo,
-      repeatInterval: details.repeatType,
-      category: details.category,
+      repeats: ['minute', 'hour', 'day', 'week', 'month'].includes(details.repeatType),
+      repeatsComponent: repeatsComponent
     };
 
     if (details.number) {
-      iosDetails.applicationIconBadgeNumber = parseInt(details.number, 10);
+      iosDetails.badge = parseInt(details.number, 10);
     }
 
-    // ignore Android only repeatType
-    if (!details.repeatType || details.repeatType === 'time') {
-      delete iosDetails.repeatInterval;
-    }
-    this.handler.scheduleLocalNotification(iosDetails);
+    this.handler.addNotificationRequest(iosDetails);
   } else {
     if (details && typeof details.number === 'number') {
       if (isNaN(details.number)) {
@@ -294,12 +303,17 @@ Notifications.localNotificationSchedule = function(details) {
       details.actions = JSON.stringify(details.actions);
     }
 
+    if(details.userInfo) {
+      details.userInfo = JSON.stringify(details.userInfo);
+    }
+
+    if(details.picture && !details.bigPictureUrl) {
+      details.bigPictureUrl = details.picture;
+    }
+
     details.fireDate = details.date.getTime();
     delete details.date;
-    // ignore iOS only repeatType
-    if (['year'].includes(details.repeatType)) {
-      delete details.repeatType;
-    }
+
     this.handler.scheduleLocalNotification(details);
   }
 };
@@ -326,7 +340,7 @@ Notifications._onRemoteFetch = function(notificationData) {
   }
 };
 
-Notifications._onAction = function(notification) {
+Notifications._onAction = function({...notification}) {
   if ( typeof notification.data === 'string' ) {
     try {
       notification.data = JSON.parse(notificationData.data);
@@ -346,7 +360,8 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
   if ( isFromBackground === null ) {
     isFromBackground = (
       data.foreground === false ||
-      AppState.currentState === 'background'
+      AppState.currentState === 'background' ||
+      AppState.currentState === 'unknown'
     );
   }
 
@@ -363,8 +378,11 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
       data: notifData,
       badge: data.getBadgeCount(),
       title: data.getTitle(),
+      subtitle: data.getSubtitle(),
       soundName: data.getSound(),
       fireDate: Date.parse(data._fireDate),
+      action: data.getActionIdentifier(),
+      reply_text: data.getUserText(),
       finish: (res) => data.finish(res)
     };
 
@@ -386,6 +404,15 @@ Notifications._transformNotificationObject = function(data, isFromBackground = n
         /* void */
       }
     }
+    
+    if ( typeof _notification.userInfo === 'string' ) {
+      try {
+        _notification.userInfo = JSON.parse(_notification.userInfo);
+      } catch(e) {
+        /* void */
+      }
+    }
+
 
     _notification.data = {
       ...(typeof _notification.userInfo === 'object' ? _notification.userInfo : {}),
@@ -456,8 +483,26 @@ Notifications.scheduleLocalNotification = function() {
   return this.callNative('scheduleLocalNotification', arguments);
 };
 
-Notifications.cancelLocalNotifications = function() {
-  return this.callNative('cancelLocalNotifications', arguments);
+Notifications.cancelLocalNotifications = function(userInfo) {
+  console.warn('This method is now deprecated, please use `cancelLocalNotification` (remove the ending `s`).');
+
+  return this.cancelLocalNotification(userInfo);
+};
+
+Notifications.cancelLocalNotification = function(notificationId) {
+  if(typeof notificationId === 'object') {
+    notificationId = notificationId?.id;
+  }
+
+  if(typeof notificationId === 'number') {
+    notificationId = '' + notificationId;
+  }
+
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removePendingNotificationRequests', [[notificationId]]);
+  } else {
+    return this.callNative('cancelLocalNotification', [notificationId]);
+  }
 };
 
 Notifications.clearLocalNotification = function() {
@@ -465,7 +510,11 @@ Notifications.clearLocalNotification = function() {
 };
 
 Notifications.cancelAllLocalNotifications = function() {
-  return this.callNative('cancelAllLocalNotifications', arguments);
+  if ( Platform.OS === 'ios' ) {
+    return this.callNative('removeAllPendingNotificationRequests', arguments);
+  } else if (Platform.OS === 'android') {
+    return this.callNative('cancelAllLocalNotifications', arguments);
+  }
 };
 
 Notifications.setApplicationIconBadgeNumber = function() {
@@ -513,17 +562,22 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 			if(Platform.OS === 'ios'){
 				mappedNotifications = notifications.map(notif => {
 					return ({
-						soundName: notif.soundName,
-						repeatInterval: notif.repeatInterval,
-						id: notif.userInfo?.id,
-            date: new Date(notif.fireDate),
-						number: notif?.applicationIconBadgeNumber,
-						message: notif?.alertBody,
-						title: notif?.alertTitle,
+						soundName: notif?.sound,
+						id: notif.id,
+                        date: (notif.date ? new Date(notif.date) : null),
+						number: notif?.badge,
+						message: notif?.body,
+            title: notif?.title,
+            data: notif?.userInfo
 					})
 				})
 			} else if(Platform.OS === 'android') {
 				mappedNotifications = notifications.map(notif => {
+
+          try {
+            notif.data = JSON.parse(notif.data);
+          } catch(e) { }
+
 					return ({
 						soundName: notif.soundName,
 						repeatInterval: notif.repeatInterval,
@@ -532,6 +586,7 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 						number: notif.number,
 						message: notif.message,
 						title: notif.title,
+						data: notif.data,
 					})
 				})
 			}
@@ -539,7 +594,11 @@ Notifications.getScheduledLocalNotifications = function(callback) {
 		callback(mappedNotifications);
 	}
 
-	return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+  if(Platform.OS === 'ios'){
+    return this.callNative('getPendingNotificationRequests', [mapNotifications]);
+  } else {
+    return this.callNative('getScheduledLocalNotifications', [mapNotifications]);
+  }
 }
 
 Notifications.removeDeliveredNotifications = function() {
@@ -569,5 +628,19 @@ Notifications.channelBlocked = function() {
 Notifications.deleteChannel = function() {
   return this.callNative('deleteChannel', arguments);
 };
+
+Notifications.setNotificationCategories = function() {
+  return this.callNative('setNotificationCategories', arguments);
+}
+
+// https://developer.android.com/reference/android/app/NotificationManager#IMPORTANCE_DEFAULT
+Notifications.Importance = Object.freeze({
+  DEFAULT: 3,
+  HIGH: 4,
+  LOW: 2,
+  MIN: 1,
+  NONE: 0,
+  UNSPECIFIED: -1000,
+});
 
 module.exports = Notifications;

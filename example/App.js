@@ -115,6 +115,13 @@ export default class App extends Component {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
+            this.notif.getDeliveredNotifications(notifs => console.log(notifs));
+          }}>
+          <Text>Console.Log Delivered Notifications</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
             this.notif.createOrUpdateChannel();
           }}>
           <Text>Create or update a channel</Text>
